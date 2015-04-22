@@ -1145,6 +1145,21 @@ gst_base_ts_mux_create_pad_stream (GstBaseTsMux * mux, GstPad * pad,
       ts_pad->prog_id = idx;
     } else {
       ts_pad->prog_id = DEFAULT_PROG_ID;
+
+      if (!ts_pad->pid) {
+        gint pid = -1;
+
+        name = GST_PAD_NAME (pad);
+        if (name != NULL && sscanf (name, "sink_%d", &pid) == 1) {
+          if (tsmux_find_stream (mux->tsmux, pid)) {
+            GST_WARNING_OBJECT (mux, "Duplicate PID");
+          }
+        } else {
+          pid = tsmux_get_new_pid (mux->tsmux);
+        }
+
+        ts_pad->pid = pid;
+      }
     }
   }
 
