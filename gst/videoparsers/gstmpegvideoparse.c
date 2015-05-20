@@ -749,6 +749,22 @@ need_more:
   if (GST_BASE_PARSE_DRAINING (parse)) {
     GST_LOG_OBJECT (mpvparse, "draining, accepting all data");
     off = size;
+    /* decide picture codding type */
+    if (mpvparse->pic_offset >= 0 && mpvparse->pic_offset < off) {
+      GstMpegVideoPacket header;
+
+      header.data = map.data;
+      header.type = GST_MPEG_VIDEO_PACKET_PICTURE;
+      header.offset = mpvparse->pic_offset;
+      header.size = map.size - mpvparse->pic_offset;
+      if (gst_mpeg_video_packet_parse_picture_header (&header, &mpvparse->pichdr))
+        GST_LOG_OBJECT (mpvparse, "picture_coding_type %d (%s), ending"
+            "frame of size %d", mpvparse->pichdr.pic_type,
+            picture_type_name (mpvparse->pichdr.pic_type), off - 4);
+      else
+        GST_LOG_OBJECT (mpvparse, "Couldn't parse picture at offset %d",
+            mpvparse->pic_offset);
+    }
     ret = TRUE;
   } else {
     GST_LOG_OBJECT (mpvparse, "need more data");
