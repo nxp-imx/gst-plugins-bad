@@ -48,7 +48,7 @@ GST_STATIC_PAD_TEMPLATE ("sink", GST_PAD_SINK,
 
 #define parent_class gst_png_parse_parent_class
 G_DEFINE_TYPE (GstPngParse, gst_png_parse, GST_TYPE_BASE_PARSE);
-GST_ELEMENT_REGISTER_DEFINE_WITH_CODE (pngparse, "pngparse", GST_RANK_PRIMARY,
+GST_ELEMENT_REGISTER_DEFINE_WITH_CODE (pngparse, "pngparse", GST_RANK_MARGINAL - 1,
     GST_TYPE_PNG_PARSE, videoparsers_element_init (plugin));
 
 static gboolean gst_png_parse_start (GstBaseParse * parse);
