@@ -444,6 +444,18 @@ void           gst_play_message_parse_volume_changed             (GstMessage *ms
 GST_PLAY_API
 void           gst_play_message_parse_muted_changed              (GstMessage *msg, gboolean *muted);
 
+/* Custom gstplay API */
+gboolean    gst_play_set_rotate (GstPlay * play, gint rotation);
+gint        gst_play_get_rotate (GstPlay * play);
+
+void        gst_play_config_set_force_aspect_ratio (GstPlay * self, gboolean force_aspect_ratio);
+gboolean    gst_play_config_get_force_aspect_ratio (const GstStructure * config);
+
+gboolean    gst_play_set_audio_sink (GstPlay * play, GstElement * audio_sink);
+gboolean    gst_play_set_text_sink (GstPlay * play, GstElement * text_sink);
+GstElement * gst_play_get_audio_sink (GstPlay * play);
+GstElement * gst_play_get_text_sink (GstPlay * play);
+
 G_END_DECLS
 
 #endif /* __GST_PLAY_H__ */
