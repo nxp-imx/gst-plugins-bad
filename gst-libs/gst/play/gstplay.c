@@ -206,6 +206,10 @@ struct _GstPlay
   gchar *subtitle_sid;
   gboolean subtitle_enabled;
   gulong stream_notify_id;
+
+  /* When error occur, will set this flag to TRUE,
+   * so that it could quit for sync play/stop loop */
+  gboolean got_error;
 };
 
 struct _GstPlayClass
@@ -299,12 +303,14 @@ gst_play_init (GstPlay * self)
       "position-update-interval", G_TYPE_UINT, DEFAULT_POSITION_UPDATE_INTERVAL_MS,
       "accurate-seek", G_TYPE_BOOLEAN, FALSE,
       "pipeline-dump-error-in-details", G_TYPE_BOOLEAN, FALSE,
+      "force-aspect-ratio", G_TYPE_BOOLEAN, TRUE,
       NULL);
   /* *INDENT-ON* */
 
   self->seek_pending = FALSE;
   self->seek_position = GST_CLOCK_TIME_NONE;
   self->last_seek_time = GST_CLOCK_TIME_NONE;
+  self->got_error = FALSE;
 
   self->cached_position = 0;
   self->cached_duration = GST_CLOCK_TIME_NONE;
@@ -977,6 +983,9 @@ on_error (GstPlay * self, GError * err, GstStructure * details)
     gst_structure_set (details, "pipeline-dump", G_TYPE_STRING, dot_data, NULL);
   }
 #endif
+
+  self->got_error = TRUE;
+
   api_bus_post_message (self, GST_PLAY_MESSAGE_ERROR,
       GST_PLAY_MESSAGE_DATA_ERROR, G_TYPE_ERROR, err,
       GST_PLAY_MESSAGE_DATA_ERROR_DETAILS, GST_TYPE_STRUCTURE, details, NULL);
@@ -5045,6 +5054,409 @@ gst_play_get_video_snapshot (GstPlay * self,
   }
 
   return sample;
+}
+
+/**
+ * gst_get_video_sink:
+ * @play: #GstPlay instance
+ *
+ * Returns: actual video sink element
+ */
+static GstElement *
+gst_play_get_video_sink (GstPlay * self)
+{
+  GstElement *sink = NULL;
+  GstElement *actual_sink = NULL;
+  GstIteratorResult rc;
+  GstIterator *it;
+  GValue item = { 0, };
+  g_return_val_if_fail (GST_IS_PLAY (self), NULL);
+
+  g_object_get (G_OBJECT (self->playbin), "video-sink", &sink, NULL);
+  if (NULL == sink) {
+    GST_WARNING_OBJECT (self, "No video-sink found");
+    return NULL;
+  }
+  it = gst_bin_iterate_sinks ((GstBin *) sink);
+  do {
+    rc = gst_iterator_next (it, &item);
+    if (rc == GST_ITERATOR_OK) {
+      break;
+    }
+  } while (rc != GST_ITERATOR_DONE);
+
+  g_object_unref (sink);
+  actual_sink = g_value_get_object (&item);
+  g_value_unset (&item);
+  gst_iterator_free (it);
+
+  if (NULL == actual_sink) {
+    GST_WARNING_OBJECT (self, "No video-sink found");
+    return NULL;
+  }
+
+  return actual_sink;
+}
+
+/**
+ * gst_palyer_set_rotate:
+ * @play: #GstPlay instance
+ * @rotation: rotation degree value
+ *
+ * Returns: %TRUE or %FALSE
+ *
+ * Set the rotation vaule
+ */
+gboolean
+gst_play_set_rotate (GstPlay * self, gint rotation)
+{
+  GstElement *video_sink = NULL;
+  GObjectClass *gobjclass = NULL;
+  g_return_val_if_fail (GST_IS_PLAY (self), FALSE);
+
+  video_sink = gst_play_get_video_sink (self);
+  if (NULL == video_sink) {
+    GST_WARNING_OBJECT (self, " cannot get  video sink ");
+    return FALSE;
+  }
+  GST_DEBUG_OBJECT (self, "set rotation degree '%d'", rotation);
+
+  gobjclass = G_OBJECT_GET_CLASS (G_OBJECT (video_sink));
+  if (g_object_class_find_property (gobjclass, "rotate")
+      && g_object_class_find_property (gobjclass, "reconfig")) {
+    g_object_set (G_OBJECT (video_sink), "rotate", rotation / 90, NULL);
+    g_object_set (G_OBJECT (video_sink), "reconfig", 1, NULL);
+  } else if (g_object_class_find_property (gobjclass, "rotate-method")) {
+    g_object_set (G_OBJECT (video_sink), "rotate-method", rotation / 90, NULL);
+  } else {
+    GST_INFO_OBJECT (self, "can't set rotation for current video sink %s'",
+        gst_element_get_name (video_sink));
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+/**
+ * gst_play_get_rotate:
+ * @play: #GstPlay instance
+ *
+ * Returns: the rotation degree value
+ */
+gint
+gst_play_get_rotate (GstPlay * self)
+{
+  GstElement *video_sink = NULL;
+  GObjectClass *gobjclass = NULL;
+  gint rotation = 0;
+  g_return_val_if_fail (GST_IS_PLAY (self), 0);
+
+  video_sink = gst_play_get_video_sink (self);
+  if (NULL == video_sink) {
+    GST_WARNING_OBJECT (self, " cannot get  video sink ");
+    return 0;
+  }
+
+  /* check if the element has "rotate" property */
+  gobjclass = G_OBJECT_GET_CLASS (video_sink);
+  if (g_object_class_find_property (gobjclass, "rotate")) {
+    g_object_get (G_OBJECT (video_sink), "rotate", &rotation, NULL);
+    rotation = rotation * 90;
+  } else if (g_object_class_find_property (gobjclass, "rotate-method")) {
+    g_object_get (G_OBJECT (video_sink), "rotate-method", &rotation, NULL);
+    rotation = rotation * 90;
+  }
+
+  GST_DEBUG_OBJECT (self, "get rotation degree '%d'", rotation);
+
+  return rotation;
+}
+
+/**
+ * gst_play_config_set_force_aspect_ratio:
+ * @play: #GstPlay instance
+ * @force_aspect_ratio: keey original aspect ratio or not
+ *
+ * Enable or disable force aspect ratio
+ * force_aspect_ratio seeking is TRUE by default.
+ *
+ * Since: 1.12
+ */
+void
+gst_play_config_set_force_aspect_ratio (GstStructure *config, gboolean force_aspect_ratio)
+{
+  g_return_if_fail (config != NULL);
+
+  gst_structure_set (config, "force-aspect-ratio", G_TYPE_BOOLEAN,
+      force_aspect_ratio, NULL);
+}
+
+/**
+ * gst_play_config_get_force_aspect_ratio:
+ * @config: a #GstPlay configuration
+ *
+ * Returns: %TRUE if force-aspect-ratio is enabled
+ *
+ * Since 1.12
+ */
+gboolean
+gst_play_config_get_force_aspect_ratio (const GstStructure * config)
+{
+  gboolean force_aspect_ratio = TRUE;
+
+  g_return_val_if_fail (config != NULL, FALSE);
+
+  gst_structure_get (config, "force-aspect-ratio", G_TYPE_BOOLEAN,
+      &force_aspect_ratio, NULL);
+
+  return force_aspect_ratio;
+}
+
+/**
+ * gst_play_set_audio_sink:
+ * @play: #GstPlay instance
+ * @audio_sink: the custom audio sink to set
+ *
+ * Returns: %TRUE or %FALSE
+ *
+ * Set the customize audio sink
+ */
+gboolean
+gst_play_set_audio_sink (GstPlay * self,  GstElement * audio_sink)
+{
+  g_return_val_if_fail (GST_IS_PLAY (self), FALSE);
+  g_return_val_if_fail (audio_sink != NULL, FALSE);
+
+  g_object_set (G_OBJECT (self->playbin), "audio-sink", audio_sink, NULL);
+  return TRUE;
+}
+
+/**
+ * gst_play_set_text_sink:
+ * @play: #GstPlay instance
+ * @text_sink: the custom text sink  to set
+ *
+ * Returns: %TRUE or %FALSE
+ *
+ * Set the customize text sink
+ */
+gboolean
+gst_play_set_text_sink (GstPlay * self,  GstElement * text_sink)
+{
+  g_return_val_if_fail (GST_IS_PLAY (self), FALSE);
+  g_return_val_if_fail (text_sink != NULL, FALSE);
+
+  g_object_set (G_OBJECT (self->playbin), "text-sink", text_sink, NULL);
+  return TRUE;
+}
+
+/**
+ * gst_play_get_audio_sink:
+ * @play: #GstPlay instance
+ *
+ * Returns: actual audio sink element
+ */
+GstElement *
+gst_play_get_audio_sink (GstPlay * self)
+{
+  GstElement *sink = NULL;
+  GstElement *actual_sink = NULL;
+  GstIteratorResult rc;
+  GstIterator *it;
+  GValue item = { 0, };
+  g_return_val_if_fail (GST_IS_PLAY (self), NULL);
+
+  g_object_get (G_OBJECT (self->playbin), "audio-sink", &sink, NULL);
+  if (NULL == sink) {
+    GST_WARNING_OBJECT (self, "No audio-sink found");
+    return NULL;
+  }
+  it = gst_bin_iterate_sinks ((GstBin *) sink);
+  do {
+    rc = gst_iterator_next (it, &item);
+    if (rc == GST_ITERATOR_OK) {
+      break;
+    }
+  } while (rc != GST_ITERATOR_DONE);
+
+  g_object_unref (sink);
+  actual_sink = g_value_get_object (&item);
+  g_value_unset (&item);
+  gst_iterator_free (it);
+
+  if (NULL == actual_sink) {
+    GST_WARNING_OBJECT (self, "No auido-sink found");
+    return NULL;
+  }
+
+  return actual_sink;
+}
+
+/**
+ * gst_play_get_text_sink:
+ * @play: #GstPlay instance
+ *
+ * Returns: actual text sink element
+ */
+GstElement *
+gst_play_get_text_sink (GstPlay * self)
+{
+  GstElement *sink = NULL;
+  GstElement *actual_sink = NULL;
+  GstIteratorResult rc;
+  GstIterator *it;
+  GValue item = { 0, };
+  g_return_val_if_fail (GST_IS_PLAY (self), NULL);
+
+  g_object_get (G_OBJECT (self->playbin), "text-sink", &sink, NULL);
+  if (NULL == sink) {
+    GST_WARNING_OBJECT (self, "No text-sink found");
+    return NULL;
+  }
+  it = gst_bin_iterate_sinks ((GstBin *) sink);
+  do {
+    rc = gst_iterator_next (it, &item);
+    if (rc == GST_ITERATOR_OK) {
+      break;
+    }
+  } while (rc != GST_ITERATOR_DONE);
+
+  g_object_unref (sink);
+  actual_sink = g_value_get_object (&item);
+  g_value_unset (&item);
+  gst_iterator_free (it);
+
+  if (NULL == actual_sink) {
+    GST_WARNING_OBJECT (self, "No text-sink found");
+    return NULL;
+  }
+
+  return actual_sink;
+}
+
+/**
+ * gst_get_state:
+ * @play: #GstPlay instance
+ *
+ * Gets internal GstPlay state.
+ * It's not guaranteed that the state returned is the current state,
+ * it might've changed in the meantime.
+ *
+ * Returns: (transfer none): internal GstPlayState
+ *
+ * Since 1.12
+ */
+GstPlayState
+gst_play_get_state (GstPlay * self)
+{
+  g_return_val_if_fail (GST_IS_PLAY (self), GST_PLAY_STATE_STOPPED);
+
+  return self->app_state;
+}
+
+/**
+ * gst_play_wait_state
+ * @play: #GstPlay instance
+ * @target_state: target state
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ * Wait for target state, quit loop when time out
+ */
+static void
+gst_play_wait_state (GstPlay * self, GstPlayState target_state,
+    gint time_out)
+{
+  gint wait_cnt = 0;
+
+  while (time_out < 0 || wait_cnt < time_out * 20) {
+    if (self->app_state == target_state) {
+      break;
+    } else if (self->got_error == TRUE) {
+      self->got_error = FALSE;
+      return;
+    } else if (self->is_eos == TRUE) {
+      return;
+    } else {
+      wait_cnt++;
+      g_usleep (50000);
+    }
+  }
+  if (time_out > 0 && wait_cnt >= time_out * 20) {
+    on_error (self, g_error_new (GST_PLAY_ERROR,
+            GST_PLAY_ERROR_FAILED,
+            "try to play /stop /pause failed, time out"), NULL);
+  }
+
+  return;
+}
+
+/**
+ * gst_play_play_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ * Request to play the loaded stream in sync mode.
+ */
+void
+gst_play_play_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_play (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_PLAYING, time_out);
+
+  return;
+}
+
+/**
+ * gst_play_stop_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ *  Stops playing the current stream in sync mode.
+ */
+void
+gst_play_stop_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_stop (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_STOPPED, time_out);
+
+  return;
+}
+
+/**
+ * gst_play_pause_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ *  Pause current stream in sync mode.
+ */
+void
+gst_play_pause_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_pause (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_PAUSED, time_out);
+
+  return;
 }
 
 /**
