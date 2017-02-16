@@ -458,6 +458,10 @@ GstElement * gst_play_get_text_sink (GstPlay * play);
 
 GstPlayState  gst_play_get_state (GstPlay * play);
 
+void         gst_play_play_sync (GstPlay * play, gint time_out);
+void         gst_play_stop_sync (GstPlay * play, gint time_out);
+void         gst_play_pause_sync (GstPlay * play, gint time_out);
+
 G_END_DECLS
 
 #endif /* __GST_PLAY_H__ */
