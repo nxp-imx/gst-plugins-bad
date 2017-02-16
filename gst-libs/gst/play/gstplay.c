@@ -204,6 +204,10 @@ struct _GstPlay
   gchar *subtitle_sid;
   gboolean subtitle_enabled;
   gulong stream_notify_id;
+
+  /* When error occur, will set this flag to TRUE,
+   * so that it could quit for sync play/stop loop */
+  gboolean got_error;
 };
 
 struct _GstPlayClass
@@ -304,6 +308,7 @@ gst_play_init (GstPlay * self)
   self->seek_pending = FALSE;
   self->seek_position = GST_CLOCK_TIME_NONE;
   self->last_seek_time = GST_CLOCK_TIME_NONE;
+  self->got_error = FALSE;
 
   self->cached_position = 0;
   self->cached_duration = GST_CLOCK_TIME_NONE;
@@ -974,6 +979,9 @@ on_error (GstPlay * self, GError * err, GstStructure * details)
     gst_structure_set (details, "pipeline-dump", G_TYPE_STRING, dot_data, NULL);
   }
 #endif
+
+  self->got_error = TRUE;
+
   api_bus_post_message (self, GST_PLAY_MESSAGE_ERROR,
       GST_PLAY_MESSAGE_DATA_ERROR, G_TYPE_ERROR, err,
       GST_PLAY_MESSAGE_DATA_ERROR_DETAILS, GST_TYPE_STRUCTURE, details, NULL);
@@ -5118,6 +5126,111 @@ gst_play_get_state (GstPlay * self)
   g_return_val_if_fail (GST_IS_PLAY (self), GST_PLAY_STATE_STOPPED);
 
   return self->app_state;
+}
+
+/**
+ * gst_play_wait_state
+ * @play: #GstPlay instance
+ * @target_state: target state
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ * Wait for target state, quit loop when time out
+ */
+static void
+gst_play_wait_state (GstPlay * self, GstPlayState target_state,
+    gint time_out)
+{
+  gint wait_cnt = 0;
+
+  while (time_out < 0 || wait_cnt < time_out * 20) {
+    if (self->app_state == target_state) {
+      break;
+    } else if (self->got_error == TRUE) {
+      self->got_error = FALSE;
+      return;
+    } else if (self->is_eos == TRUE) {
+      return;
+    } else {
+      wait_cnt++;
+      g_usleep (50000);
+    }
+  }
+  if (time_out > 0 && wait_cnt >= time_out * 20) {
+    on_error (self, g_error_new (GST_PLAY_ERROR,
+            GST_PLAY_ERROR_FAILED,
+            "try to play /stop /pause failed, time out"), NULL);
+  }
+
+  return;
+}
+
+/**
+ * gst_play_play_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ * Request to play the loaded stream in sync mode.
+ */
+void
+gst_play_play_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_play (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_PLAYING, time_out);
+
+  return;
+}
+
+/**
+ * gst_play_stop_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ *  Stops playing the current stream in sync mode.
+ */
+void
+gst_play_stop_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_stop (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_STOPPED, time_out);
+
+  return;
+}
+
+/**
+ * gst_play_pause_sync:
+ * @play: #GstPlay instance
+ * @time_out:  time out value
+ *  negtive (< 0): infinitely waiting for state change.
+ *  positive (>0): wait until time out.
+ *  zero (0), do not wait for the state change.
+ *
+ *  Pause current stream in sync mode.
+ */
+void
+gst_play_pause_sync (GstPlay * self, gint time_out)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  gst_play_pause (self);
+
+  gst_play_wait_state (self, GST_PLAY_STATE_PAUSED, time_out);
+
+  return;
 }
 
 /**
