@@ -5101,6 +5101,26 @@ gst_play_get_text_sink (GstPlay * self)
 }
 
 /**
+ * gst_get_state:
+ * @play: #GstPlay instance
+ *
+ * Gets internal GstPlay state.
+ * It's not guaranteed that the state returned is the current state,
+ * it might've changed in the meantime.
+ *
+ * Returns: (transfer none): internal GstPlayState
+ *
+ * Since 1.12
+ */
+GstPlayState
+gst_play_get_state (GstPlay * self)
+{
+  g_return_val_if_fail (GST_IS_PLAY (self), GST_PLAY_STATE_STOPPED);
+
+  return self->app_state;
+}
+
+/**
  * gst_play_is_play_message:
  * @msg: A #GstMessage
  *
