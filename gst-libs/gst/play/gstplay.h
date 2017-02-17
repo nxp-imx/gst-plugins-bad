@@ -456,6 +456,8 @@ gboolean    gst_play_set_text_sink (GstPlay * play, GstElement * text_sink);
 GstElement * gst_play_get_audio_sink (GstPlay * play);
 GstElement * gst_play_get_text_sink (GstPlay * play);
 
+GstPlayState  gst_play_get_state (GstPlay * play);
+
 G_END_DECLS
 
 #endif /* __GST_PLAY_H__ */
