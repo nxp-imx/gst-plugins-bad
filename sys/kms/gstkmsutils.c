@@ -27,7 +27,13 @@
 #include "config.h"
 #endif
 
+#include <stdint.h>
+#include <unistd.h>
+
 #include <drm_fourcc.h>
+#include <dirent.h>
+#include <string.h>
+#include <linux/version.h>
 
 #include "gstkmsutils.h"
 
@@ -77,6 +83,13 @@ static const struct
   DEF_FMT (YVU420, YV12),
   DEF_FMT (NV21, NV21),
   DEF_FMT (NV12, NV12),
+
+  /* 10bits/c YUV 4:2:0 */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+  DEF_FMT (P010, NV12_10LE40),
+#else
+  DEF_FMT (NV15, NV12_10LE40),
+#endif
 
   /* 16bits/p RGB */
   DEF_FMT (RGB565, RGB16),
@@ -149,6 +162,31 @@ gst_drm_bpp_from_drm (guint32 drmfmt)
   }
 
   return bpp;
+}
+
+guint32
+gst_drm_alignment_from_drm_format (guint32 drmfmt)
+{
+  guint32 alignment;
+
+  switch (drmfmt) {
+    case DRM_FORMAT_YUV420:
+    case DRM_FORMAT_YVU420:
+    case DRM_FORMAT_YUV422:
+    case DRM_FORMAT_NV12:
+    case DRM_FORMAT_NV21:
+    case DRM_FORMAT_NV16:
+    case DRM_FORMAT_UYVY:
+    case DRM_FORMAT_YUYV:
+    case DRM_FORMAT_YVYU:
+      alignment = 2;
+      break;
+    default:
+      alignment = 1;
+      break;
+  }
+
+  return alignment;
 }
 
 guint32

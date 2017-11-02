@@ -51,12 +51,17 @@
 #include <gst/video/videooverlay.h>
 #include <gst/video/video-color.h>
 #include <gst/allocators/gstdmabuf.h>
+#include <gst/allocators/gstdmabufmeta.h>
+#include <gst/allocators/gstphymemmeta.h>
 
-#include <drm.h>
+#include <stdint.h>
+
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 #include <drm_fourcc.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "gstkmssink.h"
 #include "gstkmsutils.h"
@@ -80,6 +85,8 @@ static GstFlowReturn gst_kms_sink_show_frame (GstVideoSink * vsink,
     GstBuffer * buf);
 static void gst_kms_sink_video_overlay_init (GstVideoOverlayInterface * iface);
 static void gst_kms_sink_drain (GstKMSSink * self);
+static void ensure_kms_allocator (GstKMSSink * self);
+static void gst_kms_sink_config_hdr10 (GstKMSSink *self, const GstCaps * caps);
 
 #define parent_class gst_kms_sink_parent_class
 G_DEFINE_TYPE_WITH_CODE (GstKMSSink, gst_kms_sink, GST_TYPE_VIDEO_SINK,
@@ -106,10 +113,14 @@ enum
   PROP_PLANE_PROPS,
   PROP_FD,
   PROP_SKIP_VSYNC,
-  PROP_N,
+  PROP_GLOBAL_ALPHA,
+  PROP_FORCE_HANTROTILE,
+  PROP_N
 };
 
 static GParamSpec *g_properties[PROP_N] = { NULL, };
+
+#define SCALE_RATIO_NO_LIMITATION 100000
 
 #ifdef HAVE_DRM_HDR
 enum hdmi_metadata_type
@@ -485,6 +496,7 @@ kms_open (gchar ** driver)
     "exynos", "amdgpu", "imx-drm", "imx-lcdif", "rockchip", "atmel-hlcdc",
     "msm", "xlnx", "vc4", "meson", "stm", "sun4i-drm", "mxsfb-drm", "tegra",
     "tidss", "xilinx_drm",      /* DEPRECATED. Replaced by xlnx */
+    "imx-dcss", /* 8mq dcss device name on L5.4 */
   };
   int i, fd = -1;
 
@@ -723,12 +735,131 @@ get_drm_caps (GstKMSSink * self)
   return TRUE;
 }
 
+static gint
+get_commit_fd (GstKMSSink * self)
+{
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+  return self->ctrl_fd;
+#else
+  return self->fd;
+#endif
+}
+
+static guint
+check_upscale (GstKMSSink * self, guint32 fb_id) {
+  guint32 src_w = self->hdisplay / 10;
+  guint32 src_h = self->vdisplay / 10;
+  guint ratio;
+  gint fd = get_commit_fd(self);
+
+  for (ratio = 10; ratio > 0; ratio--) {
+    if (!drmModeSetPlane (fd, self->plane_id, self->crtc_id, fb_id, 0,
+          0, 0, src_w * ratio, src_h * ratio,
+          0, 0, src_w << 16, src_h << 16))
+      break;
+  }
+
+  return ratio;
+}
+
+static guint
+check_downscale (GstKMSSink * self, guint32 fb_id) {
+  guint32 src_w = self->hdisplay / 10;
+  guint32 src_h = self->vdisplay / 10;
+  guint ratio;
+  gint fd = get_commit_fd(self);
+
+  for (ratio = 10; ratio > 0; ratio--) {
+    if (!drmModeSetPlane (fd, self->plane_id, self->crtc_id, fb_id, 0,
+          0, 0, src_w, src_h,
+          0, 0, (src_w * ratio) << 16, (src_h * ratio) << 16))
+      break;
+  }
+
+  return ratio;
+}
+
 static void
 ensure_kms_allocator (GstKMSSink * self)
 {
   if (self->allocator)
     return;
   self->allocator = gst_kms_allocator_new (self->fd);
+}
+
+static void
+check_scaleable (GstKMSSink * self)
+{
+  guint32 fb_id;
+  GstKMSMemory *kmsmem = NULL;
+  GstMemory *mem = NULL;
+  GstVideoInfo vinfo;
+
+  /* we assume driver can scale at initialize,
+   * if scale is checked or can not scale, we
+   * don't need check again */
+  if (self->scale_checked || !self->can_scale)
+    return;
+
+  if (self->conn_id < 0 || !self->display_connected)
+    return;
+
+  /* FIXME: for dpu, we can only hard code the scale ratio,
+   * dpu has no limitation when do upscale but can not support
+   * downscale */
+  if (HAS_DPU()) {
+    self->downscale_ratio = 1;
+    self->upscale_ratio = SCALE_RATIO_NO_LIMITATION;
+    return;
+  }
+
+  gst_video_info_init (&vinfo);
+  gst_video_info_set_format (&vinfo, GST_VIDEO_FORMAT_NV12, self->hdisplay, self->vdisplay);
+
+  ensure_kms_allocator (self);
+
+  kmsmem = (GstKMSMemory *) gst_kms_allocator_bo_alloc (self->allocator, &vinfo);
+  if (!kmsmem)
+    return;
+
+  fb_id = kmsmem->fb_id;
+
+  GST_INFO_OBJECT (self, "checking scaleable");
+  self->downscale_ratio = check_downscale (self, fb_id);
+  self->upscale_ratio = check_upscale (self, fb_id);
+
+  GST_INFO_OBJECT (self, "got scale ratio: up (%d) down (%d)",
+      self->upscale_ratio, self->downscale_ratio);
+
+  self->scale_checked = TRUE;
+  mem = (GstMemory *)kmsmem;
+  g_clear_pointer (&mem, gst_memory_unref);
+}
+
+static gboolean
+check_vsi_tile_enable (GstKMSSink * self, GstBuffer * buffer)
+{
+  GstDmabufMeta *dmabuf_meta;
+  gint64 drm_modifier = 0;
+
+  if (!buffer)
+    buffer = self->hold_buf[0];
+
+  if (!buffer)
+    return FALSE;
+
+  if (!gst_is_dmabuf_memory (gst_buffer_peek_memory (buffer, 0)))
+    return FALSE;
+
+  dmabuf_meta = gst_buffer_get_dmabuf_meta (buffer);
+  if (dmabuf_meta)
+    drm_modifier = dmabuf_meta->drm_modifier;
+
+  GST_INFO_OBJECT (self, "buffer modifier type %"G_GINT64_FORMAT, drm_modifier);
+
+  return drm_modifier == DRM_FORMAT_MOD_VSI_G1_TILED
+         || drm_modifier == DRM_FORMAT_MOD_VSI_G2_TILED
+         || drm_modifier == DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED;
 }
 
 static gboolean
@@ -830,7 +961,7 @@ ensure_allowed_caps (GstKMSSink * self, drmModeConnector * conn,
   if (!out_caps)
     return FALSE;
 
-  if (conn && self->modesetting_enabled)
+  if (conn && self->modesetting_enabled && self->display_connected)
     count_modes = conn->count_modes;
   else
     count_modes = 1;
@@ -872,6 +1003,15 @@ ensure_allowed_caps (GstKMSSink * self, drmModeConnector * conn,
 
       tmp_caps = gst_caps_merge (tmp_caps, caps);
     }
+    /* FIXME: Add NV12_10LE40 caps here, no need this code
+     * when new drm fourcc added*/
+    caps = gst_caps_new_simple ("video/x-raw",
+        "format", G_TYPE_STRING, "NV12_10LE40",
+        "width", GST_TYPE_INT_RANGE, res->min_width, res->max_width,
+        "height", GST_TYPE_INT_RANGE, res->min_height, res->max_height,
+        "framerate", GST_TYPE_FRACTION_RANGE, 0, 1, G_MAXINT, 1, NULL);
+
+    tmp_caps = gst_caps_merge (tmp_caps, caps);
 
     out_caps = gst_caps_merge (out_caps, gst_caps_simplify (tmp_caps));
   }
@@ -889,6 +1029,23 @@ ensure_allowed_caps (GstKMSSink * self, drmModeConnector * conn,
 
   return TRUE;
 }
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+static gint
+get_drm_minor_base (gint type)
+{
+  switch (type) {
+    case DRM_NODE_PRIMARY:
+      return 0;
+    case DRM_NODE_CONTROL:
+      return 64;
+    case DRM_NODE_RENDER:
+      return 128;
+    default:
+      return -1;
+  }
+}
+#endif
 
 static gboolean
 set_drm_property (gint fd, guint32 object, guint32 object_type,
@@ -1043,6 +1200,21 @@ gst_kms_sink_start (GstBaseSink * bsink)
       self->fd = kms_open (&self->devname);
   }
 
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+  gint minor;
+  minor = get_drm_minor_base (DRM_NODE_CONTROL);
+  self->ctrl_fd = drmOpenControl(minor);
+  if (self->ctrl_fd < 0) {
+    if (self->fd >= 0)
+      drmClose (self->fd);
+    GST_ELEMENT_ERROR (self, RESOURCE, OPEN_READ_WRITE,
+        ("Could not open DRM ctrl node %s", GST_STR_NULL (self->devname)),
+        ("reason: %s (%d)", strerror (errno), errno));
+    return FALSE;
+  }
+#endif
+
   if (self->fd < 0)
     goto open_failed;
 
@@ -1061,11 +1233,19 @@ gst_kms_sink_start (GstBaseSink * bsink)
   if (!conn)
     goto connector_failed;
 
+  if (conn->connection == DRM_MODE_CONNECTED)
+    self->display_connected = TRUE;
+  else
+    self->display_connected = FALSE;
+
+  GST_DEBUG_OBJECT (self, "display connection status: %s",
+      self->display_connected ? "Connected" : "disconnected");
+
   crtc = find_crtc_for_connector (self->fd, res, conn, &self->pipe);
   if (!crtc)
     goto crtc_failed;
 
-  if (!crtc->mode_valid || self->modesetting_enabled) {
+  if ((!crtc->mode_valid || self->modesetting_enabled) && self->display_connected) {
     GST_DEBUG_OBJECT (self, "enabling modesetting");
     self->modesetting_enabled = TRUE;
     universal_planes = TRUE;
@@ -1122,6 +1302,8 @@ retry_find_plane:
 
   GST_INFO_OBJECT (self, "display size: pixels = %dx%d / millimeters = %dx%d",
       self->hdisplay, self->vdisplay, self->mm_width, self->mm_height);
+
+  check_scaleable (self);
 
   self->pollfd.fd = self->fd;
   gst_poll_add_fd (self->poll, &self->pollfd);
@@ -1260,6 +1442,13 @@ gst_kms_sink_stop (GstBaseSink * bsink)
       drmClose (self->fd);
     self->fd = -1;
   }
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
+  if (self->ctrl_fd >= 0) {
+    drmClose (self->ctrl_fd);
+    self->ctrl_fd = -1;
+  }
+#endif
 
   GST_OBJECT_LOCK (bsink);
   self->hdisplay = 0;
@@ -1466,12 +1655,16 @@ gst_kms_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   if (self->modesetting_enabled && !configure_mode_setting (self, &vinfo))
     goto modesetting_failed;
 
+  check_scaleable (self);
+
   GST_OBJECT_LOCK (self);
   if (self->reconfigure) {
     self->reconfigure = FALSE;
     self->render_rect = self->pending_rect;
   }
   GST_OBJECT_UNLOCK (self);
+
+  gst_kms_sink_config_hdr10 (self, caps);
 
   GST_DEBUG_OBJECT (self, "negotiated caps = %" GST_PTR_FORMAT, caps);
 
@@ -1515,6 +1708,10 @@ gst_kms_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   gboolean need_pool;
   GstVideoInfo vinfo;
   GstBufferPool *pool;
+  guint64 drm_modifier;
+  drmModeObjectPropertiesPtr props = NULL;
+  drmModePropertyPtr prop = NULL;
+  guint i;
   gsize size;
 
   self = GST_KMS_SINK (bsink);
@@ -1551,6 +1748,27 @@ gst_kms_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
 
   gst_query_add_allocation_meta (query, GST_VIDEO_META_API_TYPE, NULL);
   gst_query_add_allocation_meta (query, GST_VIDEO_CROP_META_API_TYPE, NULL);
+
+  drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
+  gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+
+  if (self->hantro_tile_enabled) {
+    props = drmModeObjectGetProperties (self->fd, self->plane_id, DRM_MODE_OBJECT_PLANE);
+    for (i = 0; i < props->count_props; ++i) {
+      prop = drmModeGetProperty(self->fd, props->props[i]);
+      if (!strcmp(prop->name, "dtrc_table_ofs")) {
+        GST_DEBUG ("has dtrc_table_ofs property, can support VSI tile format");
+        drm_modifier = DRM_FORMAT_MOD_VSI_G1_TILED;
+        gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+        drm_modifier = DRM_FORMAT_MOD_VSI_G2_TILED;
+        gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+        drm_modifier = DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED;
+        gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+      }
+      drmModeFreeProperty (prop);
+      prop = NULL;
+    }
+  }
 
   return TRUE;
 
@@ -1655,6 +1873,8 @@ gst_kms_sink_import_dmabuf (GstKMSSink * self, GstBuffer * inbuf,
 {
   gint prime_fds[GST_VIDEO_MAX_PLANES] = { 0, };
   GstVideoMeta *meta;
+  GstDmabufMeta *dmabuf_meta;
+  gint64 drm_modifier = 0;
   guint i, n_mem, n_planes;
   GstKMSMemory *kmsmem;
   guint mems_idx[GST_VIDEO_MAX_PLANES];
@@ -1671,6 +1891,9 @@ gst_kms_sink_import_dmabuf (GstKMSSink * self, GstBuffer * inbuf,
   n_planes = GST_VIDEO_INFO_N_PLANES (&self->vinfo);
   n_mem = gst_buffer_n_memory (inbuf);
   meta = gst_buffer_get_video_meta (inbuf);
+  dmabuf_meta = gst_buffer_get_dmabuf_meta (inbuf);
+  if (dmabuf_meta)
+    drm_modifier = dmabuf_meta->drm_modifier;
 
   GST_TRACE_OBJECT (self, "Found a dmabuf with %u planes and %u memories",
       n_planes, n_mem);
@@ -1727,7 +1950,7 @@ gst_kms_sink_import_dmabuf (GstKMSSink * self, GstBuffer * inbuf,
       prime_fds[1], prime_fds[2], prime_fds[3]);
 
   kmsmem = gst_kms_allocator_dmabuf_import (self->allocator,
-      prime_fds, n_planes, mems_skip, &self->vinfo);
+      prime_fds, n_planes, drm_modifier, mems_skip, &self->vinfo);
   if (!kmsmem)
     return FALSE;
 
@@ -1785,7 +2008,156 @@ activate_pool_failed:
     gst_object_unref (pool);
     return FALSE;
   }
+}
 
+static void
+gst_kms_sink_set_kmsproperty (GstKMSSink * self, guint alpha, guint64 dtrc_table_ofs)
+{
+  drmModeRes *res = NULL;
+  drmModePlaneRes *pres = NULL;
+  drmModePlane *plane = NULL;
+  drmModeObjectPropertiesPtr props = NULL;
+  drmModePropertyPtr prop = NULL;
+  guint i;
+  gint fd = get_commit_fd (self);
+
+  props = drmModeObjectGetProperties (self->fd, self->plane_id, DRM_MODE_OBJECT_PLANE);
+  for (i = 0; i < props->count_props; ++i) {
+    prop = drmModeGetProperty(self->fd, props->props[i]);
+    if (!strcmp(prop->name, "dtrc_table_ofs") && dtrc_table_ofs) {
+      GST_DEBUG ("set DTRC table offset %"G_GUINT64_FORMAT" to primary plane %d property %d",
+          dtrc_table_ofs, self->plane_id, prop->prop_id);
+      drmModeObjectSetProperty (fd, self->plane_id, DRM_MODE_OBJECT_PLANE, prop->prop_id, dtrc_table_ofs);
+    }
+    drmModeFreeProperty (prop);
+    prop = NULL;
+  }
+
+  res = drmModeGetResources (self->fd);
+  if (!res)
+    goto out;
+
+  drmSetClientCap (self->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1);
+
+  pres = drmModeGetPlaneResources (self->fd);
+  if (!pres)
+    goto out;
+
+  plane = find_plane_for_crtc (self->fd, res, pres, self->crtc_id);
+  if (!plane)
+    goto out;
+
+  props = drmModeObjectGetProperties (self->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE);
+  for (i = 0; i < props->count_props; ++i) {
+    prop = drmModeGetProperty(self->fd, props->props[i]);
+    if (!strcmp(prop->name, "alpha")) {
+      GST_DEBUG ("set global alpha %d to primary plane %d property %d",
+          alpha, plane->plane_id, prop->prop_id);
+      drmModeObjectSetProperty (fd, plane->plane_id, DRM_MODE_OBJECT_PLANE, prop->prop_id, alpha);
+      self->primary_plane_id = plane->plane_id;
+    }
+    drmModeFreeProperty (prop);
+    prop = NULL;
+  }
+
+out:
+  if (res)
+    drmModeFreeResources (res);
+  if (pres)
+    drmModeFreePlaneResources (pres);
+  if (plane)
+    drmModeFreePlane (plane);
+  if (props)
+    drmModeFreeObjectProperties (props);
+  drmSetClientCap (self->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 0);
+}
+
+static GstStateChangeReturn
+gst_kms_sink_change_state (GstElement * element, GstStateChange transition)
+{
+  GstKMSSink *self;
+  GstStateChangeReturn ret = GST_STATE_CHANGE_SUCCESS;
+  gint fd;
+
+  GST_DEBUG ("changing state: %s => %s",
+      gst_element_state_get_name (GST_STATE_TRANSITION_CURRENT (transition)),
+      gst_element_state_get_name (GST_STATE_TRANSITION_NEXT (transition)));
+
+  self = GST_KMS_SINK (element);
+  fd = get_commit_fd (self);
+
+  switch (transition) {
+    case GST_STATE_CHANGE_NULL_TO_READY:
+      self->is_kmsproperty_set = FALSE;
+      memset (&self->hdr10meta, 0, sizeof (self->hdr10meta));
+      break;
+    case GST_STATE_CHANGE_READY_TO_PAUSED:
+    {
+      guint i;
+      for (i = 0; i < DEFAULT_HOLD_BUFFER_NUM; i++)
+        self->hold_buf[i] = NULL;
+      break;
+    }
+    case GST_STATE_CHANGE_PAUSED_TO_PLAYING:
+      break;
+    default:
+      break;
+  }
+
+  ret = GST_ELEMENT_CLASS (parent_class)->change_state (element, transition);
+  if (ret == GST_STATE_CHANGE_FAILURE)
+    return ret;
+
+  switch (transition) {
+    case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+    {
+      self->run_time = gst_element_get_start_time (element);
+      break;
+    }
+    case GST_STATE_CHANGE_PAUSED_TO_READY:
+    {
+      guint i;
+      gst_kms_sink_set_kmsproperty (self, 255, 0);
+      for (i = 0; i < DEFAULT_HOLD_BUFFER_NUM; i++) {
+        if (self->hold_buf[i])
+          gst_buffer_unref (self->hold_buf[i]);
+      }
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+      if (self->hdr10meta.eotf != 0) {
+#else
+      if (self->hdr10meta.hdmi_metadata_type1.eotf != 0) {
+#endif
+        guint blob_id = 0;
+        gint err = 0;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+        self->hdr10meta.eotf = 0;
+        drmModeCreatePropertyBlob (self->fd, &self->hdr10meta, 1, &blob_id);
+        err = drmModeObjectSetProperty (fd, self->conn_id, DRM_MODE_OBJECT_CONNECTOR, self->hdr_prop_id, blob_id);
+        drmModeDestroyPropertyBlob (self->fd, blob_id);
+#else
+        err = drmModeObjectSetProperty (fd, self->conn_id, DRM_MODE_OBJECT_CONNECTOR, self->hdr_prop_id, blob_id);
+#endif
+        if (err)
+          GST_ERROR_OBJECT (self, "reset blob property fail %d", err);
+      }
+
+      break;
+    }
+    case GST_STATE_CHANGE_READY_TO_NULL:
+      if (self->run_time > 0) {
+        g_print ("Total showed frames (%"G_GUINT64_FORMAT"), playing for (%"GST_TIME_FORMAT"), fps (%.3f).\n",
+                self->frame_showed, GST_TIME_ARGS (self->run_time),
+                (gfloat)GST_SECOND * self->frame_showed / self->run_time);
+      }
+
+      self->frame_showed = 0;
+      self->run_time = 0;
+      break;
+    default:
+      break;
+  }
+
+  return ret;
 }
 
 static GstBuffer *
@@ -1877,6 +2249,143 @@ done:
   return buf;
 }
 
+static void
+gst_kms_sink_config_hdr10 (GstKMSSink *self, const GstCaps * caps)
+{
+  guint blob_id = 0;
+  int err;
+  gint i;
+  drmModeObjectPropertiesPtr props = NULL;
+  drmModePropertyPtr prop = NULL;
+  GstVideoMasteringDisplayInfo minfo;
+  GstVideoContentLightLevel cll;
+  gint fd = get_commit_fd (self);
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+  const gchar *prop_name = "HDR_SOURCE_METADATA";
+#else
+  const gchar *prop_name = "HDR_OUTPUT_METADATA";
+#endif
+
+  if (self->conn_id < 0) {
+    GST_ERROR_OBJECT (self, "no connector");
+    return;
+  }
+
+  gst_video_mastering_display_info_init (&minfo);
+  gst_video_content_light_level_init (&cll);
+
+  if (caps) {
+    if (!gst_video_mastering_display_info_from_caps (&minfo, caps)
+        || !gst_video_content_light_level_from_caps (&cll, caps)) {
+      GST_INFO_OBJECT (self, "no HDR metadata present in caps");
+      return;
+    }
+  }
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+  if (self->hdr10meta.eotf == 0) {
+#else
+  if (self->hdr10meta.hdmi_metadata_type1.eotf == 0) {
+#endif
+    GST_INFO_OBJECT (self, "redPrimary x=%d y=%d", minfo.display_primaries[0].x,
+        minfo.display_primaries[0].y);
+    GST_INFO_OBJECT (self, "greenPrimary x=%d y=%d",
+        minfo.display_primaries[1].x, minfo.display_primaries[1].y);
+    GST_INFO_OBJECT (self, "bluePrimary x=%d y=%d",
+        minfo.display_primaries[2].x, minfo.display_primaries[2].y);
+    GST_INFO_OBJECT (self, "whitePoint x=%d y=%d", minfo.white_point.x,
+        minfo.white_point.y);
+    GST_INFO_OBJECT (self, "maxMasteringLuminance %d",
+        minfo.max_display_mastering_luminance);
+    GST_INFO_OBJECT (self, "minMasteringLuminance %d",
+        minfo.min_display_mastering_luminance);
+    GST_INFO_OBJECT (self, "maxContentLightLevel %d",
+        cll.max_content_light_level);
+    GST_INFO_OBJECT (self, "maxFrameAverageLightLevel %d",
+        cll.max_frame_average_light_level);
+
+    /* FIXME: better to use marcos instead of const value */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+    self->hdr10meta.eotf = 2;
+    self->hdr10meta.type = 0;
+    self->hdr10meta.display_primaries_x [0] = minfo.display_primaries[0].x;
+    self->hdr10meta.display_primaries_x [1] = minfo.display_primaries[1].x;
+    self->hdr10meta.display_primaries_x [2] = minfo.display_primaries[2].x;
+    self->hdr10meta.display_primaries_y [0] = minfo.display_primaries[0].y;
+    self->hdr10meta.display_primaries_y [1] = minfo.display_primaries[1].y;
+    self->hdr10meta.display_primaries_y [2] = minfo.display_primaries[2].y;
+    self->hdr10meta.white_point_x = minfo.white_point.x;
+    self->hdr10meta.white_point_y = minfo.white_point.y;
+    self->hdr10meta.max_mastering_display_luminance = (minfo.max_display_mastering_luminance / 10000) & 0xffff;;
+    self->hdr10meta.min_mastering_display_luminance = minfo.min_display_mastering_luminance & 0xffff;
+    self->hdr10meta.max_fall = cll.max_frame_average_light_level;
+    self->hdr10meta.max_cll = cll.max_content_light_level;
+#else
+    self->hdr10meta.metadata_type = 0;
+    self->hdr10meta.hdmi_metadata_type1.eotf = 2;
+    self->hdr10meta.hdmi_metadata_type1.metadata_type = 1;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[0].x = minfo.display_primaries[0].x;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[0].y = minfo.display_primaries[0].y;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[1].x = minfo.display_primaries[1].x;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[1].y = minfo.display_primaries[1].y;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[2].x = minfo.display_primaries[2].x;
+    self->hdr10meta.hdmi_metadata_type1.display_primaries[2].y = minfo.display_primaries[2].y;
+    self->hdr10meta.hdmi_metadata_type1.white_point.x = minfo.white_point.x;
+    self->hdr10meta.hdmi_metadata_type1.white_point.y = minfo.white_point.y;
+    self->hdr10meta.hdmi_metadata_type1.max_display_mastering_luminance =
+    			(minfo.max_display_mastering_luminance / 10000) & 0xffff;
+    self->hdr10meta.hdmi_metadata_type1.min_display_mastering_luminance =
+    			minfo.min_display_mastering_luminance & 0xffff;
+    self->hdr10meta.hdmi_metadata_type1.max_cll = cll.max_content_light_level;
+    self->hdr10meta.hdmi_metadata_type1.max_fall = cll.max_frame_average_light_level;
+#endif
+
+    if (!self->hdr_prop_id) {
+      props = drmModeObjectGetProperties (self->fd, self->conn_id, DRM_MODE_OBJECT_CONNECTOR);
+      for (i = 0; i < props->count_props; ++i) {
+        prop = drmModeGetProperty(self->fd, props->props[i]);
+        if (!strcmp(prop->name, prop_name)) {
+          GST_DEBUG_OBJECT (self, "found %s property on connector %d property id %d", prop_name,
+              self->conn_id, prop->prop_id);
+          self->hdr_prop_id = prop->prop_id;
+        }
+        drmModeFreeProperty (prop);
+        prop = NULL;
+      }
+    }
+
+    if (self->hdr_prop_id == 0) {
+      GST_WARNING_OBJECT (self, "no %s property found", prop_name);
+      return;
+    }
+
+    drmModeCreatePropertyBlob (self->fd, &self->hdr10meta, sizeof (self->hdr10meta), &blob_id);
+    GST_INFO_OBJECT (self, "create blob id %d", blob_id);
+    err = drmModeObjectSetProperty (fd, self->conn_id, DRM_MODE_OBJECT_CONNECTOR, self->hdr_prop_id, blob_id);
+    drmModeDestroyPropertyBlob (self->fd, blob_id);
+    if (err) {
+      GST_ERROR_OBJECT (self, "set blob property fail %d", err);
+      return;
+    }
+  }
+}
+
+static gboolean
+gst_kms_sink_check_scale_ratio (GstKMSSink * self, GstVideoRectangle dst, GstVideoRectangle src)
+{
+  gboolean can_scale = TRUE;
+  GST_INFO_OBJECT (self, "dst rectangle (%d, %d)-(%d x %d)", dst.x, dst.y, dst.w, dst.h);
+  GST_INFO_OBJECT (self, "src rectangle (%d, %d)-(%d x %d)", src.x, src.y, src.w, src.h);
+
+  can_scale = (dst.w * self->downscale_ratio >= src.w
+              && dst.w <= src.w * self->upscale_ratio
+              && dst.h * self->downscale_ratio >= src.h
+              && dst.h <= src.h * self->upscale_ratio);
+
+  GST_INFO_OBJECT (self, "can use hardware scale: %s", can_scale ? "TRUE" : "FALSE");
+  return can_scale;
+}
+
 static GstFlowReturn
 gst_kms_sink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
 {
@@ -1890,11 +2399,29 @@ gst_kms_sink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
   gint video_width, video_height;
   GstVideoRectangle dst = { 0, };
   GstVideoRectangle result;
+  GstPhyMemMeta *phymemmeta = NULL;
+  guint64 dtrc_table_ofs;
   GstFlowReturn res;
-
+  gboolean can_scale = TRUE;
+  guint32 fmt, alignment;
+  gint fd;
+  
   self = GST_KMS_SINK (vsink);
+  fd = get_commit_fd (self);
 
   res = GST_FLOW_ERROR;
+
+  if (!self->display_connected) {
+    GST_WARNING_OBJECT (self, "display not connected, drop this buffer");
+    return GST_FLOW_OK;
+  }
+
+  if (HAS_DPU()) {
+    fmt = gst_drm_format_from_video (GST_VIDEO_INFO_FORMAT (&self->vinfo));
+    alignment = gst_drm_alignment_from_drm_format (fmt);
+  } else {
+    alignment = 1;
+  }
 
   if (buf) {
     buffer = gst_kms_sink_get_input_buffer (self, buf);
@@ -1913,11 +2440,26 @@ gst_kms_sink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
 
   if (!buffer)
     return GST_FLOW_ERROR;
+
   fb_id = gst_kms_memory_get_fb_id (gst_buffer_peek_memory (buffer, 0));
   if (fb_id == 0)
     goto buffer_invalid;
 
   GST_TRACE_OBJECT (self, "displaying fb %d", fb_id);
+
+  if (!self->is_kmsproperty_set) {
+    phymemmeta = GST_PHY_MEM_META_GET (buffer);
+    if (phymemmeta) {
+      GST_DEBUG_OBJECT (self, "physical memory meta x_padding: %d y_padding: %d \
+          RFC luma offset: %d chroma offset: %d",
+          phymemmeta->x_padding, phymemmeta->y_padding, phymemmeta->rfc_luma_offset, phymemmeta->rfc_chroma_offset);
+      dtrc_table_ofs = phymemmeta->rfc_luma_offset | ((guint64)phymemmeta->rfc_chroma_offset << 32);
+      gst_kms_sink_set_kmsproperty (self, self->global_alpha, dtrc_table_ofs);
+    } else
+      gst_kms_sink_set_kmsproperty (self, self->global_alpha, 0);
+
+    self->is_kmsproperty_set = TRUE;
+  }
 
   GST_OBJECT_LOCK (self);
   if (self->modesetting_enabled) {
@@ -1943,35 +2485,61 @@ gst_kms_sink_show_frame (GstVideoSink * vsink, GstBuffer * buf)
   dst.h = self->render_rect.h;
 
 retry_set_plane:
-  gst_video_sink_center_rect (src, dst, &result, self->can_scale);
+  gst_video_sink_center_rect (src, dst, &result, can_scale);
 
-  result.x += self->render_rect.x;
-  result.y += self->render_rect.y;
+  result.x = GST_ROUND_DOWN_N (result.x + self->render_rect.x, alignment);
+  result.y = GST_ROUND_DOWN_N (result.y + self->render_rect.y, alignment);;
+
+  if (result.x < 0 || result.y < 0) {
+    /* FIXME: need improve cropping handle when DTRC is not enable */
+    if (!check_vsi_tile_enable (self, buf)) {
+      result.x = result.x < 0 ? 0 : result.x;
+      result.y = result.y < 0 ? 0 : result.y;
+    }
+  }
 
   if (crop) {
     src.w = crop->width;
     src.h = crop->height;
   } else {
-    src.w = video_width;
-    src.h = video_height;
+    src.w = GST_ROUND_DOWN_N (video_width, alignment);
+    src.h = GST_ROUND_DOWN_N (video_height, alignment);
   }
+
+  if (!gst_kms_sink_check_scale_ratio (self, result, src)) {
+    if (can_scale) {
+      can_scale = FALSE;
+      dst.w = MAX (self->hdisplay, src.w);
+      dst.h = MAX (self->vdisplay, src.h);
+      GST_WARNING_OBJECT (self, "try not scale");
+      goto retry_set_plane;
+    } else
+      goto check_ratio_fail;
+  }
+
+  GST_TRACE_OBJECT (self,
+      "scaling result at (%i,%i) %ix%i sourcing at (%i,%i) %ix%i",
+      result.x, result.y, result.w, result.h, src.x, src.y, src.w, src.h);
 
   /* handle out of screen case */
-  if ((result.x + result.w) > self->hdisplay)
-    result.w = self->hdisplay - result.x;
-
-  if ((result.y + result.h) > self->vdisplay)
-    result.h = self->vdisplay - result.y;
-
-  if (result.w <= 0 || result.h <= 0) {
-    GST_WARNING_OBJECT (self, "video is out of display range");
-    goto sync_frame;
+  if ((result.x + result.w) > self->hdisplay) {
+    gint crop_width = self->hdisplay - result.x;
+    if (crop_width > 0)
+      src.w = GST_ROUND_UP_2 (crop_width * src.w / result.w);
+    result.w = crop_width;
   }
 
-  /* to make sure it can be show when driver don't support scale */
-  if (!self->can_scale) {
-    src.w = result.w;
-    src.h = result.h;
+  if ((result.y + result.h) > self->vdisplay) {
+    gint crop_height = self->vdisplay - result.y;
+    if (crop_height > 0)
+      src.h = GST_ROUND_UP_2 (crop_height * src.h / result.h);
+    result.h = crop_height;
+  }
+
+  if (result.w <= 0 || result.h <= 0 || src.h <= 0 || src.w <= 0) {
+    GST_WARNING_OBJECT (self, "video is out of display range, use previous area");
+    self->render_rect = self->last_rect;
+    goto done;
   }
 #ifdef HAVE_DRM_HDR
   /* Send the HDR infoframes if appropriate */
@@ -1982,17 +2550,14 @@ retry_set_plane:
       "drmModeSetPlane at (%i,%i) %ix%i sourcing at (%i,%i) %ix%i",
       result.x, result.y, result.w, result.h, src.x, src.y, src.w, src.h);
 
-  ret = drmModeSetPlane (self->fd, self->plane_id, self->crtc_id, fb_id, 0,
+  ret = drmModeSetPlane (fd, self->plane_id, self->crtc_id, fb_id, 0,
       result.x, result.y, result.w, result.h,
       /* source/cropping coordinates are given in Q16 */
       src.x << 16, src.y << 16, src.w << 16, src.h << 16);
   if (ret) {
-    if (self->can_scale) {
-      self->can_scale = FALSE;
-      goto retry_set_plane;
-    }
     goto set_plane_failed;
-  }
+  } else
+    goto done;
 
 sync_frame:
   /* Wait for the previous frame to complete redraw */
@@ -2002,6 +2567,7 @@ sync_frame:
   }
 
   /* Save the rendered buffer and its metadata in case a redraw is needed */
+done:
   if (buffer != self->last_buffer) {
     gst_buffer_replace (&self->last_buffer, buffer);
     self->last_width = GST_VIDEO_SINK_WIDTH (self);
@@ -2013,7 +2579,22 @@ sync_frame:
   GST_OBJECT_UNLOCK (self);
   res = GST_FLOW_OK;
 
+  self->frame_showed++;
+  self->last_rect = self->render_rect;
+
 bail:
+  if (buf) {
+    guint i;
+
+    if (self->hold_buf[DEFAULT_HOLD_BUFFER_NUM-1])
+      gst_buffer_unref (self->hold_buf[DEFAULT_HOLD_BUFFER_NUM-1]);
+
+    for (i = DEFAULT_HOLD_BUFFER_NUM - 1; i > 0; i--)
+      self->hold_buf[i] = self->hold_buf[i-1];
+
+    self->hold_buf[0] = gst_buffer_ref (buf);
+  }
+
   gst_buffer_unref (buffer);
   return res;
 
@@ -2039,6 +2620,13 @@ no_disp_ratio:
     GST_OBJECT_UNLOCK (self);
     GST_ELEMENT_ERROR (self, CORE, NEGOTIATION, (NULL),
         ("Error calculating the output display ratio of the video."));
+    goto bail;
+  }
+check_ratio_fail:
+  {
+    GST_OBJECT_UNLOCK (self);
+    GST_ELEMENT_ERROR (self, RESOURCE, FAILED, (NULL),
+        ("Checking scale ratio fail."));
     goto bail;
   }
 }
@@ -2200,6 +2788,12 @@ gst_kms_sink_set_property (GObject * object, guint prop_id,
     case PROP_SKIP_VSYNC:
       sink->skip_vsync = g_value_get_boolean (value);
       break;
+    case PROP_GLOBAL_ALPHA:
+      sink->global_alpha = g_value_get_int (value);
+      break;
+    case PROP_FORCE_HANTROTILE:
+      sink->hantro_tile_enabled = g_value_get_boolean (value);
+      break;
     default:
       if (!gst_video_overlay_set_property (object, PROP_N, prop_id, value))
         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2252,6 +2846,11 @@ gst_kms_sink_get_property (GObject * object, guint prop_id,
       break;
     case PROP_PLANE_PROPS:
       gst_value_set_structure (value, sink->plane_props);
+    case PROP_GLOBAL_ALPHA:
+      g_value_set_int (value, sink->global_alpha);
+      break;
+    case PROP_FORCE_HANTROTILE:
+      g_value_set_boolean (value, sink->hantro_tile_enabled);
       break;
     case PROP_FD:
       g_value_set_int (value, sink->fd);
@@ -2285,14 +2884,24 @@ static void
 gst_kms_sink_init (GstKMSSink * sink)
 {
   sink->fd = -1;
+  sink->ctrl_fd = -1;
   sink->is_internal_fd = TRUE;
   sink->conn_id = -1;
   sink->plane_id = -1;
+  sink->primary_plane_id = -1;
+  sink->hdr_prop_id = 0;
   sink->can_scale = TRUE;
+  sink->scale_checked = FALSE;
+  sink->upscale_ratio = 1;
+  sink->downscale_ratio = 1;
+  sink->hantro_tile_enabled = FALSE;
   gst_poll_fd_init (&sink->pollfd);
   sink->poll = gst_poll_new (TRUE);
   gst_video_info_init (&sink->vinfo);
   sink->skip_vsync = FALSE;
+  sink->frame_showed = 0;
+  sink->run_time = 0;
+  sink->global_alpha = 0;
 
 #ifdef HAVE_DRM_HDR
   sink->no_infoframe = FALSE;
@@ -2328,6 +2937,7 @@ gst_kms_sink_class_init (GstKMSSinkClass * klass)
       gst_pad_template_new ("sink", GST_PAD_SINK, GST_PAD_ALWAYS, caps));
   gst_caps_unref (caps);
 
+  element_class->change_state = GST_DEBUG_FUNCPTR (gst_kms_sink_change_state);
   basesink_class->start = GST_DEBUG_FUNCPTR (gst_kms_sink_start);
   basesink_class->stop = GST_DEBUG_FUNCPTR (gst_kms_sink_stop);
   basesink_class->set_caps = GST_DEBUG_FUNCPTR (gst_kms_sink_set_caps);
@@ -2395,6 +3005,16 @@ gst_kms_sink_class_init (GstKMSSinkClass * klass)
   g_properties[PROP_FORCE_MODESETTING] =
       g_param_spec_boolean ("force-modesetting", "Force modesetting",
       "When enabled, the sink try to configure the display mode", FALSE,
+      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT);
+  
+  /**
+   * kmssink:force-hantrotile:
+   *
+   * If enable, the sink propose hantro tile modifier to VPU.
+   */
+  g_properties[PROP_FORCE_HANTROTILE] =
+      g_param_spec_boolean ("force-hantrotile", "Force to use hantro tile",
+      "When enabled, the sink propose hantro tile modifier to VPU", FALSE,
       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT);
 
   /**
@@ -2469,6 +3089,14 @@ gst_kms_sink_class_init (GstKMSSinkClass * klass)
       g_param_spec_boxed ("plane-properties", "Connector Plane",
       "Additional properties for the plane",
       GST_TYPE_STRUCTURE, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS);
+   /**
+   * kmssink:global-alpha:
+   *
+   * configure global alpha on mscale
+   */
+  g_properties[PROP_GLOBAL_ALPHA] = g_param_spec_int ("global-alpha",
+      "global alpha", "global alpha", 0, 255, 0,
+      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT);
 
   /**
    * kmssink:fd:

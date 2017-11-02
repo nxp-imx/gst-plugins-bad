@@ -26,6 +26,9 @@
 #ifndef __GST_KMS_SINK_H__
 #define __GST_KMS_SINK_H__
 
+#include <drm.h>
+#include <linux/version.h>
+
 #include <gst/video/gstvideosink.h>
 #include <gst/video/video-hdr.h>
 
@@ -42,6 +45,8 @@ G_BEGIN_DECLS
 #define GST_IS_KMS_SINK_CLASS(klass) \
   (G_TYPE_CHECK_CLASS_TYPE((klass), GST_TYPE_KMS_SINK))
 
+#define DEFAULT_HOLD_BUFFER_NUM 2
+
 typedef struct _GstKMSSink GstKMSSink;
 typedef struct _GstKMSSinkClass GstKMSSinkClass;
 
@@ -50,10 +55,16 @@ struct _GstKMSSink {
 
   /*< private >*/
   gint fd;
+  gint ctrl_fd;
   gint conn_id;
   gint crtc_id;
   gint plane_id;
+  gint primary_plane_id;
   guint pipe;
+
+  /* fps print support */
+  guint64 frame_showed;
+  GstClockTime run_time;
 
   /* crtc data */
   guint16 hdisplay, vdisplay;
@@ -64,11 +75,30 @@ struct _GstKMSSink {
   gboolean has_prime_export;
   gboolean has_async_page_flip;
   gboolean can_scale;
+  gboolean scale_checked;
+  gint upscale_ratio;
+  gint downscale_ratio;
+
+  /* global alpha */
+  gboolean is_kmsproperty_set;
+  guint global_alpha;
 
   gboolean modesetting_enabled;
   gboolean restore_crtc;
   GstStructure *connector_props;
   GstStructure *plane_props;
+
+  gboolean display_connected;
+  gboolean hantro_tile_enabled;
+
+  /* hdr10 support */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+  struct hdr_static_metadata hdr10meta;
+#else
+  struct hdr_output_metadata hdr10meta;
+#endif
+
+  gint hdr_prop_id;
 
   GstVideoInfo vinfo;
   GstCaps *allowed_caps;
@@ -78,6 +108,7 @@ struct _GstKMSSink {
   guint last_width;
   guint last_height;
   GstBuffer *last_buffer;
+  GstBuffer *hold_buf[DEFAULT_HOLD_BUFFER_NUM];
   GstMemory *tmp_kmsmem;
 
   gchar *devname;
@@ -90,6 +121,7 @@ struct _GstKMSSink {
 
   /* render video rectangle */
   GstVideoRectangle render_rect;
+  GstVideoRectangle last_rect;
 
   /* reconfigure info if driver doesn't scale */
   GstVideoRectangle pending_rect;

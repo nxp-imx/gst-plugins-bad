@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <drm_fourcc.h>
 
 /* it needs to be below because is internal to libdrm */
 #include <drm.h>
@@ -347,14 +348,15 @@ gst_kms_allocator_new (int fd)
  * which are relative to the GstBuffer start. */
 static gboolean
 gst_kms_allocator_add_fb (GstKMSAllocator * alloc, GstKMSMemory * kmsmem,
-    gsize in_offsets[GST_VIDEO_MAX_PLANES], GstVideoInfo * vinfo,
+    gint64 drm_modifier, gsize in_offsets[GST_VIDEO_MAX_PLANES], GstVideoInfo * vinfo,
     guint32 bo_handles[4])
 {
   gint i, ret;
   gint num_planes = GST_VIDEO_INFO_N_PLANES (vinfo);
-  guint32 w, h, fmt;
+  guint32 w, h, fmt, alignment;
   guint32 pitches[4] = { 0, };
   guint32 offsets[4] = { 0, };
+  guint64 modifier[4] = { 0, };
 
   if (kmsmem->fb_id)
     return TRUE;
@@ -362,17 +364,33 @@ gst_kms_allocator_add_fb (GstKMSAllocator * alloc, GstKMSMemory * kmsmem,
   w = GST_VIDEO_INFO_WIDTH (vinfo);
   h = GST_VIDEO_INFO_HEIGHT (vinfo);
   fmt = gst_drm_format_from_video (GST_VIDEO_INFO_FORMAT (vinfo));
+  alignment = gst_drm_alignment_from_drm_format (fmt);
+  w = GST_ROUND_UP_N (w, alignment);
+  h = GST_ROUND_UP_N (h, alignment);
 
   for (i = 0; i < num_planes; i++) {
     pitches[i] = GST_VIDEO_INFO_PLANE_STRIDE (vinfo, i);
     offsets[i] = in_offsets[i];
+    modifier[i] = drm_modifier;
   }
 
   GST_DEBUG_OBJECT (alloc, "bo handles: %d, %d, %d, %d", bo_handles[0],
       bo_handles[1], bo_handles[2], bo_handles[3]);
+  if (drm_modifier == DRM_FORMAT_MOD_AMPHION_TILED) {
+    /* for qxp, dpu need fb width align to 8
+     * and height align to 256 */
+    w = GST_ROUND_UP_8 (w);
+    h = GST_ROUND_UP_N (h, 256);
+  }
 
-  ret = drmModeAddFB2 (alloc->priv->fd, w, h, fmt, bo_handles, pitches,
-      offsets, &kmsmem->fb_id, 0);
+  if (drm_modifier) {
+    ret = drmModeAddFB2WithModifiers (alloc->priv->fd, w, h, fmt, bo_handles, pitches,
+        offsets, modifier, &kmsmem->fb_id, DRM_MODE_FB_MODIFIERS);
+  } else {
+    ret = drmModeAddFB2 (alloc->priv->fd, w, h, fmt, bo_handles, pitches,
+        offsets, &kmsmem->fb_id, 0);
+  }
+
   if (ret) {
     GST_ERROR_OBJECT (alloc, "Failed to bind to framebuffer: %s (%d)",
         g_strerror (errno), errno);
@@ -408,7 +426,7 @@ gst_kms_allocator_bo_alloc (GstAllocator * allocator, GstVideoInfo * vinfo)
   for (i = 0; i < GST_VIDEO_INFO_N_PLANES (vinfo); i++)
     bo_handle[i] = gst_drm_dumb_memory_get_handle (kmsmem->bo);
 
-  if (!gst_kms_allocator_add_fb (alloc, kmsmem, vinfo->offset, vinfo,
+  if (!gst_kms_allocator_add_fb (alloc, kmsmem, 0, vinfo->offset, vinfo,
           bo_handle))
     goto fail;
 
@@ -422,7 +440,7 @@ fail:
 
 GstKMSMemory *
 gst_kms_allocator_dmabuf_import (GstAllocator * allocator, gint * prime_fds,
-    gint n_planes, gsize offsets[GST_VIDEO_MAX_PLANES], GstVideoInfo * vinfo)
+    gint n_planes, gint64 drm_modifier, gsize offsets[GST_VIDEO_MAX_PLANES], GstVideoInfo * vinfo)
 {
   GstKMSAllocator *alloc;
   GstKMSMemory *kmsmem;
@@ -445,7 +463,7 @@ gst_kms_allocator_dmabuf_import (GstAllocator * allocator, gint * prime_fds,
       goto import_fd_failed;
   }
 
-  if (!gst_kms_allocator_add_fb (alloc, kmsmem, offsets, vinfo, gem_handle))
+  if (!gst_kms_allocator_add_fb (alloc, kmsmem, drm_modifier, offsets, vinfo, gem_handle))
     goto failed;
 
 done:
