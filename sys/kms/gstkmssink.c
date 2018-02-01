@@ -62,6 +62,7 @@
 #include "gstkmsutils.h"
 #include "gstkmsbufferpool.h"
 #include "gstkmsallocator.h"
+#include "gstimxcommon.h"
 
 #ifdef HAVE_DRM_HDR
 #include <math.h>

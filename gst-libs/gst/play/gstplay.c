@@ -4727,6 +4727,8 @@ gst_play_get_video_sink (GstPlay * self)
     GST_WARNING_OBJECT (self, "No video-sink found");
     return NULL;
   }
+  if (TRUE != GST_IS_BIN((GstBin*) sink))
+     return sink;
   it = gst_bin_iterate_sinks ((GstBin *) sink);
   do {
     rc = gst_iterator_next (it, &item);
@@ -4778,6 +4780,9 @@ gst_play_set_rotate (GstPlay * self, gint rotation)
     g_object_set (G_OBJECT (video_sink), "reconfig", 1, NULL);
   } else if (g_object_class_find_property (gobjclass, "rotate-method")) {
     g_object_set (G_OBJECT (video_sink), "rotate-method", rotation / 90, NULL);
+  }  else if (g_object_class_find_property (gobjclass, "video-direction")) {
+    g_object_set (G_OBJECT (video_sink), "video-direction", rotation / 90, NULL);
+    g_object_set (G_OBJECT (video_sink), "reconfig", 1, NULL);
   } else {
     GST_INFO_OBJECT (self, "can't set rotation for current video sink %s'",
         gst_element_get_name (video_sink));
@@ -4814,6 +4819,9 @@ gst_play_get_rotate (GstPlay * self)
     rotation = rotation * 90;
   } else if (g_object_class_find_property (gobjclass, "rotate-method")) {
     g_object_get (G_OBJECT (video_sink), "rotate-method", &rotation, NULL);
+    rotation = rotation * 90;
+  }   else if (g_object_class_find_property (gobjclass, "video-direction")) {
+    g_object_get (G_OBJECT (video_sink), "video-direction", &rotation, NULL);
     rotation = rotation * 90;
   }
 
