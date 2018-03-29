@@ -78,6 +78,10 @@ struct _GstWaylandSink
   gchar *drm_device;
   gboolean skip_dumb_buffer_copy;
   gboolean force_aspect_ratio;
+
+  /* fps print support */
+  guint64 frame_showed;
+  GstClockTime run_time;
 };
 
 struct _GstWaylandSinkClass
