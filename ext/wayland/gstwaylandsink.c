@@ -201,6 +201,8 @@ gst_wayland_sink_init (GstWaylandSink * self)
 {
   g_mutex_init (&self->display_lock);
   g_mutex_init (&self->render_lock);
+  self->frame_showed = 0;
+  self->run_time = 0;
 }
 
 static void
@@ -437,6 +439,9 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
     return ret;
 
   switch (transition) {
+    case GST_STATE_CHANGE_PLAYING_TO_PAUSED:
+      self->run_time = gst_element_get_start_time (element);
+      break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_buffer_replace (&self->last_buffer, NULL);
       if (self->window) {
@@ -466,6 +471,14 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
 
       g_mutex_unlock (&self->display_lock);
       g_clear_object (&self->pool);
+
+      if (self->run_time > 0) {
+        g_print ("Total showed frames (%lld), playing for (%"GST_TIME_FORMAT"), fps (%.3f).\n",
+                self->frame_showed, GST_TIME_ARGS (self->run_time),
+                (gfloat)GST_SECOND * self->frame_showed / self->run_time);
+      }
+      self->frame_showed = 0;
+      self->run_time = 0;
       break;
     default:
       break;
@@ -1077,6 +1090,7 @@ dst_map_failed:
   }
 done:
   {
+    self->frame_showed++;
     g_mutex_unlock (&self->render_lock);
     return ret;
   }
