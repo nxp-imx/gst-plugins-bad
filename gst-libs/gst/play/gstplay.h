@@ -373,7 +373,7 @@ GST_PLAY_API
 guint          gst_play_config_get_position_update_interval  (const GstStructure * config);
 
 GST_PLAY_API
-void           gst_play_config_set_seek_accurate (GstStructure * config, gboolean accurate);
+void           gst_play_config_set_seek_accurate (GstPlay * play, gboolean accurate);
 
 GST_PLAY_API
 gboolean       gst_play_config_get_seek_accurate (const GstStructure * config);
