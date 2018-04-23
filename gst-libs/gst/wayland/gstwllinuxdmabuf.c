@@ -24,6 +24,8 @@
 #include <config.h>
 #endif
 
+#include <gst/allocators/gstdmabufmeta.h>
+
 #include "gstwllinuxdmabuf.h"
 
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -87,7 +89,7 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
 {
   GstMemory *mem;
   guint fourcc;
-  guint64 modifier;
+  guint64 modifier = 0;
   guint i, width = 0, height = 0;
   GstVideoInfo info;
   const gsize *offsets = NULL;
@@ -97,13 +99,19 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
   struct zwp_linux_buffer_params_v1 *params;
   gint64 timeout;
   ConstructBufferData data;
+  GstDmabufMeta *dmabuf_meta;
 
   g_return_val_if_fail (gst_wl_display_check_format_for_dmabuf (display,
           drm_info), NULL);
 
   mem = gst_buffer_peek_memory (buf, 0);
   fourcc = drm_info->drm_fourcc;
-  modifier = drm_info->drm_modifier;
+
+  dmabuf_meta = gst_buffer_get_dmabuf_meta (buf);
+  if (dmabuf_meta)
+    modifier = dmabuf_meta->drm_modifier;
+  else
+    modifier = drm_info->drm_modifier;
 
   g_cond_init (&data.cond);
   g_mutex_init (&data.lock);
