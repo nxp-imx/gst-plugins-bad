@@ -51,6 +51,9 @@
 #include <gst/video/videooverlay.h>
 #include <linux/version.h>
 
+#include <xf86drm.h>
+#include <xf86drmMode.h>
+
 #include "hdr10-metadata-unstable-v1-client-protocol.h"
 
 /* signals */
@@ -840,6 +843,7 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   GstCaps *caps;
   GstBufferPool *pool = NULL;
   gboolean need_pool;
+  guint64 drm_modifier;
   GstVideoInfoDmaDrm drm_info;
   GstVideoInfo vinfo;
   guint size;
@@ -859,6 +863,9 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
       return FALSE;
     size = vinfo.size;
   }
+
+  drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
+  gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
 
   if (need_pool && !gst_video_is_dma_drm_caps (caps)) {
     GstStructure *config;
