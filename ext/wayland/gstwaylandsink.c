@@ -51,6 +51,10 @@
 #include <gst/video/gstvideodmabufpool.h>
 #include <gst/video/videooverlay.h>
 
+#include <xf86drm.h>
+#include <xf86drmMode.h>
+
+
 /* signals */
 enum
 {
@@ -871,6 +875,8 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   GstBufferPool *pool = NULL;
   gboolean need_pool;
   guint size;
+  guint64 drm_modifier;
+  
 
   gst_query_parse_allocation (query, &caps, &need_pool);
 
@@ -897,6 +903,9 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
     if (!allocator)
       allocator = gst_shm_allocator_get ();
   }
+
+  drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
+  gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
 
   if (need_pool && !gst_video_is_dma_drm_caps (caps)) {
     GstStructure *config;
