@@ -44,6 +44,8 @@
 
 #include "gstwaylandsink.h"
 
+#include "gstimxcommon.h"
+
 #include <drm_fourcc.h>
 #include <gst/allocators/allocators.h>
 #include <gst/video/videooverlay.h>
@@ -117,8 +119,6 @@ static void gst_wayland_sink_expose (GstVideoOverlay * overlay);
 G_DEFINE_TYPE_WITH_CODE (GstWaylandSink, gst_wayland_sink, GST_TYPE_VIDEO_SINK,
     G_IMPLEMENT_INTERFACE (GST_TYPE_VIDEO_OVERLAY,
         gst_wayland_sink_videooverlay_init));
-GST_ELEMENT_REGISTER_DEFINE (waylandsink, "waylandsink", GST_RANK_MARGINAL,
-    GST_TYPE_WAYLAND_SINK);
 
 static void
 gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
@@ -1348,8 +1348,16 @@ gst_wayland_sink_expose (GstVideoOverlay * overlay)
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
+  GstRank rank = GST_RANK_MARGINAL;
+
   GST_DEBUG_CATEGORY_INIT (gstwayland_debug, "waylandsink", 0,
       " wayland video sink");
+
+  if (imx_chip_code() >= CC_MX8)
+      rank = IMX_GST_PLUGIN_RANK + 1;
+
+  GST_ELEMENT_REGISTER_DEFINE (waylandsink, "waylandsink", rank,
+    GST_TYPE_WAYLAND_SINK);
 
   return GST_ELEMENT_REGISTER (waylandsink, plugin);
 }
