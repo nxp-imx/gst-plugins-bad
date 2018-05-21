@@ -3600,7 +3600,6 @@ gst_h265_parse_event (GstBaseParse * parse, GstEvent * event)
     }
     case GST_EVENT_FLUSH_STOP:
     case GST_EVENT_SEGMENT_DONE:
-      h265parse->push_codec = TRUE;
       res = GST_BASE_PARSE_CLASS (parent_class)->sink_event (parse, event);
       break;
     case GST_EVENT_SEGMENT:
