@@ -68,6 +68,9 @@ void gst_wl_window_set_render_rectangle (GstWlWindow * self, gint x, gint y,
         gint w, gint h);
 
 GST_WL_API
+void gst_wl_window_set_source_crop (GstWlWindow * self, GstBuffer * buffer);
+
+GST_WL_API
 const GstVideoRectangle *gst_wl_window_get_render_rectangle (GstWlWindow * self);
 
 GST_WL_API

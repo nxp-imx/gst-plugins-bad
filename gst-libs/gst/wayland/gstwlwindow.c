@@ -80,6 +80,9 @@ typedef struct _GstWlWindowPrivate
   gboolean clear_window;
   struct wl_callback *frame_callback;
   struct wl_callback *commit_callback;
+
+  /* the coordinate of video crop */
+  gint src_x, src_y, src_width, src_height;
 } GstWlWindowPrivate;
 
 G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
@@ -185,6 +188,11 @@ gst_wl_window_init (GstWlWindow * self)
   g_cond_init (&priv->configure_cond);
   g_mutex_init (&priv->configure_mutex);
   g_mutex_init (&priv->window_lock);
+
+  priv->src_x = 0;
+  priv->src_y = 0;
+  priv->src_width = -1;
+  priv->src_height = 0;
 }
 
 static void
@@ -458,6 +466,11 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   int wp_src_width;
   int wp_src_height;
 
+  wl_fixed_t src_x = wl_fixed_from_int (priv->src_x);
+  wl_fixed_t src_y = wl_fixed_from_int (priv->src_y);
+  wl_fixed_t src_width = wl_fixed_from_int (priv->src_width);
+  wl_fixed_t src_height = wl_fixed_from_int (priv->src_height);
+
   switch (priv->buffer_transform) {
     case WL_OUTPUT_TRANSFORM_NORMAL:
     case WL_OUTPUT_TRANSFORM_180:
@@ -487,10 +500,10 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   /* center the video_subsurface inside area_subsurface */
   if (priv->video_viewport) {
     gst_video_center_rect (&src, &dst, &res, TRUE);
-    wp_viewport_set_source (priv->video_viewport, wl_fixed_from_int (0),
-        wl_fixed_from_int (0), wl_fixed_from_int (wp_src_width),
-        wl_fixed_from_int (wp_src_height));
     wp_viewport_set_destination (priv->video_viewport, res.w, res.h);
+    if (src_width != wl_fixed_from_int(-1))
+      wp_viewport_set_source (priv->video_viewport,
+          src_x, src_y, src_width, src_height);
   } else {
     gst_video_center_rect (&src, &dst, &res, FALSE);
   }
@@ -783,6 +796,25 @@ gst_wl_window_set_render_rectangle (GstWlWindow * self, gint x, gint y,
   priv->render_rectangle.h = h;
 
   gst_wl_window_update_geometry (self);
+}
+
+void
+gst_wl_window_set_source_crop (GstWlWindow * self, GstBuffer * buffer)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+  GstVideoCropMeta *crop = NULL;
+  crop = gst_buffer_get_video_crop_meta(buffer);
+
+  if (crop) {
+    GST_DEBUG ("buffer crop x=%d y=%d width=%d height=%d\n",
+        crop->x, crop->y, crop->width, crop->height);
+    priv->src_x = crop->x;
+    priv->src_y = crop->y;
+    priv->src_width = crop->width;
+    priv->src_height = crop->height;
+  } else {
+    priv->src_width = -1;
+  }
 }
 
 const GstVideoRectangle *
