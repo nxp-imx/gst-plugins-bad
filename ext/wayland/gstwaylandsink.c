@@ -812,6 +812,7 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   alloc = gst_shm_allocator_get ();
   gst_query_add_allocation_param (query, alloc, NULL);
   gst_query_add_allocation_meta (query, GST_VIDEO_META_API_TYPE, NULL);
+  gst_query_add_allocation_meta (query, GST_VIDEO_CROP_META_API_TYPE, NULL);
   g_object_unref (alloc);
 
   return TRUE;
@@ -879,6 +880,8 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
   /* make sure that the application has called set_render_rectangle() */
   if (G_UNLIKELY (gst_wl_window_get_render_rectangle (self->window)->w == 0))
     goto no_window_size;
+
+  gst_wl_window_set_source_crop (self->window, buffer);
 
   wlbuffer = gst_buffer_get_wl_buffer (self->display, buffer);
 
