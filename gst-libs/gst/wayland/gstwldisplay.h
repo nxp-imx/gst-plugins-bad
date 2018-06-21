@@ -92,6 +92,9 @@ GST_WL_API
 struct wp_viewporter *gst_wl_display_get_viewporter (GstWlDisplay * self);
 
 GST_WL_API
+struct zwp_alpha_compositing_v1 *gst_wl_display_get_alpha_compositing (GstWlDisplay * self);
+
+GST_WL_API
 struct wl_shm *gst_wl_display_get_shm (GstWlDisplay * self);
 
 GST_WL_API

@@ -52,6 +52,9 @@ struct _GstWaylandSink
   GstWlWindow *window;
   GstBufferPool *pool;
 
+  /* alpha compositing */
+  gfloat alpha;
+
   gboolean video_info_changed;
   GstVideoInfo video_info;
   GstVideoInfoDmaDrm drm_info;
