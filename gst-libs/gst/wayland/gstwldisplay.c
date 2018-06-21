@@ -29,6 +29,7 @@
 #include "single-pixel-buffer-v1-client-protocol.h"
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
+#include "alpha-compositing-unstable-v1-client-protocol.h"
 
 #include <errno.h>
 #include <drm_fourcc.h>
@@ -53,6 +54,7 @@ typedef struct _GstWlDisplayPrivate
   struct wl_shm *shm;
   struct wp_viewporter *viewporter;
   struct zwp_linux_dmabuf_v1 *dmabuf;
+  struct zwp_alpha_compositing_v1 *alpha_compositing;
   GArray *shm_formats;
   GArray *dmabuf_formats;
   GArray *dmabuf_modifiers;
@@ -155,6 +157,9 @@ gst_wl_display_finalize (GObject * gobject)
 
   if (priv->single_pixel_buffer)
     wp_single_pixel_buffer_manager_v1_destroy (priv->single_pixel_buffer);
+
+  if (priv->alpha_compositing)
+    zwp_alpha_compositing_v1_destroy (priv->alpha_compositing);
 
   if (priv->compositor)
     wl_compositor_destroy (priv->compositor);
@@ -334,6 +339,9 @@ registry_handle_global (void *data, struct wl_registry *registry,
     priv->single_pixel_buffer =
         wl_registry_bind (registry, id,
         &wp_single_pixel_buffer_manager_v1_interface, 1);
+  } else if (g_strcmp0 (interface, "zwp_alpha_compositing_v1") == 0) {
+    priv->alpha_compositing =
+        wl_registry_bind (registry, id, &zwp_alpha_compositing_v1_interface, 1);
   }
 }
 
@@ -655,6 +663,14 @@ gst_wl_display_get_viewporter (GstWlDisplay * self)
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
 
   return priv->viewporter;
+}
+
+struct zwp_alpha_compositing_v1 *
+gst_wl_display_get_alpha_compositing (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->alpha_compositing;
 }
 
 struct wl_shm *

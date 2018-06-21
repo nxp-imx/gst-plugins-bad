@@ -25,11 +25,13 @@
 #endif
 
 #include "gstwlwindow.h"
+#include "gstimxcommon.h"
 
 #include "fullscreen-shell-unstable-v1-client-protocol.h"
 #include "single-pixel-buffer-v1-client-protocol.h"
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
+#include "alpha-compositing-unstable-v1-client-protocol.h"
 
 #define GST_CAT_DEFAULT gst_wl_window_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
@@ -54,6 +56,9 @@ typedef struct _GstWlWindowPrivate
   gboolean configured;
   GCond configure_cond;
   GMutex configure_mutex;
+
+  struct wl_shell_surface *shell_surface;
+  struct zwp_blending_v1 *blend_func;
 
   /* the size and position of the area_(sub)surface */
   GstVideoRectangle render_rectangle;
@@ -219,6 +224,10 @@ gst_wl_window_finalize (GObject * gobject)
     wp_viewport_destroy (priv->video_viewport);
 
   wl_proxy_wrapper_destroy (priv->video_surface_wrapper);
+
+  if (priv->blend_func)
+    zwp_blending_v1_destroy (priv->blend_func);
+
   wl_subsurface_destroy (priv->video_subsurface);
   wl_surface_destroy (priv->video_surface);
 
@@ -245,6 +254,7 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   struct wl_event_queue *event_queue;
   struct wl_region *region;
   struct wp_viewporter *viewporter;
+  struct zwp_alpha_compositing_v1 *alpha_compositing;
 
   self = g_object_new (GST_TYPE_WL_WINDOW, NULL);
   priv = gst_wl_window_get_instance_private (self);
@@ -278,6 +288,12 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
     priv->video_viewport = wp_viewporter_get_viewport (viewporter,
         priv->video_surface);
   }
+
+  alpha_compositing = gst_wl_display_get_alpha_compositing (display);
+  if (alpha_compositing)
+    priv->blend_func =
+        zwp_alpha_compositing_v1_get_blending (alpha_compositing,
+        priv->area_surface);
 
   /* never accept input events on the video surface */
   region = wl_compositor_create_region (compositor);
@@ -445,6 +461,39 @@ gst_wl_window_get_subsurface (GstWlWindow * self)
   return priv->area_subsurface;
 }
 
+struct wl_surface *
+gst_wl_window_get_area_surface (GstWlWindow * self)
+{
+  GstWlWindowPrivate *priv;
+
+  g_return_val_if_fail (self != NULL, NULL);
+
+  priv = gst_wl_window_get_instance_private (self);
+  return priv->area_surface;
+}
+
+gint
+gst_wl_window_get_rectangle_w (GstWlWindow * self)
+{
+  GstWlWindowPrivate *priv;
+
+  g_return_val_if_fail (self != NULL, -1);
+
+  priv = gst_wl_window_get_instance_private (self);
+  return priv->render_rectangle.w;
+}
+
+gint
+gst_wl_window_get_rectangle_h (GstWlWindow * self)
+{
+  GstWlWindowPrivate *priv;
+
+  g_return_val_if_fail (self != NULL, -1);
+
+  priv = gst_wl_window_get_instance_private (self);
+  return priv->render_rectangle.h;
+}
+
 gboolean
 gst_wl_window_is_toplevel (GstWlWindow * self)
 {
@@ -501,7 +550,7 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   if (priv->video_viewport) {
     gst_video_center_rect (&src, &dst, &res, TRUE);
     wp_viewport_set_destination (priv->video_viewport, res.w, res.h);
-    if (src_width != wl_fixed_from_int(-1))
+    if (src_width != wl_fixed_from_int (-1))
       wp_viewport_set_source (priv->video_viewport,
           src_x, src_y, src_width, src_height);
   } else {
@@ -527,12 +576,12 @@ gst_wl_window_set_opaque (GstWlWindow * self, const GstVideoInfo * info)
 
   /* Set area opaque */
   compositor = gst_wl_display_get_compositor (priv->display);
-  region = wl_compositor_create_region (compositor);
-  wl_region_add (region, 0, 0, G_MAXINT32, G_MAXINT32);
-  wl_surface_set_opaque_region (priv->area_surface, region);
-  wl_region_destroy (region);
 
   if (!GST_VIDEO_INFO_HAS_ALPHA (info)) {
+    /* for platform support underlay, video should not overlap graphic */
+    if (HAS_DCSS ())
+      return;
+
     /* Set video opaque */
     region = wl_compositor_create_region (compositor);
     wl_region_add (region, 0, 0, G_MAXINT32, G_MAXINT32);
@@ -803,7 +852,7 @@ gst_wl_window_set_source_crop (GstWlWindow * self, GstBuffer * buffer)
 {
   GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
   GstVideoCropMeta *crop = NULL;
-  crop = gst_buffer_get_video_crop_meta(buffer);
+  crop = gst_buffer_get_video_crop_meta (buffer);
 
   if (crop) {
     GST_DEBUG ("buffer crop x=%d y=%d width=%d height=%d\n",
@@ -814,6 +863,23 @@ gst_wl_window_set_source_crop (GstWlWindow * self, GstBuffer * buffer)
     priv->src_height = crop->height;
   } else {
     priv->src_width = -1;
+  }
+}
+
+void
+gst_wl_window_set_alpha (GstWlWindow * self, gfloat alpha)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  if (priv && priv->blend_func) {
+    zwp_blending_v1_set_alpha (priv->blend_func,
+        wl_fixed_from_double (alpha));
+    if (alpha < 1.0)
+      zwp_blending_v1_set_blending (priv->blend_func,
+          ZWP_BLENDING_V1_BLENDING_EQUATION_FROMSOURCE);
+    else
+      zwp_blending_v1_set_blending (priv->blend_func,
+          ZWP_BLENDING_V1_BLENDING_EQUATION_PREMULTIPLIED);
   }
 }
 
