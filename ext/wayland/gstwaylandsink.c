@@ -61,6 +61,7 @@ enum
   PROP_0,
   PROP_DISPLAY,
   PROP_FULLSCREEN,
+  PROP_ALPHA,
   PROP_ROTATE_METHOD,
   PROP_DRM_DEVICE,
   PROP_LAST
@@ -161,6 +162,11 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
           "Whether the surface should be made fullscreen ", FALSE,
           G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (gobject_class, PROP_ALPHA,
+      g_param_spec_float ("alpha", "Wayland surface alpha", "Wayland "
+          "surface alpha value, apply custom alpha value to wayland surface",
+          0.0f, 1.0f, 0.0f, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
   /**
    * waylandsink:rotate-method:
    *
@@ -199,6 +205,7 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
 static void
 gst_wayland_sink_init (GstWaylandSink * self)
 {
+  self->alpha = 0.0f;
   g_mutex_init (&self->display_lock);
   g_mutex_init (&self->render_lock);
   self->frame_showed = 0;
@@ -270,6 +277,8 @@ gst_wayland_sink_get_property (GObject * object,
       GST_OBJECT_LOCK (self);
       g_value_set_boolean (value, self->fullscreen);
       GST_OBJECT_UNLOCK (self);
+    case PROP_ALPHA:
+      g_value_set_float (value, self->alpha);
       break;
     case PROP_ROTATE_METHOD:
       GST_OBJECT_LOCK (self);
@@ -303,6 +312,8 @@ gst_wayland_sink_set_property (GObject * object,
       GST_OBJECT_LOCK (self);
       gst_wayland_sink_set_fullscreen (self, g_value_get_boolean (value));
       GST_OBJECT_UNLOCK (self);
+    case PROP_ALPHA:
+      self->alpha = g_value_get_float (value);
       break;
     case PROP_ROTATE_METHOD:
       gst_wayland_sink_set_rotate_method (self, g_value_get_enum (value),
@@ -451,6 +462,9 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
 {
   GstWaylandSink *self = GST_WAYLAND_SINK (element);
   GstStateChangeReturn ret = GST_STATE_CHANGE_SUCCESS;
+  struct wl_surface *area_surface;
+  struct wl_display *display_display;
+  gint render_rectangle_w, render_rectangle_h;
 
   switch (transition) {
     case GST_STATE_CHANGE_NULL_TO_READY:
@@ -472,6 +486,15 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_buffer_replace (&self->last_buffer, NULL);
       if (self->window) {
+        area_surface = gst_wl_window_get_area_surface (self->window);
+        render_rectangle_w = gst_wl_window_get_rectangle_w (self->window);
+        render_rectangle_h = gst_wl_window_get_rectangle_h (self->window);
+        display_display = gst_wl_display_get_display (self->display);
+        gst_wl_window_set_alpha (self->window, 1.0);
+        wl_surface_damage (area_surface, 0, 0,
+            render_rectangle_w, render_rectangle_h);
+        wl_surface_commit (area_surface);
+        wl_display_roundtrip (display_display);
         if (gst_wl_window_is_toplevel (self->window)) {
           g_clear_object (&self->window);
         } else {
@@ -500,9 +523,10 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
       g_clear_object (&self->pool);
 
       if (self->run_time > 0) {
-        g_print ("Total showed frames (%lld), playing for (%"GST_TIME_FORMAT"), fps (%.3f).\n",
-                self->frame_showed, GST_TIME_ARGS (self->run_time),
-                (gfloat)GST_SECOND * self->frame_showed / self->run_time);
+        g_print ("Total showed frames (%"G_GUINT64_FORMAT"), playing for (%" GST_TIME_FORMAT
+            "), fps (%.3f).\n", self->frame_showed,
+            GST_TIME_ARGS (self->run_time),
+            (gfloat) GST_SECOND * self->frame_showed / self->run_time);
       }
       self->frame_showed = 0;
       self->run_time = 0;
@@ -879,6 +903,7 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
       gst_wl_window_set_rotate_method (self->window,
           self->current_rotate_method);
     }
+    gst_wl_window_set_alpha (self->window, self->alpha);
   }
 
   /* make sure that the application has called set_render_rectangle() */
