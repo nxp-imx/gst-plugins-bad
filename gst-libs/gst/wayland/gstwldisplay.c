@@ -52,12 +52,16 @@ typedef struct _GstWlDisplayPrivate
   struct zwp_fullscreen_shell_v1 *fullscreen_shell;
   struct wp_single_pixel_buffer_manager_v1 *single_pixel_buffer;
   struct wl_shm *shm;
+  struct wl_output *output;
   struct wp_viewporter *viewporter;
   struct zwp_linux_dmabuf_v1 *dmabuf;
   struct zwp_alpha_compositing_v1 *alpha_compositing;
   GArray *shm_formats;
   GArray *dmabuf_formats;
   GArray *dmabuf_modifiers;
+
+  /* real display resolution */
+  gint width, height;
 
   /* private */
   gboolean own_display;
@@ -96,6 +100,8 @@ gst_wl_display_init (GstWlDisplay * self)
   priv->dmabuf_modifiers = g_array_new (FALSE, FALSE, sizeof (guint64));
   priv->wl_fd_poll = gst_poll_new (TRUE);
   priv->buffers = g_hash_table_new (g_direct_hash, g_direct_equal);
+  priv->width = -1;
+  priv->height = -1;
   g_mutex_init (&priv->buffers_mutex);
   g_rec_mutex_init (&priv->sync_mutex);
 
@@ -305,6 +311,50 @@ static const struct xdg_wm_base_listener xdg_wm_base_listener = {
   handle_xdg_wm_base_ping
 };
 
+output_handle_geometry (void *data, struct wl_output *wl_output,
+    int32_t x, int32_t y,
+    int32_t physical_width, int32_t physical_height,
+    int32_t subpixel,
+    const char *make, const char *model, int32_t output_transform)
+{
+  /* Nothing to do now */
+}
+
+static void
+output_handle_mode (void *data, struct wl_output *wl_output,
+    uint32_t flags, int32_t width, int32_t height, int32_t refresh)
+{
+  GstWlDisplay *self = data;
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  /* we only care about the current mode */
+  if (flags & WL_OUTPUT_MODE_CURRENT) {
+    priv->width = width;
+    priv->height = height;
+  }
+}
+
+static void
+output_handle_done (void *data, struct wl_output *wl_output)
+{
+  /* don't bother waiting for this; there's no good reason a
+   * compositor will wait more than one roundtrip before sending
+   * these initial events. */
+}
+
+static void
+output_handle_scale (void *data, struct wl_output *wl_output, int32_t scale)
+{
+  /* Nothing to do now */
+}
+
+static const struct wl_output_listener output_listener = {
+  output_handle_geometry,
+  output_handle_mode,
+  output_handle_done,
+  output_handle_scale,
+};
+
 static void
 registry_handle_global (void *data, struct wl_registry *registry,
     uint32_t id, const char *interface, uint32_t version)
@@ -342,6 +392,10 @@ registry_handle_global (void *data, struct wl_registry *registry,
   } else if (g_strcmp0 (interface, "zwp_alpha_compositing_v1") == 0) {
     priv->alpha_compositing =
         wl_registry_bind (registry, id, &zwp_alpha_compositing_v1_interface, 1);
+  } else if (g_strcmp0 (interface, "wl_output") == 0) {
+    priv->output =
+	wl_registry_bind (registry, id, &wl_output_interface, MIN (version, 2));
+    wl_output_add_listener (priv->output, &output_listener, self);
   }
 }
 
@@ -666,6 +720,21 @@ gst_wl_display_get_alpha_compositing (GstWlDisplay * self)
   return priv->alpha_compositing;
 }
 
+gint
+gst_wl_display_get_width (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->width;
+}
+
+gint
+gst_wl_display_get_height (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->height;
+}
 struct wl_shm *
 gst_wl_display_get_shm (GstWlDisplay * self)
 {
