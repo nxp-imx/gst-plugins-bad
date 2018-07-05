@@ -76,6 +76,9 @@ typedef struct _GstWlDisplayPrivate
   GMutex outputs_mutex;
   GHashTable *outputs;
 
+  /* real display resolution */
+  gint width, height;
+
   /* private */
   gboolean own_display;
   GThread *thread;
@@ -120,6 +123,8 @@ gst_wl_display_init (GstWlDisplay * self)
   priv->color_alpha_modes = g_array_new (FALSE, FALSE, sizeof (uint32_t));
   priv->wl_fd_poll = gst_poll_new (TRUE);
   priv->buffers = g_hash_table_new (g_direct_hash, g_direct_equal);
+  priv->width = -1;
+  priv->height = -1;
   g_mutex_init (&priv->buffers_mutex);
   g_rec_mutex_init (&priv->sync_mutex);
 
@@ -406,6 +411,14 @@ output_mode (void *data, struct wl_output *wl_output,
     uint32_t flags, int32_t width, int32_t height, int32_t refresh)
 {
   GstWlOutput *output = GST_WL_OUTPUT (data);
+  GstWlDisplay *self = g_object_get_data (G_OBJECT (output), "display");
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+  /* we only care about the current mode */
+  if (flags & WL_OUTPUT_MODE_CURRENT
+      && priv->width == -1 && priv->height == -1) {
+    priv->width = width;
+    priv->height = height;
+  }
   gst_wl_output_set_mode (output, flags, width, height, refresh);
 }
 
@@ -940,6 +953,22 @@ gst_wl_display_get_explicit_sync (GstWlDisplay * self)
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
 
   return priv->explicit_sync;
+}
+
+gint
+gst_wl_display_get_width (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->width;
+}
+
+gint
+gst_wl_display_get_height (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->height;
 }
 
 struct wl_shm *

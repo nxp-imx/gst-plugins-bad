@@ -27,6 +27,8 @@
 #include <unistd.h>
 #include "gstwlwindow.h"
 #include "gstwlbuffer_private.h"
+#include "gstwlutils.h"
+#include "gstimxcommon.h"
 
 #include "color-management-v1-client-protocol.h"
 #include "color-representation-v1-client-protocol.h"
@@ -105,6 +107,9 @@ typedef struct _GstWlWindowPrivate
   struct wl_callback *frame_callback;
   struct wl_callback *commit_callback;
   GMutex commit_lock;
+
+  /* video buffer scale */
+  guint scale;
 } GstWlWindowPrivate;
 
 G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
@@ -308,6 +313,8 @@ gst_wl_window_init (GstWlWindow * self)
   g_mutex_init (&priv->configure_mutex);
   g_mutex_init (&priv->window_lock);
   g_mutex_init (&priv->commit_lock);
+
+  priv->scale = 1;
 }
 
 static void
@@ -387,6 +394,7 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   struct wl_region *region;
   struct wp_viewporter *viewporter;
   struct zwp_linux_explicit_synchronization_v1 *explicit_sync;
+  gint width, height;
 
   self = g_object_new (GST_TYPE_WL_WINDOW, NULL);
   priv = gst_wl_window_get_instance_private (self);
@@ -432,6 +440,12 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   region = wl_compositor_create_region (compositor);
   wl_surface_set_input_region (priv->video_surface, region);
   wl_region_destroy (region);
+
+  width = gst_wl_display_get_width (display);
+  height = gst_wl_display_get_height (display);
+  if (!gst_wl_init_buffer_scale (width, height, &priv->scale)) {
+    GST_WARNING ("init buffer scale fail, fallback to scale=%d", priv->scale);
+  }
 
   return self;
 }
@@ -693,7 +707,6 @@ gst_wl_window_resize_video_surface (GstWlWindow * self)
   /* viewport coordinates will be based on the trasnformed surface */
   wl_surface_set_buffer_transform (priv->video_surface_wrapper,
       priv->buffer_transform);
-
   /* adjust the width/height base on the rotation */
   switch (priv->buffer_transform) {
     case WL_OUTPUT_TRANSFORM_NORMAL:
@@ -766,6 +779,11 @@ gst_wl_window_resize_video_surface (GstWlWindow * self)
       res = dst;
     else
       gst_video_center_rect (&src, &dst, &res, TRUE);
+
+    wp_src.x = wp_src.x / priv->scale;
+    wp_src.y = wp_src.y / priv->scale;
+    wp_src.w = wp_src.w / priv->scale;
+    wp_src.h = wp_src.h / priv->scale;
     wp_viewport_set_source (priv->video_viewport, wl_fixed_from_int (wp_src.x),
         wl_fixed_from_int (wp_src.y), wl_fixed_from_int (wp_src.w),
         wl_fixed_from_int (wp_src.h));
@@ -931,6 +949,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
     priv->frame_callback = callback;
     wl_callback_add_listener (callback, &frame_callback_listener, self);
     gst_wl_buffer_attach (buffer, priv->video_surface_wrapper);
+    wl_surface_set_buffer_scale (priv->video_surface_wrapper, priv->scale);
     wl_surface_damage_buffer (priv->video_surface_wrapper, 0, 0, G_MAXINT32,
         G_MAXINT32);
     wl_surface_commit (priv->video_surface_wrapper);
@@ -944,6 +963,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
   } else {
     /* clear both video and parent surfaces */
     wl_surface_attach (priv->video_surface_wrapper, NULL, 0, 0);
+    wl_surface_set_buffer_scale (priv->video_surface_wrapper, priv->scale);
     wl_surface_commit (priv->video_surface_wrapper);
     wl_surface_attach (priv->area_surface_wrapper, NULL, 0, 0);
     wl_surface_commit (priv->area_surface_wrapper);

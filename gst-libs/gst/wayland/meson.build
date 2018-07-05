@@ -18,6 +18,7 @@ if use_wayland
       'gstwlvideobufferpool.c',
       'gstwlvideoformat.c',
       'gstwlwindow.c',
+      'gstwlutils.c',
   ])
 
   wl_headers = files([
@@ -31,6 +32,7 @@ if use_wayland
       'gstwlvideobufferpool.h',
       'gstwlvideoformat.h',
       'gstwlwindow.h',
+      'gstwlutils.h',
       'wayland.h',
       'wayland-prelude.h',
   ])
