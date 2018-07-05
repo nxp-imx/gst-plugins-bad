@@ -25,6 +25,7 @@
 #endif
 
 #include "gstwlwindow.h"
+#include "gstwlutils.h"
 #include "gstimxcommon.h"
 
 #include "fullscreen-shell-unstable-v1-client-protocol.h"
@@ -88,6 +89,9 @@ typedef struct _GstWlWindowPrivate
 
   /* the coordinate of video crop */
   gint src_x, src_y, src_width, src_height;
+
+  /* video buffer scale */
+  guint scale;
 } GstWlWindowPrivate;
 
 G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
@@ -198,6 +202,7 @@ gst_wl_window_init (GstWlWindow * self)
   priv->src_y = 0;
   priv->src_width = -1;
   priv->src_height = 0;
+  priv->scale = 1;
 }
 
 static void
@@ -256,6 +261,7 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   struct wl_region *region;
   struct wp_viewporter *viewporter;
   struct zwp_alpha_compositing_v1 *alpha_compositing;
+  gint width, height;
 
   self = g_object_new (GST_TYPE_WL_WINDOW, NULL);
   priv = gst_wl_window_get_instance_private (self);
@@ -300,6 +306,12 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   region = wl_compositor_create_region (compositor);
   wl_surface_set_input_region (priv->video_surface, region);
   wl_region_destroy (region);
+
+  width = gst_wl_display_get_width (display);
+  height = gst_wl_display_get_height (display);
+  if (!gst_wl_init_buffer_scale (width, height, &priv->scale)) {
+    GST_WARNING ("init buffer scale fail, fallback to scale=%d", priv->scale);
+  }
 
   return self;
 }
@@ -391,7 +403,8 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
     /* set the initial size to be the same as the reported video size */
     gint width =
         gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
-    gst_wl_window_set_render_rectangle (self, 0, 0, width, info->height);
+    gst_wl_window_set_render_rectangle (self, 0, 0, width / priv->scale,
+        info->height / priv->scale);
   }
 
   return self;
@@ -516,10 +529,11 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   int wp_src_width;
   int wp_src_height;
 
-  wl_fixed_t src_x = wl_fixed_from_int (priv->src_x);
-  wl_fixed_t src_y = wl_fixed_from_int (priv->src_y);
-  wl_fixed_t src_width = wl_fixed_from_int (priv->src_width);
-  wl_fixed_t src_height = wl_fixed_from_int (priv->src_height);
+  wl_fixed_t src_x = wl_fixed_from_int (priv->src_x / priv->scale);
+  wl_fixed_t src_y = wl_fixed_from_int (priv->src_y / priv->scale);
+  wl_fixed_t src_width = wl_fixed_from_int (priv->src_width / priv->scale);
+  wl_fixed_t src_height =
+      wl_fixed_from_int (priv->src_height / priv->scale);
 
   switch (priv->buffer_transform) {
     case WL_OUTPUT_TRANSFORM_NORMAL:
@@ -551,7 +565,7 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   if (priv->video_viewport) {
     gst_video_center_rect (&src, &dst, &res, TRUE);
     wp_viewport_set_destination (priv->video_viewport, res.w, res.h);
-    if (src_width != wl_fixed_from_int (-1))
+    if (src_width != wl_fixed_from_int (-1 / priv->scale))
       wp_viewport_set_source (priv->video_viewport,
           src_x, src_y, src_width, src_height);
   } else {
@@ -642,6 +656,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
     priv->frame_callback = callback;
     wl_callback_add_listener (callback, &frame_callback_listener, self);
     gst_wl_buffer_attach (buffer, priv->video_surface_wrapper);
+    wl_surface_set_buffer_scale (priv->video_surface_wrapper, priv->scale);
     wl_surface_damage_buffer (priv->video_surface_wrapper, 0, 0, G_MAXINT32,
         G_MAXINT32);
     wl_surface_commit (priv->video_surface_wrapper);
@@ -655,6 +670,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
   } else {
     /* clear both video and parent surfaces */
     wl_surface_attach (priv->video_surface_wrapper, NULL, 0, 0);
+    wl_surface_set_buffer_scale (priv->video_surface_wrapper, priv->scale);
     wl_surface_commit (priv->video_surface_wrapper);
     wl_surface_attach (priv->area_surface_wrapper, NULL, 0, 0);
     wl_surface_commit (priv->area_surface_wrapper);

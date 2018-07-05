@@ -95,6 +95,12 @@ GST_WL_API
 struct zwp_alpha_compositing_v1 *gst_wl_display_get_alpha_compositing (GstWlDisplay * self);
 
 GST_WL_API
+gint gst_wl_display_get_width (GstWlDisplay * self);
+
+GST_WL_API
+gint gst_wl_display_get_height (GstWlDisplay * self);
+
+GST_WL_API
 struct wl_shm *gst_wl_display_get_shm (GstWlDisplay * self);
 
 GST_WL_API
