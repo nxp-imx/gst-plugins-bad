@@ -25,6 +25,7 @@
 #endif
 
 #include <gst/allocators/gstdmabufmeta.h>
+#include <gst/allocators/gstphymemmeta.h>
 
 #include "gstwllinuxdmabuf.h"
 
@@ -100,6 +101,7 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
   gint64 timeout;
   ConstructBufferData data;
   GstDmabufMeta *dmabuf_meta;
+  GstPhyMemMeta *phymemmeta = NULL;
 
   g_return_val_if_fail (gst_wl_display_check_format_for_dmabuf (display,
           drm_info), NULL);
@@ -190,6 +192,16 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
       GST_DEBUG_OBJECT (mem->allocator, "with bottom field first");
       flags |= ZWP_LINUX_BUFFER_PARAMS_V1_FLAGS_BOTTOM_FIRST;
     }
+  }
+
+  phymemmeta = GST_PHY_MEM_META_GET (buf);
+  if (modifier != 0 && phymemmeta) {
+    GST_DEBUG_OBJECT (display, "physical memory meta x_padding: %d y_padding: %d \
+          RFC luma offset: %d chroma offset: %d",
+          phymemmeta->x_padding, phymemmeta->y_padding, phymemmeta->rfc_luma_offset, phymemmeta->rfc_chroma_offset);
+    zwp_linux_buffer_params_v1_add_dtrc_meta (params, phymemmeta->rfc_chroma_offset, phymemmeta->rfc_luma_offset);
+  } else {
+    zwp_linux_buffer_params_v1_add_dtrc_meta (params, 0, 0);
   }
 
   /* Request buffer creation */
