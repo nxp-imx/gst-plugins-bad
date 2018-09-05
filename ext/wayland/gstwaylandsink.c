@@ -72,6 +72,7 @@ enum
   PROP_DISPLAY,
   PROP_FULLSCREEN,
   PROP_ALPHA,
+  PROP_ENABLE_TILE,
   PROP_ROTATE_METHOD,
   PROP_DRM_DEVICE,
   PROP_LAST
@@ -187,6 +188,11 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
           "surface alpha value, apply custom alpha value to wayland surface",
           0.0f, 1.0f, 0.0f, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
+  g_object_class_install_property (gobject_class, PROP_ENABLE_TILE,
+      g_param_spec_boolean ("enable-tile", "enable hantro tile",
+          "When enabled, the sink propose VSI tile modifier to VPU", FALSE,
+          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_CONSTRUCT));
+
   /**
    * waylandsink:rotate-method:
    *
@@ -232,6 +238,7 @@ gst_wayland_sink_init (GstWaylandSink * self)
   g_mutex_init (&self->render_lock);
   self->frame_showed = 0;
   self->run_time = 0;
+  self->enable_tile = FALSE;
 }
 
 static void
@@ -319,6 +326,9 @@ gst_wayland_sink_get_property (GObject * object,
       g_value_set_string (value, self->drm_device);
       GST_OBJECT_UNLOCK (self);
       break;
+    case PROP_ENABLE_TILE:
+      g_value_set_boolean (value, self->enable_tile);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -359,6 +369,9 @@ gst_wayland_sink_set_property (GObject * object,
       GST_OBJECT_LOCK (self);
       self->drm_device = g_value_dup_string (value);
       GST_OBJECT_UNLOCK (self);
+      break;
+    case PROP_ENABLE_TILE:
+      self->enable_tile = g_value_get_boolean (value);
       break;
     default:
       if (!gst_video_overlay_set_property (object, PROP_LAST, prop_id, value))
@@ -838,6 +851,7 @@ unsupported_format:
 static gboolean
 gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
 {
+  GstWaylandSink *self = GST_WAYLAND_SINK (bsink);
   GstCaps *caps;
   GstBufferPool *pool = NULL;
   gboolean need_pool;
@@ -864,6 +878,15 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
 
   drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
   gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+
+  if (self->enable_tile && HAS_DCSS ()) {
+    drm_modifier = DRM_FORMAT_MOD_VSI_G1_TILED;
+    gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+    drm_modifier = DRM_FORMAT_MOD_VSI_G2_TILED;
+    gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+    drm_modifier = DRM_FORMAT_MOD_VSI_G2_TILED_COMPRESSED;
+    gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+  }
 
   if (need_pool && !gst_video_is_dma_drm_caps (caps)) {
     GstStructure *config;
