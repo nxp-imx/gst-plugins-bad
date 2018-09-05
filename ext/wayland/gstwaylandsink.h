@@ -82,6 +82,8 @@ struct _GstWaylandSink
   /* fps print support */
   guint64 frame_showed;
   GstClockTime run_time;
+
+  gboolean enable_tile;
 };
 
 struct _GstWaylandSinkClass
