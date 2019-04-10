@@ -731,8 +731,9 @@ gst_wl_window_set_opaque (GstWlWindow * self, const GstVideoInfo * info)
   compositor = gst_wl_display_get_compositor (priv->display);
 
   if (!GST_VIDEO_INFO_HAS_ALPHA (info)) {
-    /* for platform support overlay, video should not overlap graphic */
-    if (HAS_DCSS () || HAS_DPU ())
+    /* for platform support overlay, video should not overlap graphic
+       FIXME. Not sure whether still need this change */
+    if (HAS_DCSS ())
       return;
 
     /* Set video opaque */
