@@ -32,6 +32,7 @@
 #include "xdg-shell-client-protocol.h"
 #include "alpha-compositing-unstable-v1-client-protocol.h"
 #include "hdr10-metadata-unstable-v1-client-protocol.h"
+#include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
 
 #include <errno.h>
 #include <drm_fourcc.h>
@@ -61,6 +62,8 @@ typedef struct _GstWlDisplayPrivate
   struct zwp_linux_dmabuf_v1 *dmabuf;
   struct zwp_alpha_compositing_v1 *alpha_compositing;
   struct zwp_hdr10_metadata_v1 *hdr10_metadata;
+  struct zwp_linux_explicit_synchronization_v1 *explicit_sync;
+
   GArray *shm_formats;
   GArray *dmabuf_formats;
   GArray *dmabuf_modifiers;
@@ -207,6 +210,9 @@ gst_wl_display_finalize (GObject * gobject)
 
   if (priv->hdr10_metadata)
     zwp_hdr10_metadata_v1_destroy (priv->hdr10_metadata);
+
+  if (priv->explicit_sync)
+    zwp_linux_explicit_synchronization_v1_destroy (priv->explicit_sync);
 
   if (priv->registry)
     wl_registry_destroy (priv->registry);
@@ -446,6 +452,11 @@ registry_handle_global (void *data, struct wl_registry *registry,
   } else if (g_strcmp0 (interface, "wl_shm") == 0) {
     priv->shm = wl_registry_bind (registry, id, &wl_shm_interface, 1);
     wl_shm_add_listener (priv->shm, &shm_listener, self);
+  } else if (g_strcmp0 (interface,
+          "zwp_linux_explicit_synchronization_v1") == 0) {
+    priv->explicit_sync =
+        wl_registry_bind (registry, id,
+        &zwp_linux_explicit_synchronization_v1_interface, 1);
   } else if (g_strcmp0 (interface, "wp_viewporter") == 0) {
     priv->viewporter =
         wl_registry_bind (registry, id, &wp_viewporter_interface, 1);
@@ -834,6 +845,14 @@ gst_wl_display_get_hdr10_metadata (GstWlDisplay * self)
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
 
   return priv->hdr10_metadata;
+}
+
+struct zwp_linux_explicit_synchronization_v1 *
+gst_wl_display_get_explicit_sync (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->explicit_sync;
 }
 
 gint
