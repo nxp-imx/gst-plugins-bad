@@ -58,9 +58,24 @@ GST_WL_API
 GstWlDisplay *gst_wl_buffer_get_display (GstWlBuffer * self);
 
 GST_WL_API
+
 GstVideoMeta * gst_wl_buffer_get_video_meta (GstWlBuffer * self);
 
 GST_WL_API
 GstVideoCropMeta * gst_wl_buffer_get_video_crop_meta (GstWlBuffer * self);
+
+GstBuffer *gst_wl_buffer_get_current_gstbuffer (GstWlBuffer * self);
+
+GST_WL_API
+struct zwp_linux_buffer_release_v1 *gst_wl_buffer_get_buffer_release (GstWlBuffer * self);
+
+GST_WL_API
+gboolean gst_wl_buffer_get_used_by_compositor (GstWlBuffer * self);
+
+GST_WL_API
+void gst_wl_buffer_set_buffer_release (GstWlBuffer * self, struct zwp_linux_buffer_release_v1 * buffer_release);
+
+GST_WL_API
+void gst_wl_buffer_set_used_by_compositor (GstWlBuffer * self, gboolean used_by_compositor);
 
 G_END_DECLS

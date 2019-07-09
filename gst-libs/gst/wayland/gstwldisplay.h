@@ -95,6 +95,8 @@ GST_WL_API
 struct wp_viewporter *gst_wl_display_get_viewporter (GstWlDisplay * self);
 
 GST_WL_API
+struct zwp_linux_explicit_synchronization_v1 *gst_wl_display_get_explicit_sync (GstWlDisplay * self);
+
 struct wl_shm *gst_wl_display_get_shm (GstWlDisplay * self);
 
 GST_WL_API

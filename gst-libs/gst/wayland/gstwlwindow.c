@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <unistd.h>
 #include "gstwlwindow.h"
 
 #include "color-management-v1-client-protocol.h"
@@ -32,6 +33,7 @@
 #include "single-pixel-buffer-v1-client-protocol.h"
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
+#include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
 
 #define GST_CAT_DEFAULT gst_wl_window_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
@@ -55,6 +57,7 @@ typedef struct _GstWlWindowPrivate
   struct xdg_toplevel *xdg_toplevel;
   struct wp_color_management_surface_v1 *color_management_surface;
   struct wp_color_representation_surface_v1 *color_representation_surface;
+  struct zwp_linux_surface_synchronization_v1 *surface_sync;
   gboolean configured;
   GCond configure_cond;
   GMutex configure_mutex;
@@ -201,6 +204,79 @@ static const struct xdg_surface_listener xdg_surface_listener = {
   handle_xdg_surface_configure,
 };
 
+static gboolean
+gst_wl_poll_wait_fence (int32_t fence)
+{
+  GstPollFD pollfd = GST_POLL_FD_INIT;
+  GstPoll *fence_poll = gst_poll_new (TRUE);
+
+  pollfd.fd = fence;
+  gst_poll_add_fd (fence_poll, &pollfd);
+  gst_poll_fd_ctl_read (fence_poll, &pollfd, TRUE);
+  gst_poll_fd_ctl_write (fence_poll, &pollfd, TRUE);
+
+  if (gst_poll_wait (fence_poll, GST_CLOCK_TIME_NONE) < 0) {
+    GST_ERROR ("wait on fence failed, errno %d", errno);
+    gst_poll_free (fence_poll);
+    return FALSE;
+  }
+
+  GST_DEBUG ("wait on fence %d done", fence);
+  gst_poll_free (fence_poll);
+
+  return TRUE;
+}
+
+static void
+buffer_fenced_release (void *data,
+    struct zwp_linux_buffer_release_v1 *release, int32_t fence)
+{
+  GstWlBuffer *buffer = data;
+  GstBuffer *current_gstbuffer = gst_wl_buffer_get_current_gstbuffer (buffer);
+
+  g_assert (release == gst_wl_buffer_get_buffer_release (buffer));
+
+  gst_wl_buffer_set_used_by_compositor (buffer, FALSE);
+  zwp_linux_buffer_release_v1_destroy (gst_wl_buffer_get_buffer_release (buffer));
+  gst_wl_buffer_set_buffer_release (buffer, NULL);
+  GST_LOG ("wl_buffer::fenced_release %d (GstBuffer: %p)",
+      fence, current_gstbuffer);
+
+  if (fence > 0) {
+    gst_wl_poll_wait_fence (fence);
+    close (fence);
+    if (buffer)
+      gst_buffer_unref (current_gstbuffer);
+  }
+
+}
+
+static void
+buffer_immediate_release (void *data,
+    struct zwp_linux_buffer_release_v1 *release)
+{
+  GstWlBuffer *buffer = data;
+  GstBuffer *current_gstbuffer = gst_wl_buffer_get_current_gstbuffer (buffer);
+
+  g_assert (release == gst_wl_buffer_get_buffer_release (buffer));
+
+  gst_wl_buffer_set_used_by_compositor (buffer, FALSE);
+  zwp_linux_buffer_release_v1_destroy (gst_wl_buffer_get_buffer_release (buffer));
+  gst_wl_buffer_set_buffer_release (buffer, NULL);
+  GST_LOG ("wl_buffer::immediate_release (GstBuffer: %p)",
+      current_gstbuffer);
+
+  /* unref should be last, because it may end up destroying the GstWlBuffer */
+  gst_buffer_unref (current_gstbuffer);
+}
+
+static const struct zwp_linux_buffer_release_v1_listener buffer_release_listener
+    = {
+  buffer_fenced_release,
+  buffer_immediate_release,
+};
+
+
 static void
 gst_wl_window_class_init (GstWlWindowClass * klass)
 {
@@ -255,6 +331,9 @@ gst_wl_window_finalize (GObject * gobject)
     wp_color_representation_surface_v1_destroy
         (priv->color_representation_surface);
 
+  if (priv->surface_sync)
+    zwp_linux_surface_synchronization_v1_destroy (priv->surface_sync);
+
   wl_proxy_wrapper_destroy (priv->video_surface_wrapper);
   wl_subsurface_destroy (priv->video_subsurface);
   wl_surface_destroy (priv->video_surface);
@@ -282,6 +361,7 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   struct wl_event_queue *event_queue;
   struct wl_region *region;
   struct wp_viewporter *viewporter;
+  struct zwp_linux_explicit_synchronization_v1 *explicit_sync;
 
   self = g_object_new (GST_TYPE_WL_WINDOW, NULL);
   priv = gst_wl_window_get_instance_private (self);
@@ -316,6 +396,12 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
     priv->video_viewport = wp_viewporter_get_viewport (viewporter,
         priv->video_surface);
   }
+
+  explicit_sync = gst_wl_display_get_explicit_sync (display);
+  if (explicit_sync)
+    priv->surface_sync =
+        zwp_linux_explicit_synchronization_v1_get_synchronization(explicit_sync,
+        priv->video_surface_wrapper);
 
   /* never accept input events on the video surface */
   region = wl_compositor_create_region (compositor);
@@ -742,6 +828,9 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
   struct wl_callback *callback;
   gboolean needs_layout_update = FALSE;
   GstVideoRectangle crop = priv->crop;
+  GstBuffer *current_gstbuffer;
+  struct zwp_linux_buffer_release_v1 *buffer_release;
+  gboolean used_by_compositor;
 
   if (G_UNLIKELY (info)) {
     priv->scaled_width =
@@ -792,6 +881,18 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
   }
 
   if (G_LIKELY (buffer)) {
+    current_gstbuffer = gst_wl_buffer_get_current_gstbuffer (buffer);
+    used_by_compositor = gst_wl_buffer_get_used_by_compositor (buffer);
+    if (!used_by_compositor && priv->surface_sync) {
+      GST_DEBUG ("use explicit sync create buffer release (GstBuffer: %p)",
+        current_gstbuffer);
+      gst_wl_buffer_set_buffer_release (buffer,
+          zwp_linux_surface_synchronization_v1_get_release (priv->surface_sync));
+      buffer_release = gst_wl_buffer_get_buffer_release (buffer);
+      zwp_linux_buffer_release_v1_add_listener (buffer_release,
+          &buffer_release_listener, buffer);
+    }
+
     callback = wl_surface_frame (priv->video_surface_wrapper);
     priv->frame_callback = callback;
     wl_callback_add_listener (callback, &frame_callback_listener, self);
