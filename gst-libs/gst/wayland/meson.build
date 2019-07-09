@@ -45,6 +45,7 @@ if use_wayland
     ['single-pixel-buffer', 'staging', 'v1' ],
     ['alpha-compositing', 'unstable', 'v1', ],
     ['hdr10-metadata', 'unstable', 'v1', ],
+    ['linux-explicit-synchronization', 'unstable', 'v1'],
   ]
   protocols_files = []
 
