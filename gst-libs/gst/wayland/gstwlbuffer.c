@@ -82,6 +82,8 @@
 
 #include "gstwlbuffer.h"
 
+#include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
+
 #define GST_CAT_DEFAULT gst_wl_buffer_debug
 GST_DEBUG_CATEGORY_STATIC (GST_CAT_DEFAULT);
 
@@ -92,6 +94,8 @@ typedef struct _GstWlBufferPrivate
   GstMemory *gstmem;
 
   GstWlDisplay *display;
+
+  struct zwp_linux_buffer_release_v1 *buffer_release;
 
   gboolean used_by_compositor;
 } GstWlBufferPrivate;
@@ -189,6 +193,7 @@ gst_buffer_add_wl_buffer (GstBuffer * gstbuffer, struct wl_buffer *wlbuffer,
 {
   GstWlBuffer *self;
   GstWlBufferPrivate *priv;
+  struct zwp_linux_explicit_synchronization_v1 *explicit_sync;
 
   self = g_object_new (GST_TYPE_WL_BUFFER, NULL);
   priv = gst_wl_buffer_get_instance_private (self);
@@ -199,7 +204,10 @@ gst_buffer_add_wl_buffer (GstBuffer * gstbuffer, struct wl_buffer *wlbuffer,
 
   gst_wl_display_register_buffer (priv->display, priv->gstmem, self);
 
-  wl_buffer_add_listener (priv->wlbuffer, &buffer_listener, self);
+  explicit_sync = gst_wl_display_get_explicit_sync (display);
+  if (!explicit_sync) {
+    wl_buffer_add_listener (priv->wlbuffer, &buffer_listener, self);
+  }
 
   gst_mini_object_weak_ref (GST_MINI_OBJECT (priv->gstmem),
       (GstMiniObjectNotify) gstmemory_disposed, self);
@@ -261,6 +269,11 @@ gst_wl_buffer_force_release_and_unref (GstBuffer * buf, GstWlBuffer * self)
   priv->display = NULL;
   priv->current_gstbuffer = NULL;
 
+  /* destroy buffer_release object attacted before wl queue release */
+  if (priv->buffer_release) {
+    zwp_linux_buffer_release_v1_destroy (priv->buffer_release);
+  }
+
   /* remove the reference that the caller (GstWlDisplay) owns */
   g_object_unref (self);
 }
@@ -305,4 +318,45 @@ gst_wl_buffer_get_display (GstWlBuffer * self)
   GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
 
   return priv->display;
+}
+
+GstBuffer *
+gst_wl_buffer_get_current_gstbuffer (GstWlBuffer * self)
+{
+  GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
+
+  return priv->current_gstbuffer;
+}
+
+struct zwp_linux_buffer_release_v1 *
+gst_wl_buffer_get_buffer_release (GstWlBuffer * self)
+{
+  GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
+
+  return priv->buffer_release;
+}
+
+gboolean
+gst_wl_buffer_get_used_by_compositor (GstWlBuffer * self)
+{
+  GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
+
+  return priv->used_by_compositor;
+}
+
+void
+gst_wl_buffer_set_buffer_release (GstWlBuffer * self,
+    struct zwp_linux_buffer_release_v1 * buffer_release)
+{
+  GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
+
+  priv->buffer_release = buffer_release;
+}
+
+void
+gst_wl_buffer_set_used_by_compositor (GstWlBuffer * self, gboolean used_by_compositor)
+{
+  GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (self);
+
+  priv->used_by_compositor = used_by_compositor;
 }
