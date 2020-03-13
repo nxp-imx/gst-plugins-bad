@@ -1593,18 +1593,15 @@ gst_dvbsrc_open_frontend (GstDvbSrc * object, gboolean writable)
   if (object->fd_frontend < 0) {
     switch (errno) {
       case ENOENT:
-        GST_ELEMENT_ERROR (object, RESOURCE, NOT_FOUND,
-            (_("Device \"%s\" does not exist."), frontend_dev), (NULL));
+        GST_WARNING_OBJECT (object, "Device \"%s\" does not exist.", frontend_dev);
         break;
       default:
-        GST_ELEMENT_ERROR (object, RESOURCE, OPEN_READ_WRITE,
-            (_("Could not open frontend device \"%s\"."), frontend_dev),
-            GST_ERROR_SYSTEM);
+        GST_WARNING_OBJECT (object, "Could not open frontend device \"%s\".", frontend_dev);
         break;
     }
 
     g_free (frontend_dev);
-    return FALSE;
+    return TRUE;
   }
 
   if (object->supported_delsys)
@@ -2198,6 +2195,11 @@ gst_dvbsrc_output_frontend_stats (GstDvbSrc * src, fe_status_t * status)
   GstStructure *structure;
   gint err;
 
+  if (src->fd_frontend < 0) {
+    GST_WARNING_OBJECT (src, "Frontend not open");
+    return TRUE;
+  }
+
   errno = 0;
 
   LOOP_WHILE_EINTR (err, ioctl (src->fd_frontend, FE_READ_STATUS, status));
@@ -2337,8 +2339,8 @@ gst_dvbsrc_tune_fe (GstDvbSrc * object)
   GST_DEBUG_OBJECT (object, "Starting the frontend tuning process");
 
   if (object->fd_frontend < 0) {
-    GST_INFO_OBJECT (object, "Frontend not open: tuning later");
-    return FALSE;
+    GST_WARNING_OBJECT (object, "Frontend not open: tuning later");
+    return TRUE;
   }
 
   /* If set, confirm the chosen delivery system is actually
