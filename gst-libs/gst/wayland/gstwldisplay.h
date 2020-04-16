@@ -86,6 +86,9 @@ GST_WL_API
 struct xdg_wm_base *gst_wl_display_get_xdg_wm_base (GstWlDisplay * self);
 
 GST_WL_API
+struct wl_seat *gst_wl_display_get_seat (GstWlDisplay * self);
+
+GST_WL_API
 struct zwp_fullscreen_shell_v1 *gst_wl_display_get_fullscreen_shell_v1 (GstWlDisplay * self);
 
 GST_WL_API
@@ -93,6 +96,12 @@ struct wp_viewporter *gst_wl_display_get_viewporter (GstWlDisplay * self);
 
 GST_WL_API
 struct zwp_alpha_compositing_v1 *gst_wl_display_get_alpha_compositing (GstWlDisplay * self);
+
+GST_WL_API
+struct wl_pointer *gst_wl_display_get_pointer (GstWlDisplay * self);
+
+GST_WL_API
+struct wl_touch *gst_wl_display_get_touch (GstWlDisplay * self);
 
 GST_WL_API
 gint gst_wl_display_get_width (GstWlDisplay * self);
