@@ -52,6 +52,9 @@ typedef struct _GstWlDisplayPrivate
   struct wl_compositor *compositor;
   struct wl_subcompositor *subcompositor;
   struct xdg_wm_base *xdg_wm_base;
+  struct wl_seat *seat;
+  struct wl_pointer *pointer;
+  struct wl_touch *touch;
   struct zwp_fullscreen_shell_v1 *fullscreen_shell;
   struct wp_single_pixel_buffer_manager_v1 *single_pixel_buffer;
   struct wl_shm *shm;
@@ -200,6 +203,15 @@ gst_wl_display_finalize (GObject * gobject)
 
   if (priv->xdg_wm_base)
     xdg_wm_base_destroy (priv->xdg_wm_base);
+
+  if (priv->seat)
+    wl_seat_destroy (priv->seat);
+
+  if (priv->pointer)
+    wl_pointer_destroy (priv->pointer);
+
+  if (priv->touch)
+    wl_touch_destroy (priv->touch);
 
   if (priv->fullscreen_shell)
     zwp_fullscreen_shell_v1_release (priv->fullscreen_shell);
@@ -536,6 +548,32 @@ gst_wl_display_check_format_for_dmabuf (GstWlDisplay * self,
 }
 
 static void
+seat_handle_capabilities (void *data, struct wl_seat *seat,
+    enum wl_seat_capability caps)
+{
+  GstWlDisplay *self = data;
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  if ((caps & WL_SEAT_CAPABILITY_POINTER) && !priv->pointer) {
+    priv->pointer = wl_seat_get_pointer (seat);
+  } else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && priv->pointer) {
+    wl_pointer_destroy (priv->pointer);
+    priv->pointer = NULL;
+  }
+
+  if ((caps & WL_SEAT_CAPABILITY_TOUCH) && !priv->touch) {
+    priv->touch = wl_seat_get_touch (seat);
+  } else if (!(caps & WL_SEAT_CAPABILITY_TOUCH) && priv->touch) {
+    wl_touch_destroy (priv->touch);
+    priv->touch = NULL;
+  }
+}
+
+static const struct wl_seat_listener seat_listener = {
+  seat_handle_capabilities,
+};
+
+static void
 handle_xdg_wm_base_ping (void *user_data, struct xdg_wm_base *xdg_wm_base,
     uint32_t serial)
 {
@@ -563,6 +601,9 @@ registry_handle_global (void *data, struct wl_registry *registry,
     priv->xdg_wm_base =
         wl_registry_bind (registry, id, &xdg_wm_base_interface, 1);
     xdg_wm_base_add_listener (priv->xdg_wm_base, &xdg_wm_base_listener, self);
+  } else if (strcmp (interface, "wl_seat") == 0) {
+    priv->seat = wl_registry_bind (registry, id, &wl_seat_interface, 1);
+    wl_seat_add_listener (priv->seat, &seat_listener, self);
   } else if (g_strcmp0 (interface, "zwp_fullscreen_shell_v1") == 0) {
     priv->fullscreen_shell = wl_registry_bind (registry, id,
         &zwp_fullscreen_shell_v1_interface, 1);
@@ -931,6 +972,13 @@ gst_wl_display_get_xdg_wm_base (GstWlDisplay * self)
   return priv->xdg_wm_base;
 }
 
+struct wl_seat *gst_wl_display_get_seat (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->seat;
+}
+
 struct zwp_fullscreen_shell_v1 *
 gst_wl_display_get_fullscreen_shell_v1 (GstWlDisplay * self)
 {
@@ -953,6 +1001,22 @@ gst_wl_display_get_explicit_sync (GstWlDisplay * self)
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
 
   return priv->explicit_sync;
+}
+
+struct wl_pointer *
+gst_wl_display_get_pointer (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->pointer;
+}
+
+struct wl_touch *
+gst_wl_display_get_touch (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->touch;
 }
 
 gint

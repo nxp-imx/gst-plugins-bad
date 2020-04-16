@@ -25,6 +25,8 @@
 #endif
 
 #include <unistd.h>
+#include <linux/input.h>
+
 #include "gstwlwindow.h"
 #include "gstwlbuffer_private.h"
 #include "gstwlutils.h"
@@ -110,6 +112,9 @@ typedef struct _GstWlWindowPrivate
 
   /* video buffer scale */
   guint scale;
+
+  /* mouse location when click */
+  gint pointer_x, pointer_y;
 } GstWlWindowPrivate;
 
 G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
@@ -117,6 +122,9 @@ G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
     GST_DEBUG_CATEGORY_INIT (gst_wl_window_debug,
         "wlwindow", 0, "wlwindow library");
     );
+
+/* resize trigger margin in pixel */
+#define RESIZE_MARGIN 20
 
 enum
 {
@@ -140,6 +148,110 @@ static void gst_wl_window_set_colorimetry (GstWlWindow * self,
     const GstVideoColorimetry * colorimetry,
     const GstVideoMasteringDisplayInfo * minfo,
     const GstVideoContentLightLevel * linfo);
+
+static void
+pointer_handle_enter (void *data, struct wl_pointer *pointer,
+    uint32_t serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
+{
+  GstWlWindow *self = data;
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  priv->pointer_x = wl_fixed_to_int (sx);
+  priv->pointer_y = wl_fixed_to_int (sy);
+}
+
+static void
+pointer_handle_leave (void *data, struct wl_pointer *pointer,
+    uint32_t serial, struct wl_surface *surface)
+{
+}
+
+static void
+pointer_handle_motion (void *data, struct wl_pointer *pointer,
+    uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+{
+}
+
+static void
+pointer_handle_button (void *data, struct wl_pointer *wl_pointer,
+    uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+{
+  GstWlWindow *self = data;
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  if (!priv->xdg_toplevel)
+    return;
+
+  if (button == BTN_LEFT && state == WL_POINTER_BUTTON_STATE_PRESSED) {
+    struct wl_seat *seat = gst_wl_display_get_seat (priv->display);
+    if (priv->render_rectangle.w - priv->pointer_x <= RESIZE_MARGIN
+        && priv->render_rectangle.h - priv->pointer_y <= RESIZE_MARGIN)
+      xdg_toplevel_resize (priv->xdg_toplevel, seat, serial,
+          XDG_TOPLEVEL_RESIZE_EDGE_BOTTOM_RIGHT);
+    else
+      xdg_toplevel_move (priv->xdg_toplevel, seat, serial);
+  }
+}
+
+static void
+pointer_handle_axis (void *data, struct wl_pointer *wl_pointer,
+    uint32_t time, uint32_t axis, wl_fixed_t value)
+{
+}
+
+static const struct wl_pointer_listener pointer_listener = {
+  pointer_handle_enter,
+  pointer_handle_leave,
+  pointer_handle_motion,
+  pointer_handle_button,
+  pointer_handle_axis,
+};
+
+static void
+touch_handle_down (void *data, struct wl_touch *wl_touch,
+    uint32_t serial, uint32_t time, struct wl_surface *surface,
+    int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+{
+  GstWlWindow *self = data;
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+  struct wl_seat *seat;
+
+  if (!priv->xdg_toplevel)
+    return;
+
+  seat = gst_wl_display_get_seat (priv->display);
+  xdg_toplevel_move (priv->xdg_toplevel, seat, serial);
+}
+
+static void
+touch_handle_up (void *data, struct wl_touch *wl_touch,
+    uint32_t serial, uint32_t time, int32_t id)
+{
+}
+
+static void
+touch_handle_motion (void *data, struct wl_touch *wl_touch,
+    uint32_t time, int32_t id, wl_fixed_t x_w, wl_fixed_t y_w)
+{
+}
+
+static void
+touch_handle_frame (void *data, struct wl_touch *wl_touch)
+{
+}
+
+static void
+touch_handle_cancel (void *data, struct wl_touch *wl_touch)
+{
+}
+
+static const struct wl_touch_listener touch_listener = {
+  touch_handle_down,
+  touch_handle_up,
+  touch_handle_motion,
+  touch_handle_frame,
+  touch_handle_cancel,
+};
 
 static void
 handle_xdg_toplevel_close (void *data, struct xdg_toplevel *xdg_toplevel)
@@ -182,6 +294,9 @@ handle_xdg_toplevel_configure (void *data, struct xdg_toplevel *xdg_toplevel,
     width = priv->default_width;
     height = priv->default_height;
   }
+
+  if (width <= 2 * RESIZE_MARGIN || height <= 2 * RESIZE_MARGIN)
+    return;
 
   g_mutex_lock (&priv->configure_mutex);
   priv->configured = FALSE;
@@ -528,6 +643,8 @@ gst_wl_window_new_toplevel_full (GstWlDisplay * display,
   /* Check which protocol we will use (in order of preference) */
   if (xdg_wm_base) {
     gint64 timeout;
+    struct wl_pointer *pointer;
+    struct wl_touch *touch;
 
     /* First create the XDG surface */
     priv->xdg_surface = xdg_wm_base_get_xdg_surface (xdg_wm_base,
@@ -552,6 +669,16 @@ gst_wl_window_new_toplevel_full (GstWlDisplay * display,
       xdg_toplevel_set_app_id (priv->xdg_toplevel, "org.gstreamer.wayland");
     }
 
+    pointer = gst_wl_display_get_pointer (display);
+    touch = gst_wl_display_get_touch (display);
+    if (pointer)
+      wl_pointer_add_listener (pointer, &pointer_listener, self);
+
+    if (touch) {
+      wl_touch_set_user_data (touch, self);
+      wl_touch_add_listener (touch, &touch_listener, self);
+    }
+    
     gst_wl_window_ensure_fullscreen_for_output (self, fullscreen, output_name);
 
     /* Finally, commit the xdg_surface state as toplevel */
@@ -793,6 +920,10 @@ gst_wl_window_resize_video_surface (GstWlWindow * self)
     res.h = MAX (res.h, 1);
 
     wp_viewport_set_destination (priv->video_viewport, res.w, res.h);
+
+    /* need reset default width/height, otherwise resize window will fail */
+    priv->default_width = priv->render_rectangle.w;
+    priv->default_height = priv->render_rectangle.h;
   } else {
     gst_video_center_rect (&src, &dst, &res, FALSE);
   }
