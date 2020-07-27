@@ -572,6 +572,8 @@ gst_tinycompresssink_close_device (GstTinyCompressSink * csink)
   if (csink->compress)
     compress_close(csink->compress);
 
+  csink->compress = NULL;
+
   return TRUE;
 }
 
