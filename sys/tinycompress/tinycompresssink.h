@@ -40,10 +40,16 @@ G_BEGIN_DECLS
 #define GST_TINYCOMPRESSSINK_CAST(obj) \
     ((GstTinyCompressSink *)(obj))
 
+
+#define _TINYCOMPRESS_CAPS_PCM "audio/x-raw, " \
+      "format = (string) { S16LE, S32LE }, " \
+      "layout = (string) interleaved, " \
+      "rate = (int) [ 8000, 192000 ], " \
+      "channels = (int) [ 1, 2 ]; "
 #define _TINYCOMPRESS_CAPS_MP3 "audio/mpeg, mpegversion = (int) 1, " \
-      "mpegaudioversion = (int) [ 1, 3 ], parsed = (boolean) true; "
+      "mpegaudioversion = (int) [ 1, 3 ]; "
 #define _TINYCOMPRESS_CAPS_AAC "audio/mpeg, mpegversion = (int) { 2, 4 }, " \
-      "framed = (boolean) true, stream-format = (string) { adts, raw };"
+      "stream-format = (string) { adts, raw };"
 
 typedef struct _GstTinyCompressSink GstTinyCompressSink;
 typedef struct _GstTinyCompressSinkClass GstTinyCompressSinkClass;
@@ -64,9 +70,10 @@ struct _GstTinyCompressSink
   guint32 maxlength;
   guint32 prebuf;
 
+  guint codec_id;
+  guint format;
   guint channels;
   guint rate;
-  guint codec_id;
 
   GstCaps *caps;
   GstClock *clock;
@@ -82,8 +89,8 @@ struct _GstTinyCompressSinkClass
 GType gst_tinycompresssink_get_type (void);
 
 #define TINY_COMPRESS_SINK_TEMPLATE_CAPS \
-  _TINYCOMPRESS_CAPS_MP3 \
-  _TINYCOMPRESS_CAPS_AAC \
+  _TINYCOMPRESS_CAPS_PCM \
+  _TINYCOMPRESS_CAPS_MP3
 
 G_END_DECLS
 #endif /* __GST_TINYCOMPRESSSINK_H__ */
