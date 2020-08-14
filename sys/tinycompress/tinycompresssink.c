@@ -35,6 +35,7 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+#include <alsa/asoundlib.h>
 #include <gst/audio/audio.h>
 #include "sound/compress_params.h"
 #include "tinycompresssink.h"
@@ -49,7 +50,7 @@ GST_DEBUG_CATEGORY_STATIC (tinycompresssink_debug);
 #define DEFAULT_MINREQ          -1
 #define DEFAULT_MAXLENGTH       -1
 #define DEFAULT_PREBUF          -1
-#define DEFAULT_PROVIDE_CLOCK   FALSE
+#define DEFAULT_PROVIDE_CLOCK   TRUE
 
 enum
 {
@@ -416,12 +417,16 @@ gst_tinycompresssink_render (GstBaseSink * bsink, GstBuffer * buf)
   GstFlowReturn ret;
   unsigned int available;
   struct timespec tstamp;
-  int wrote;
+  guint8 *buf_ptr;
+  int wrote, size;
 
   gst_buffer_map (buf, &info, GST_MAP_READ);
+  buf_ptr = info.data;
+  size = info.size;
 
   GST_LOG_OBJECT (csink, "Writing %" G_GSIZE_FORMAT " bytes", info.size);
 
+again:
   for (;;) {
     if (bsink->flushing) {
       GST_LOG_OBJECT (csink, "In flushing");
@@ -433,7 +438,7 @@ gst_tinycompresssink_render (GstBaseSink * bsink, GstBuffer * buf)
       goto writable_size_failed;
 
     /* We have space to write now, let's do it */
-    if (available >= info.size)
+    if (available > 0)
       break;
 
     GST_LOG_OBJECT (csink, "Waiting for space, available = %" G_GSIZE_FORMAT,
@@ -458,15 +463,18 @@ gst_tinycompresssink_render (GstBaseSink * bsink, GstBuffer * buf)
 
   /* FIXME: perform segment clipping */
 
-  if (info.size > 0) {
-    wrote = compress_write(csink->compress, info.data, info.size);
+  if (size > 0) {
+    wrote = compress_write(csink->compress, buf_ptr, size);
     if (wrote < 0) {
       GST_ERROR_OBJECT (csink, "Error playing sample\n");
       GST_ERROR_OBJECT (csink, "ERR: %s\n", compress_get_error(csink->compress));
       goto writable_size_failed;
     }
-    if (wrote != info.size) {
-      GST_ERROR_OBJECT (csink, "We wrote %d, DSP accepted %d\n", info.size, wrote);
+    if (wrote != size) {
+      buf_ptr += wrote;
+      size -= wrote;
+      GST_ERROR_OBJECT (csink, "We wrote %d, DSP accepted %d\n", size, wrote);
+      goto again;
     }
     GST_DEBUG_OBJECT (csink, "%s: wrote %d\n", __func__, wrote);
 
@@ -532,12 +540,14 @@ gst_tinycompresssink_open_device (GstTinyCompressSink * csink)
 
   config.codec = &codec;
   codec.id = csink->codec_id;
+  codec.format = csink->format;
   codec.ch_in = csink->channels;
   codec.ch_out = csink->channels;
   codec.sample_rate = csink->rate;
 
   sscanf (csink->device, "hw:%d,%d", &card, &device);
   GST_INFO_OBJECT (csink, "device: %s card: %d device: %d", csink->device, card, device);
+  GST_INFO_OBJECT (csink, "codec id: %d format: %d channels: %d rate: %d", csink->codec_id, csink->format, csink->channels, csink->rate);
 
   csink->compress = compress_open(card, device, COMPRESS_IN, &config);
   if (!csink->compress || !is_compress_ready(csink->compress)) {
@@ -737,6 +747,27 @@ gst_tinycompresssink_get_times (GstBaseSink * bsink, GstBuffer * buffer,
   *end = GST_CLOCK_TIME_NONE;
 }
 
+static guint
+pcm_format_from_gst (GstAudioFormat format)
+{
+  switch (format) {
+    case GST_AUDIO_FORMAT_S8:
+      return SND_PCM_FORMAT_S8;
+
+    case GST_AUDIO_FORMAT_S16LE:
+      return SND_PCM_FORMAT_S16_LE;
+
+    case GST_AUDIO_FORMAT_S24_32LE:
+      return SND_PCM_FORMAT_S24_LE;
+
+    case GST_AUDIO_FORMAT_S32LE:
+      return SND_PCM_FORMAT_S32_LE;
+
+    default:
+      g_assert_not_reached ();
+  }
+}
+
 static gboolean
 gst_tinycompresssink_set_caps (GstBaseSink * bsink, GstCaps * caps)
 {
@@ -756,6 +787,11 @@ gst_tinycompresssink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   if (g_str_equal (format, "audio/x-raw")) {
     if (!gst_audio_info_from_caps (&info, caps))
       goto parse_error;
+
+    csink->codec_id = SND_AUDIOCODEC_PCM;
+    csink->format = pcm_format_from_gst (GST_AUDIO_INFO_FORMAT (&info));
+    csink->channels = GST_AUDIO_INFO_CHANNELS (&info);
+    csink->rate = GST_AUDIO_INFO_RATE (&info);
   } else if (g_str_equal (format, "audio/mpeg")) {
     gint mpegversion, rate, channels;
     const gchar *stream_format = NULL;
