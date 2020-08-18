@@ -50,7 +50,7 @@ GST_DEBUG_CATEGORY_STATIC (tinycompresssink_debug);
 #define DEFAULT_MINREQ          -1
 #define DEFAULT_MAXLENGTH       -1
 #define DEFAULT_PREBUF          -1
-#define DEFAULT_PROVIDE_CLOCK   TRUE
+#define DEFAULT_PROVIDE_CLOCK   FALSE
 
 enum
 {
@@ -485,6 +485,9 @@ again:
     }
   }
 
+  /* Send evevy frame to FW when non-LPA */
+  if (!csink->enable_lpa)
+    compress_write(csink->compress, NULL, 0);
 
   ret = GST_FLOW_OK;
 
@@ -723,11 +726,13 @@ gst_tinycompresssink_wait_event (GstBaseSink * bsink, GstEvent * event)
   switch (GST_EVENT_TYPE (event)) {
     case GST_EVENT_EOS:
       GST_DEBUG_OBJECT (csink, "Draining on EOS");
-      compress_write(csink->compress, NULL, 1);
+      if (csink->enable_lpa)
+        compress_write(csink->compress, NULL, 0);
       /* remove suspend as bitstream maybe returned before systen suspended*/
       /*if (csink->enable_lpa)
         system ("echo mem > /sys/power/state");*/
       compress_drain(csink->compress);
+      GST_DEBUG_OBJECT (csink, "Draining done on EOS");
       break;
 
     default:
