@@ -44,7 +44,7 @@ G_BEGIN_DECLS
 #define _TINYCOMPRESS_CAPS_PCM "audio/x-raw, " \
       "format = (string) { S16LE, S32LE }, " \
       "layout = (string) interleaved, " \
-      "rate = (int) [ 8000, 192000 ], " \
+      "rate = (int) [ 8000, 48000 ], " \
       "channels = (int) [ 1, 2 ]; "
 #define _TINYCOMPRESS_CAPS_MP3 "audio/mpeg, mpegversion = (int) 1, " \
       "mpegaudioversion = (int) [ 1, 3 ]; "
