@@ -63,6 +63,9 @@ typedef struct _GstWlDisplayPrivate
   /* real display resolution */
   gint width, height;
 
+  /* preferred window resolution */
+  gint preferred_width, preferred_height;
+
   /* private */
   gboolean own_display;
   GThread *thread;
@@ -102,6 +105,8 @@ gst_wl_display_init (GstWlDisplay * self)
   priv->buffers = g_hash_table_new (g_direct_hash, g_direct_equal);
   priv->width = -1;
   priv->height = -1;
+  priv->preferred_width = -1;
+  priv->preferred_height = -1;
   g_mutex_init (&priv->buffers_mutex);
   g_rec_mutex_init (&priv->sync_mutex);
 
@@ -723,6 +728,39 @@ gst_wl_display_get_height (GstWlDisplay * self)
 
   return priv->height;
 }
+
+void
+gst_wl_display_set_preferred_width (GstWlDisplay * self, gint preferred_width)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  priv->preferred_width = preferred_width;
+}
+
+void
+gst_wl_display_set_preferred_height (GstWlDisplay * self, gint preferred_height)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  priv->preferred_height = preferred_height;
+}
+
+gint
+gst_wl_display_get_preferred_width (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->preferred_width;
+}
+
+gint
+gst_wl_display_get_preferred_height (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->preferred_height;
+}
+
 struct wl_shm *
 gst_wl_display_get_shm (GstWlDisplay * self)
 {

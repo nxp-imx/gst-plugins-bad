@@ -101,6 +101,18 @@ GST_WL_API
 gint gst_wl_display_get_height (GstWlDisplay * self);
 
 GST_WL_API
+void gst_wl_display_set_preferred_width (GstWlDisplay * self, gint preferred_width);
+
+GST_WL_API
+void gst_wl_display_set_preferred_height (GstWlDisplay * self, gint preferred_height);
+
+GST_WL_API
+gint gst_wl_display_get_preferred_width (GstWlDisplay * self);
+
+GST_WL_API
+gint gst_wl_display_get_preferred_height (GstWlDisplay * self);
+
+GST_WL_API
 struct wl_shm *gst_wl_display_get_shm (GstWlDisplay * self);
 
 GST_WL_API
