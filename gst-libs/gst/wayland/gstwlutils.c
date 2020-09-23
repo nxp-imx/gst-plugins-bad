@@ -38,13 +38,13 @@
 #define WESTON_INI "/etc/xdg/weston/weston.ini"
 
 gboolean
-gst_wl_init_buffer_scale (gint display_width, gint display_height,
-    guint * scale)
+gst_wl_init_surface_state (GstWlDisplay * display, GstWlWindow * self)
 {
   gchar path[] = WESTON_INI;
   gchar line[512], *p, *section = NULL, *size = NULL;
   gint fd, n, i;
   gint desktop_width, desktop_height;
+  gint display_width, display_height;
   gboolean found_config = FALSE;
   gboolean ret = TRUE;
   struct stat filestat;
@@ -124,11 +124,16 @@ gst_wl_init_buffer_scale (gint display_width, gint display_height,
   }
 
   /* FIXME: only support buffer scale 2 and 1 */
+  display_width = gst_wl_display_get_width (display);
+  display_height = gst_wl_display_get_height (display);
   if (display_width > 0 && display_height > 0) {
-    *scale = display_width / desktop_width;
-    if (*scale != 1 && *scale != 2) {
-      *scale = 1;
+    gst_wl_window_set_scale (self, display_width / desktop_width);
+    if (gst_wl_window_get_scale (self) != 1 && gst_wl_window_get_scale (self) != 2) {
+      ret = FALSE;
+      goto out;
     }
+    gst_wl_window_set_fullscreen_width (self, desktop_width);
+    gst_wl_window_set_fullscreen_height (self, desktop_height - PANEL_HEIGH);
   } else {
     ret = FALSE;
     goto out;

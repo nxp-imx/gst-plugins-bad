@@ -89,4 +89,16 @@ GST_WL_API
 void gst_wl_window_set_rotate_method (GstWlWindow               *self,
         GstVideoOrientationMethod  rotate_method);
 
+GST_WL_API
+void gst_wl_window_set_scale (GstWlWindow * self, gint scale);
+
+GST_WL_API
+guint gst_wl_window_get_scale (GstWlWindow * self);
+
+GST_WL_API
+void gst_wl_window_set_fullscreen_width (GstWlWindow * self, gint fullscreen_width);
+
+GST_WL_API
+void gst_wl_window_set_fullscreen_height (GstWlWindow * self, gint fullscreen_height);
+
 G_END_DECLS

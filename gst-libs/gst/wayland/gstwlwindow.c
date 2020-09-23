@@ -100,6 +100,8 @@ typedef struct _GstWlWindowPrivate
 
   /* mouse location when click */
   gint pointer_x, pointer_y;
+  /* fullscreen window size */
+  gint fullscreen_width, fullscreen_height;
 } GstWlWindowPrivate;
 
 G_DEFINE_TYPE_WITH_CODE (GstWlWindow, gst_wl_window, G_TYPE_OBJECT,
@@ -391,6 +393,8 @@ gst_wl_window_init (GstWlWindow * self)
   priv->src_width = -1;
   priv->src_height = 0;
   priv->scale = 1;
+  priv->fullscreen_width = -1;
+  priv->fullscreen_height = -1;
 }
 
 static void
@@ -507,8 +511,13 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   width = gst_wl_display_get_width (display);
   height = gst_wl_display_get_height (display);
 
-  if (!gst_wl_init_buffer_scale (width, height, &priv->scale)) {
-    GST_WARNING ("init buffer scale fail, fallback to scale=%d", priv->scale);
+  if (!gst_wl_init_surface_state (display, self)) {
+    priv->fullscreen_width = width;
+    priv->fullscreen_height = height - PANEL_HEIGH;
+    priv->scale = 1;
+    GST_WARNING
+        ("init surface_state fail, fallback to scale=%d fullscreen (%dx%d)",
+        priv->scale, priv->fullscreen_width, priv->fullscreen_height);
   }
 
   return self;
@@ -616,12 +625,15 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
     if (preferred_width > 0 && preferred_height > 0) {
       width = preferred_width;
       height = preferred_height;
-    } else {
+    } else if (priv->fullscreen_width <= 0) {
       /* set the initial size to be the same as the reported video size */
-      width = 
+      width =
           gst_util_uint64_scale_int_round (info->width, info->par_n,
-                                           info->par_d) / priv->scale;
-      height = info->height / priv->scale;
+          info->par_d);
+      height = info->height;
+    } else {
+      width = priv->fullscreen_width;
+      height = priv->fullscreen_height;
     }
 
     gst_wl_window_set_render_rectangle (self, 0, 0, width, height);
@@ -1174,6 +1186,44 @@ gst_wl_window_set_rotate_method (GstWlWindow * self,
   GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
 
   priv->buffer_transform = output_transform_from_orientation_method (method);
+
+  gst_wl_window_update_geometry (self);
+}
+
+void
+gst_wl_window_set_scale (GstWlWindow * self, gint scale)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  priv->scale = scale;
+
+  gst_wl_window_update_geometry (self);
+}
+
+guint
+gst_wl_window_get_scale (GstWlWindow * self)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  return priv->scale;
+}
+
+void
+gst_wl_window_set_fullscreen_width (GstWlWindow * self, gint fullscreen_width)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  priv->fullscreen_width = fullscreen_width;
+
+  gst_wl_window_update_geometry (self);
+}
+
+void
+gst_wl_window_set_fullscreen_height (GstWlWindow * self, gint fullscreen_height)
+{
+  GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
+
+  priv->fullscreen_height = fullscreen_height;
 
   gst_wl_window_update_geometry (self);
 }
