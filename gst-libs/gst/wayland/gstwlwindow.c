@@ -559,8 +559,11 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
   width = gst_wl_display_get_width (display);
   height = gst_wl_display_get_height (display);
   if (!gst_wl_init_buffer_scale (width, height, &priv->scale)) {
+    priv->scale = 1;
     GST_WARNING ("init buffer scale fail, fallback to scale=%d", priv->scale);
   }
+  priv->default_width = width / priv->scale;
+  priv->default_height = height / priv->scale - PANEL_HEIGH;
 
   return self;
 }
@@ -688,11 +691,6 @@ gst_wl_window_new_toplevel_full (GstWlDisplay * display,
         window_rectangle->w != 0 && window_rectangle->h != 0) {
       priv->default_width = window_rectangle->w;
       priv->default_height = window_rectangle->h;
-    } else {
-      /* set the initial size to be the same as the reported video size */
-      priv->default_width =
-          gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
-      priv->default_height = info->height;
     }
     gst_wl_window_set_render_rectangle (self, 0, 0, priv->default_width,
         priv->default_height);

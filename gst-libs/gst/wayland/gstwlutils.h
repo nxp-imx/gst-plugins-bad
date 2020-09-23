@@ -25,7 +25,10 @@
 
 G_BEGIN_DECLS
 
-gboolean gst_wl_init_buffer_scale(gint display_width, gint display_height, guint * scale);
+/* FIXME: try to get from wayland server */
+#define PANEL_HEIGH 32
+
+gboolean gst_wl_init_buffer_scale (gint display_width, gint display_height, guint * scale);
 G_END_DECLS
 
 #endif
