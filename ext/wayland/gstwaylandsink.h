@@ -61,6 +61,9 @@ struct _GstWaylandSink
   gboolean fullscreen;
   GstCaps *caps;
 
+  /* preferred window resolution */
+  gint preferred_width, preferred_height;
+
   gchar *display_name;
 
   GMutex render_lock;

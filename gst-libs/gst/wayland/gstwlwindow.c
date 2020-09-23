@@ -308,6 +308,7 @@ gst_wl_window_new_internal (GstWlDisplay * display, GMutex * render_lock)
 
   width = gst_wl_display_get_width (display);
   height = gst_wl_display_get_height (display);
+
   if (!gst_wl_init_buffer_scale (width, height, &priv->scale)) {
     GST_WARNING ("init buffer scale fail, fallback to scale=%d", priv->scale);
   }
@@ -399,11 +400,21 @@ gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
   /* render_rectangle is already set via toplevel_configure in
    * xdg_shell fullscreen mode */
   if (!(xdg_wm_base && fullscreen)) {
-    /* set the initial size to be the same as the reported video size */
-    gint width =
-        gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
-    gst_wl_window_set_render_rectangle (self, 0, 0, width / priv->scale,
-        info->height / priv->scale);
+    gint width, height;
+    gint preferred_width = gst_wl_display_get_preferred_width (display);
+    gint preferred_height = gst_wl_display_get_preferred_height (display);
+    if (preferred_width > 0 && preferred_height > 0) {
+      width = preferred_width;
+      height = preferred_height;
+    } else {
+      /* set the initial size to be the same as the reported video size */
+      width = 
+          gst_util_uint64_scale_int_round (info->width, info->par_n,
+                                           info->par_d) / priv->scale;
+      height = info->height / priv->scale;
+    }
+
+    gst_wl_window_set_render_rectangle (self, 0, 0, width, height);
   }
 
   return self;
