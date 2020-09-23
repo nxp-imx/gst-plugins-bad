@@ -70,6 +70,8 @@ enum
 enum
 {
   PROP_0,
+  PROP_WINDOW_WIDTH,
+  PROP_WINDOW_HEIGHT,
   PROP_DISPLAY,
   PROP_FULLSCREEN,
   PROP_FULLSCREEN_OUTPUT,
@@ -164,6 +166,18 @@ gst_wayland_sink_class_init (GstWaylandSinkClass * klass)
 
   gstvideosink_class->show_frame =
       GST_DEBUG_FUNCPTR (gst_wayland_sink_show_frame);
+
+  g_object_class_install_property (gobject_class, PROP_WINDOW_WIDTH,
+      g_param_spec_int ("window-width", "Wayland sink window width", "Wayland "
+          "sink preferred window width in pixel, same effect of render-rectangle, "
+          "deprecated property",
+          -1, G_MAXINT, -1, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+
+  g_object_class_install_property (gobject_class, PROP_WINDOW_HEIGHT,
+      g_param_spec_int ("window-height", "Wayland sink window height","Wayland "
+          "sink preferred window height in pixel, same effect of render-rectangle, "
+          "deprecated property",
+          -1, G_MAXINT, -1, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
   g_object_class_install_property (gobject_class, PROP_DISPLAY,
       g_param_spec_string ("display", "Wayland Display name", "Wayland "
@@ -349,6 +363,16 @@ gst_wayland_sink_get_property (GObject * object,
       g_value_set_string (value, self->fullscreen_output);
       GST_OBJECT_UNLOCK (self);
       break;
+    case PROP_WINDOW_WIDTH:
+      GST_OBJECT_LOCK (self);
+      g_value_set_int (value, self->window_rectangle.w);
+      GST_OBJECT_UNLOCK (self);
+      break;
+    case PROP_WINDOW_HEIGHT:
+      GST_OBJECT_LOCK (self);
+      g_value_set_int (value, self->window_rectangle.h);
+      GST_OBJECT_UNLOCK (self);
+      break;
     case PROP_ROTATE_METHOD:
       GST_OBJECT_LOCK (self);
       g_value_set_enum (value, self->current_rotate_method);
@@ -396,6 +420,16 @@ gst_wayland_sink_set_property (GObject * object,
       GST_OBJECT_LOCK (self);
       gst_wayland_sink_set_fullscreen (self, self->fullscreen,
           g_value_get_string (value));
+      GST_OBJECT_UNLOCK (self);
+      break;
+    case PROP_WINDOW_WIDTH:
+      GST_OBJECT_LOCK (self);
+      self->window_rectangle.w = g_value_get_int (value);
+      GST_OBJECT_UNLOCK (self);
+      break;
+    case PROP_WINDOW_HEIGHT:
+      GST_OBJECT_LOCK (self);
+      self->window_rectangle.h = g_value_get_int (value);
       GST_OBJECT_UNLOCK (self);
       break;
     case PROP_ROTATE_METHOD:
