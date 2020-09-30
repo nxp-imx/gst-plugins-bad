@@ -445,21 +445,33 @@ GST_PLAY_API
 void           gst_play_message_parse_muted_changed              (GstMessage *msg, gboolean *muted);
 
 /* Custom gstplay API */
+GST_PLAY_API
 gboolean    gst_play_set_rotate (GstPlay * play, gint rotation);
+GST_PLAY_API
 gint        gst_play_get_rotate (GstPlay * play);
 
+GST_PLAY_API
 void        gst_play_config_set_force_aspect_ratio (GstPlay * self, gboolean force_aspect_ratio);
+GST_PLAY_API
 gboolean    gst_play_config_get_force_aspect_ratio (const GstStructure * config);
 
+GST_PLAY_API
 gboolean    gst_play_set_audio_sink (GstPlay * play, GstElement * audio_sink);
+GST_PLAY_API
 gboolean    gst_play_set_text_sink (GstPlay * play, GstElement * text_sink);
+GST_PLAY_API
 GstElement * gst_play_get_audio_sink (GstPlay * play);
+GST_PLAY_API
 GstElement * gst_play_get_text_sink (GstPlay * play);
 
+GST_PLAY_API
 GstPlayState  gst_play_get_state (GstPlay * play);
 
+GST_PLAY_API
 void         gst_play_play_sync (GstPlay * play, gint time_out);
+GST_PLAY_API
 void         gst_play_stop_sync (GstPlay * play, gint time_out);
+GST_PLAY_API
 void         gst_play_pause_sync (GstPlay * play, gint time_out);
 
 G_END_DECLS
