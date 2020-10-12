@@ -23,6 +23,7 @@
 #endif
 
 #include "gstwldisplay.h"
+#include "gstimxcommon.h"
 
 #include "fullscreen-shell-unstable-v1-client-protocol.h"
 #include "linux-dmabuf-unstable-v1-client-protocol.h"
@@ -30,6 +31,7 @@
 #include "viewporter-client-protocol.h"
 #include "xdg-shell-client-protocol.h"
 #include "alpha-compositing-unstable-v1-client-protocol.h"
+#include "hdr10-metadata-unstable-v1-client-protocol.h"
 
 #include <errno.h>
 #include <drm_fourcc.h>
@@ -58,6 +60,7 @@ typedef struct _GstWlDisplayPrivate
   struct wp_viewporter *viewporter;
   struct zwp_linux_dmabuf_v1 *dmabuf;
   struct zwp_alpha_compositing_v1 *alpha_compositing;
+  struct zwp_hdr10_metadata_v1 *hdr10_metadata;
   GArray *shm_formats;
   GArray *dmabuf_formats;
   GArray *dmabuf_modifiers;
@@ -201,6 +204,9 @@ gst_wl_display_finalize (GObject * gobject)
     }
     g_array_unref (priv->outputs);
   }
+
+  if (priv->hdr10_metadata)
+    zwp_hdr10_metadata_v1_destroy (priv->hdr10_metadata);
 
   if (priv->registry)
     wl_registry_destroy (priv->registry);
@@ -454,6 +460,9 @@ registry_handle_global (void *data, struct wl_registry *registry,
   } else if (g_strcmp0 (interface, "zwp_alpha_compositing_v1") == 0) {
     priv->alpha_compositing =
         wl_registry_bind (registry, id, &zwp_alpha_compositing_v1_interface, 1);
+  } else if (g_strcmp0 (interface, "zwp_hdr10_metadata_v1") == 0) {
+    priv->hdr10_metadata =
+        wl_registry_bind (registry, id, &zwp_hdr10_metadata_v1_interface, 1);
   } else if (g_strcmp0 (interface, "wl_output") == 0) {
     struct wl_output *output;
     output =
@@ -807,6 +816,14 @@ gst_wl_display_get_touch (GstWlDisplay * self)
   return priv->touch;
 }
 
+struct zwp_hdr10_metadata_v1 *
+gst_wl_display_get_hdr10_metadata (GstWlDisplay * self)
+{
+  GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
+
+  return priv->hdr10_metadata;
+}
+
 gint
 gst_wl_display_get_width (GstWlDisplay * self)
 {
@@ -946,6 +963,16 @@ gst_wl_display_fill_dmabuf_format_list (GstWlDisplay * self,
     mod = g_array_index (priv->dmabuf_modifiers, guint64, i);
     g_value_init (&value, G_TYPE_STRING);
     g_value_take_string (&value, gst_video_dma_drm_fourcc_to_string (fmt, mod));
+    gst_value_list_append_and_take_value (format_list, &value);
+  }
+
+  /** FIXME:work around for 10bit format not in the none capsfeature list
+   * need vpu add memory:DMABuf capsfeature when output dmabuf
+  */
+  if (HAS_DCSS ()) {
+    g_value_init (&value, G_TYPE_STRING);
+    g_value_set_static_string (&value,
+        gst_video_format_to_string (GST_VIDEO_FORMAT_NV12_10LE40));
     gst_value_list_append_and_take_value (format_list, &value);
   }
 }

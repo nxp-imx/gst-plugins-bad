@@ -47,6 +47,9 @@
 #include <drm_fourcc.h>
 #include <gst/allocators/allocators.h>
 #include <gst/video/videooverlay.h>
+#include <linux/version.h>
+
+#include "hdr10-metadata-unstable-v1-client-protocol.h"
 
 /* signals */
 enum
@@ -98,6 +101,8 @@ static gboolean
 gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query);
 static GstFlowReturn gst_wayland_sink_show_frame (GstVideoSink * vsink,
     GstBuffer * buffer);
+static void
+gst_wayland_sink_config_hdr10 (GstWaylandSink * self, const GstCaps * caps);
 
 /* VideoOverlay interface */
 static void gst_wayland_sink_videooverlay_init (GstVideoOverlayInterface *
@@ -515,6 +520,7 @@ gst_wayland_sink_change_state (GstElement * element, GstStateChange transition)
       break;
     case GST_STATE_CHANGE_PAUSED_TO_READY:
       gst_buffer_replace (&self->last_buffer, NULL);
+      gst_wayland_sink_config_hdr10 (self, NULL);
       if (self->window) {
         area_surface = gst_wl_window_get_area_surface (self->window);
         render_rectangle_w = gst_wl_window_get_rectangle_w (self->window);
@@ -801,6 +807,8 @@ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   /* Will be used to create buffer pools */
   gst_caps_replace (&self->caps, caps);
 
+  gst_wayland_sink_config_hdr10 (self, caps);
+
   return TRUE;
 
 invalid_format:
@@ -900,6 +908,88 @@ on_window_closed (GstWlWindow * window, gpointer user_data)
   /* Handle window closure by posting an error on the bus */
   GST_ELEMENT_ERROR (self, RESOURCE, NOT_FOUND,
       ("Output window was closed"), (NULL));
+}
+
+static void
+gst_wayland_sink_config_hdr10 (GstWaylandSink * self, const GstCaps * caps)
+{
+  GstWlDisplay *display = self->display;
+  struct zwp_hdr10_metadata_v1 *hdr10_metadata;
+  struct wl_display *display_display;
+  guint32 eotf = 0;
+  guint32 type = 0;
+  guint32 display_primaries_red = 0;
+  guint32 display_primaries_green = 0;
+  guint32 display_primaries_blue = 0;
+  guint32 white_point = 0;
+  guint32 mastering_display_luminance = 0;
+  guint32 max_cll = 0;
+  guint32 max_fall = 0;
+
+  /* buf could be NULL when resize */
+
+  if (caps) {
+    GstVideoMasteringDisplayInfo minfo;
+    GstVideoContentLightLevel cll;
+    if (!gst_video_mastering_display_info_from_caps (&minfo, caps)
+        || !gst_video_content_light_level_from_caps (&cll, caps)) {
+      GST_INFO_OBJECT (self, "no HDR metadata present in caps");
+      return;
+    }
+
+    GST_INFO_OBJECT (self, "redPrimary x=%d y=%d", minfo.display_primaries[0].x,
+        minfo.display_primaries[0].y);
+    GST_INFO_OBJECT (self, "greenPrimary x=%d y=%d",
+        minfo.display_primaries[1].x, minfo.display_primaries[1].y);
+    GST_INFO_OBJECT (self, "bluePrimary x=%d y=%d",
+        minfo.display_primaries[2].x, minfo.display_primaries[2].y);
+    GST_INFO_OBJECT (self, "whitePoint x=%d y=%d", minfo.white_point.x,
+        minfo.white_point.y);
+    GST_INFO_OBJECT (self, "maxMasteringLuminance %d",
+        minfo.max_display_mastering_luminance);
+    GST_INFO_OBJECT (self, "minMasteringLuminance %d",
+        minfo.min_display_mastering_luminance);
+    GST_INFO_OBJECT (self, "maxContentLightLevel %d",
+        cll.max_content_light_level);
+    GST_INFO_OBJECT (self, "maxFrameAverageLightLevel %d",
+        cll.max_frame_average_light_level);
+
+    eotf = SMPTE_ST2084;
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+    type = 0;
+#else
+    type = 1;
+#endif
+    display_primaries_red =
+        (guint) (minfo.display_primaries[0].x << 16 | minfo.
+        display_primaries[0].y);
+    display_primaries_green =
+        (guint) (minfo.display_primaries[1].x << 16 | minfo.
+        display_primaries[1].y);
+    display_primaries_blue =
+        (guint) (minfo.display_primaries[2].x << 16 | minfo.
+        display_primaries[2].y);
+    white_point = (guint) (minfo.white_point.x << 16 | minfo.white_point.y);
+    mastering_display_luminance =
+        (guint) (((minfo.max_display_mastering_luminance /
+                10000) & 0xffff) << 16 | (minfo.min_display_mastering_luminance
+            & 0xffff));
+    max_cll = cll.max_content_light_level;
+    max_fall = cll.max_frame_average_light_level;
+  }
+
+  hdr10_metadata = gst_wl_display_get_hdr10_metadata (display);
+  display_display = gst_wl_display_get_display (display);
+  if (hdr10_metadata) {
+    zwp_hdr10_metadata_v1_set_metadata (hdr10_metadata,
+        eotf,
+        type,
+        display_primaries_red,
+        display_primaries_green,
+        display_primaries_blue,
+        white_point, mastering_display_luminance, max_cll, max_fall);
+    wl_display_roundtrip (display_display);
+  }
 }
 
 static GstFlowReturn
