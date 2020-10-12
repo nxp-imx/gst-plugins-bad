@@ -28,6 +28,7 @@
 #include "gstwlvideoformat.h"
 
 #include <drm_fourcc.h>
+#include <linux/version.h>
 
 /* This can be removed once we can bump the required wl_client_dep,
  * which again is blocked by a CI image update, see
@@ -90,6 +91,12 @@ static const wl_VideoFormat wl_formats[] = {
   {WL_SHM_FORMAT_YVU420, DRM_FORMAT_YVU420, GST_VIDEO_FORMAT_YV12},
   {WL_SHM_FORMAT_YUV422, DRM_FORMAT_YUV422, GST_VIDEO_FORMAT_Y42B},
   {WL_SHM_FORMAT_YUV444, DRM_FORMAT_YUV444, GST_VIDEO_FORMAT_v308},
+  /*FIXME. no suitable format for shm when it is NV12 10bit */
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 4, 0)
+  {WL_SHM_FORMAT_NV12, DRM_FORMAT_P010, GST_VIDEO_FORMAT_NV12_10LE40},
+#else
+  {WL_SHM_FORMAT_NV12, DRM_FORMAT_NV15, GST_VIDEO_FORMAT_NV12_10LE40},
+#endif
 };
 
 enum wl_shm_format

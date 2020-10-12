@@ -104,6 +104,9 @@ GST_WL_API
 struct wl_touch *gst_wl_display_get_touch (GstWlDisplay * self);
 
 GST_WL_API
+struct zwp_hdr10_metadata_v1 *gst_wl_display_get_hdr10_metadata (GstWlDisplay * self);
+
+GST_WL_API
 gint gst_wl_display_get_width (GstWlDisplay * self);
 
 GST_WL_API

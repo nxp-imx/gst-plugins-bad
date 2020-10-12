@@ -44,6 +44,7 @@ if use_wayland
     ['xdg-shell', 'stable', ],
     ['single-pixel-buffer', 'staging', 'v1' ],
     ['alpha-compositing', 'unstable', 'v1', ],
+    ['hdr10-metadata', 'unstable', 'v1', ],
   ]
   protocols_files = []
 
