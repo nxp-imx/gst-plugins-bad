@@ -9,7 +9,7 @@ if have_tinycompress
 endif
 
 if not have_tinycompress
-  tinycompress_dep = dependency('tinycompress', required: get_option('tinycompress'),
+  tinycompress_dep = dependency('tinycompress', required: false,
                             fallback: ['tinycompress', 'tinycompress_dep'])
   have_tinycompress = tinycompress_dep.found()
 endif
@@ -25,5 +25,6 @@ if have_tinycompress
   )
   pkgconfig.generate(gsttinycompress, install_dir: plugins_pkgconfig_install_dir)
 elif get_option('tinycompress').enabled()
-  error('tinycompress plugin enabled but TinyALSA library or headers not found')
+  message('tinycompress plugin enabled but TinyALSA library or headers not found')
+  subdir_done()
 endif
