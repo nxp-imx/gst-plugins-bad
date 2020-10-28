@@ -223,7 +223,10 @@ gst_buffer_get_wl_buffer (GstWlDisplay * display, GstBuffer * gstbuffer)
   if (wlbuf) {
     GstWlBufferPrivate *priv = gst_wl_buffer_get_instance_private (wlbuf);
 
-    priv->current_gstbuffer = gstbuffer;
+    if (priv->used_by_compositor)
+      gst_buffer_replace (&priv->current_gstbuffer, gstbuffer);
+    else
+      priv->current_gstbuffer = gstbuffer;
   }
 
   return wlbuf;
