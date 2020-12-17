@@ -286,6 +286,10 @@ gboolean     gst_play_set_subtitle_track            (GstPlay    *play,
                                                      gint stream_index);
 
 GST_PLAY_API
+gboolean     gst_play_set_connection_speed          (GstPlay    *play,
+                                                     guint connnection_speed);
+
+GST_PLAY_API
 GstPlayMediaInfo *    gst_play_get_media_info     (GstPlay * play);
 
 GST_PLAY_API
