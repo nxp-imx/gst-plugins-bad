@@ -754,8 +754,13 @@ static gboolean
 gst_dash_demux_setup_mpdparser_streams (GstDashDemux * demux,
     GstMPDClient * client)
 {
+  GstAdaptiveDemux *adaptivedemux = GST_ADAPTIVE_DEMUX_CAST (demux);
   gboolean has_streams = FALSE;
   GList *adapt_sets, *iter;
+
+  if (adaptivedemux->connection_speed) {
+    client->connection_speed = adaptivedemux->connection_speed;
+  }
 
   adapt_sets = gst_mpd_client_get_adaptation_sets (client);
   for (iter = adapt_sets; iter; iter = g_list_next (iter)) {
