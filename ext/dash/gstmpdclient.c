@@ -157,7 +157,6 @@ gst_mpd_client_get_lowest_representation (GList * Representations)
   return lowest;
 }
 
-#if 0
 static GstMPDRepresentationNode *
 gst_mpdparser_get_highest_representation (GList * Representations)
 {
@@ -177,6 +176,7 @@ gst_mpdparser_get_representation_with_max_bandwidth (GList * Representations,
 {
   GList *list = NULL;
   GstMPDRepresentationNode *representation, *best_rep = NULL;
+  gint best_bandwidth = 0;
 
   if (Representations == NULL)
     return NULL;
@@ -186,14 +186,15 @@ gst_mpdparser_get_representation_with_max_bandwidth (GList * Representations,
 
   for (list = g_list_first (Representations); list; list = g_list_next (list)) {
     representation = (GstMPDRepresentationNode *) list->data;
-    if (representation && representation->bandwidth <= max_bandwidth) {
+    if (representation && representation->bandwidth <= max_bandwidth
+        && representation->bandwidth > best_bandwidth) {
       best_rep = representation;
+      best_bandwidth = representation->bandwidth;
     }
   }
 
   return best_rep;
 }
-#endif
 
 static GstMPDSegmentListNode *
 gst_mpd_client_fetch_external_segment_list (GstMPDClient * client,
@@ -454,6 +455,7 @@ gst_mpd_client_class_init (GstMPDClientClass * klass)
 static void
 gst_mpd_client_init (GstMPDClient * client)
 {
+  client->connection_speed = 0;
 }
 
 GstMPDClient *
@@ -1612,7 +1614,7 @@ gboolean
 gst_mpd_client_setup_streaming (GstMPDClient * client,
     GstMPDAdaptationSetNode * adapt_set)
 {
-  GstMPDRepresentationNode *representation;
+  GstMPDRepresentationNode *representation = NULL;
   GList *rep_list = NULL;
   GstActiveStream *stream;
 
@@ -1628,7 +1630,8 @@ gst_mpd_client_setup_streaming (GstMPDClient * client,
   stream->baseURL_idx = 0;
   stream->cur_adapt_set = adapt_set;
 
-  GST_DEBUG ("0. Current stream %p", stream);
+  GST_DEBUG ("0. Current stream %p connection speed %u kbps", stream,
+      client->connection_speed / 1000);
 
 #if 0
   /* fast start */
@@ -1642,9 +1645,16 @@ gst_mpd_client_setup_streaming (GstMPDClient * client,
     representation = gst_mpd_client_get_lowest_representation (rep_list);
   }
 #else
-  /* slow start */
-  representation = gst_mpd_client_get_lowest_representation (rep_list);
+  /* select representation based on connection-speed */
+  if (client->connection_speed)
+    representation =
+        gst_mpdparser_get_representation_with_max_bandwidth (rep_list,
+        client->connection_speed);
 #endif
+
+  /* if no matched representation, then slow start */
+  if (!representation)
+    representation = gst_mpd_client_get_lowest_representation (rep_list);
 
   if (!representation) {
     GST_WARNING ("No valid representation in the MPD file, aborting...");
