@@ -42,6 +42,7 @@ struct _GstMPDClient
   gchar *mpd_uri;                             /* manifest file URI */
   gchar *mpd_base_uri;                        /* base URI for resolving relative URIs.
                                                * this will be different for redirects */
+  guint connection_speed;                     /* connection speed set by player */
 
   /* profiles */
   gboolean profile_isoff_ondemand;
