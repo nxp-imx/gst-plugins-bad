@@ -933,6 +933,19 @@ gst_dash_demux_setup_all_streams (GstDashDemux * demux)
           gst_dash_demux_send_content_protection_event, stream);
     }
 
+    if (active_stream->cur_adapt_set) {
+      GstStreamCollection *collection = NULL;
+      collection =
+          gst_mpd_client_get_stream_collection (demux->client,
+          active_stream->cur_adapt_set);
+      if (collection) {
+        GstEvent *event = NULL;
+        event = gst_event_new_stream_collection (collection);
+        gst_adaptive_demux_stream_queue_event ((GstAdaptiveDemuxStream *)
+            stream, event);
+      }
+    }
+
     gst_isoff_sidx_parser_init (&stream->sidx_parser);
   }
 

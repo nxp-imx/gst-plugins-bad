@@ -126,6 +126,7 @@ void gst_mpd_client_seek_to_first_segment (GstMPDClient * client);
 GstDateTime *gst_mpd_client_get_next_segment_availability_start_time (GstMPDClient * client, GstActiveStream * stream);
 
 /* Get audio/video stream parameters (caps, width, height, rate, number of channels) */
+GstStreamCollection * gst_mpd_client_get_stream_collection (GstMPDClient * client, GstMPDAdaptationSetNode * adapt_set);
 GstCaps * gst_mpd_client_get_stream_caps (GstActiveStream * stream);
 gboolean gst_mpd_client_get_bitstream_switching_flag (GstActiveStream * stream);
 guint gst_mpd_client_get_video_stream_width (GstActiveStream * stream);
