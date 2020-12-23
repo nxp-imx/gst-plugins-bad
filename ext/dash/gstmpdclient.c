@@ -2722,6 +2722,73 @@ gst_mpd_client_active_stream_contains_subtitles (GstActiveStream * stream)
       || (rep_codecs && g_str_has_prefix (rep_codecs, "stpp"));
 }
 
+GstStreamCollection *
+gst_mpd_client_get_stream_collection (GstMPDClient * client,
+    GstMPDAdaptationSetNode * adapt_set)
+{
+  GList *list = NULL;
+  GstMPDRepresentationBaseNode *base_rep = NULL;
+  GstMPDRepresentationNode *rep = NULL;
+  GstStreamCollection *collection = NULL;
+  const gchar *caps_mime;
+
+  if (adapt_set == NULL)
+    return NULL;
+
+  collection = gst_stream_collection_new (NULL);
+
+  for (list = g_list_first (adapt_set->Representations); list;
+      list = g_list_next (list)) {
+    GstStream *stream = NULL;
+    GstCaps *caps = NULL;
+    GstStreamType type = GST_STREAM_TYPE_UNKNOWN;
+    gchar *caps_string = NULL;
+
+    base_rep = GST_MPD_REPRESENTATION_BASE_NODE (list->data);
+    rep = (GstMPDRepresentationNode *) list->data;
+    caps_mime = gst_mpd_helper_mimetype_to_caps (base_rep->mimeType);
+    type = gst_mpd_helper_mimetype_to_stream_type (base_rep->mimeType);
+
+    switch (type) {
+      case GST_STREAM_TYPE_VIDEO:
+        caps_string =
+            g_strdup_printf ("%s,width=%u,height=%u,bitrate=%u", caps_mime,
+            base_rep->width, base_rep->height, rep->bandwidth);
+        break;
+      case GST_STREAM_TYPE_AUDIO:
+        /* fixme: add channel configure */
+        caps_string =
+            g_strdup_printf ("%s,rate=%s", caps_mime,
+            base_rep->audioSamplingRate);
+        break;
+      case GST_STREAM_TYPE_TEXT:
+        caps_string = g_strdup_printf ("%s", caps_mime);
+        break;
+      case GST_STREAM_TYPE_UNKNOWN:
+      case GST_STREAM_TYPE_CONTAINER:
+        GST_DEBUG_OBJECT (client, "meet not support stream type");
+        break;
+    }
+
+    if (caps_string) {
+      caps = gst_caps_from_string (caps_string);
+      g_free (caps_string);
+    }
+
+    if (!caps) {
+      gst_object_unref (collection);
+      return NULL;
+    }
+
+    stream = gst_stream_new (rep->id, caps, type, GST_STREAM_FLAG_NONE);
+    gst_stream_collection_add_stream (collection, stream);
+
+    gst_caps_unref (caps);
+  }
+
+  return collection;
+}
+
 GstCaps *
 gst_mpd_client_get_stream_caps (GstActiveStream * stream)
 {
