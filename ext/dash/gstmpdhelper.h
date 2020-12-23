@@ -60,6 +60,7 @@ typedef enum
 gboolean gst_mpd_helper_get_mpd_type (xmlNode * a_node, const gchar * property_name, GstMPDFileType * property_value);
 gboolean gst_mpd_helper_get_SAP_type (xmlNode * a_node, const gchar * property_name, GstMPDSAPType * property_value);
 
+GstStreamType gst_mpd_helper_mimetype_to_stream_type (const gchar * mimeType);
 const gchar * gst_mpd_helper_mimetype_to_caps (const gchar * mimeType);
 GstUri *gst_mpd_helper_combine_urls (GstUri * base, GList * list, gchar ** query, guint idx);
 int gst_mpd_helper_strncmp_ext (const char *s1, const char *s2);
