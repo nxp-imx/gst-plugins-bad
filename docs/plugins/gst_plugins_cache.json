@@ -255041,6 +255041,320 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "vmaf": {
+        "description": "Netflix VMAF quality metric plugin",
+        "elements": {
+            "vmaf": {
+                "author": "Casey Bateman <casey.bateman@hudl.com>, Andoni Morales <amorales@fluendo.com>, Diego Nieto <dnieto@fluendo.com>",
+                "description": "Provides Video Multi-Method Assessment Fusion metric",
+                "hierarchy": [
+                    "GstVmaf",
+                    "GstVideoAggregator",
+                    "GstAggregator",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Analyzer/Video",
+                "pad-templates": {
+                    "dist_sink": {
+                        "caps": "video/x-raw:\n         format: { I420, NV12, YV12, Y42B, Y444, I420_10LE, I422_10LE, Y444_10LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always",
+                        "type": "GstVideoAggregatorPad"
+                    },
+                    "ref_sink": {
+                        "caps": "video/x-raw:\n         format: { I420, NV12, YV12, Y42B, Y444, I420_10LE, I422_10LE, Y444_10LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always",
+                        "type": "GstVideoAggregatorPad"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n         format: { I420, NV12, YV12, Y42B, Y444, I420_10LE, I422_10LE, Y444_10LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always",
+                        "type": "GstAggregatorPad"
+                    }
+                },
+                "properties": {
+                    "conf-interval": {
+                        "blurb": "Enable confidence intervals",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "disable-clip": {
+                        "blurb": "Disable clipping VMAF values",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "enable-transform": {
+                        "blurb": "Enable transform VMAF scores",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "frame-message": {
+                        "blurb": "Enable frame level score messaging",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "log-level": {
+                        "blurb": "VMAF log level",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "none (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstVmafLogLevel",
+                        "writable": true
+                    },
+                    "model-filename": {
+                        "blurb": "Model *.pkl abs filename, or file version for built in models",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "vmaf_v0.6.1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "ms-ssim": {
+                        "blurb": "Estimate MS-SSIM",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "phone-model": {
+                        "blurb": "Use VMAF phone model",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "pool-method": {
+                        "blurb": "Pool method for mean",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "mean (3)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstVmafPoolMethod",
+                        "writable": true
+                    },
+                    "psnr": {
+                        "blurb": "Estimate PSNR",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "results-filename": {
+                        "blurb": "VMAF results filename for scores",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "results-format": {
+                        "blurb": "VMAF results file format used for scores (csv, xml, json)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "none (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstVmafResultsFormat",
+                        "writable": true
+                    },
+                    "ssim": {
+                        "blurb": "Estimate SSIM",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "subsample": {
+                        "blurb": "Computing on one of every N frames",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "128",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "threads": {
+                        "blurb": "The number of threads",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "8",
+                        "max": "2147483647",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            }
+        },
+        "filename": "gstvmaf",
+        "license": "LGPL",
+        "other-types": {
+            "GstVmafLogLevel": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "No logging",
+                        "name": "none",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Error",
+                        "name": "error",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Warning",
+                        "name": "warning",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Info",
+                        "name": "info",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "Debug",
+                        "name": "debug",
+                        "value": "4"
+                    }
+                ]
+            },
+            "GstVmafPoolMethod": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Minimum value",
+                        "name": "min",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Maximum value",
+                        "name": "max",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Arithmetic mean",
+                        "name": "mean",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "Harmonic mean",
+                        "name": "harmonic_mean",
+                        "value": "4"
+                    }
+                ]
+            },
+            "GstVmafResultsFormat": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "None",
+                        "name": "none",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "XML",
+                        "name": "xml",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Comma Separated File (csv)",
+                        "name": "csv",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "JSON",
+                        "name": "json",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "vmnc": {
         "description": "VmWare Video Codec plugins",
         "elements": {
