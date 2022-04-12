@@ -47,7 +47,7 @@ if xml2_dep.found()
     include_directories : [configinc, libsinc],
     dependencies : [gstadaptivedemux_dep, gsturidownloader_dep, gsttag_dep,
                     gstnet_dep, gstpbutils_dep, gstbase_dep, gstisoff_dep,
-                    gio_dep, xml2_dep],
+                    gio_dep, xml2_dep, gstmatroska_dep],
     install : true,
     install_dir : plugins_install_dir,
   )

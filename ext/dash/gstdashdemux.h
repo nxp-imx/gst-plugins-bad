@@ -37,6 +37,7 @@
 #include "gstmpdclient.h"
 #include <gst/isoff/gstisoff.h>
 #include <gst/uridownloader/gsturidownloader.h>
+#include <gst/matroska/gstmatroska.h>
 
 G_BEGIN_DECLS
 #define GST_TYPE_DASH_DEMUX \
@@ -72,6 +73,7 @@ struct _GstDashDemuxStream
   gint64 sidx_base_offset;
   gboolean allow_sidx;
   GstClockTime pending_seek_ts;
+  GstMatroskaParser matroska_parser;
 
   GstAdapter *adapter;
   /* current offset of the first byte in the adapter / last byte we pushed or
