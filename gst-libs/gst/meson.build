@@ -27,3 +27,5 @@ subdir('wayland')
 subdir('webrtc')
 subdir('winrt')
 subdir('analytics')
+subdir('matroska')
+
