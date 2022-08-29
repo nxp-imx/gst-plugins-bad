@@ -468,6 +468,8 @@ gst_wl_display_thread_run (gpointer data)
   GstWlDisplay *self = data;
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
   GstPollFD pollfd = GST_POLL_FD_INIT;
+  gint err;
+  gboolean normal = FALSE;
 
   pollfd.fd = wl_display_get_fd (priv->display);
   gst_poll_add_fd (priv->wl_fd_poll, &pollfd);
@@ -482,10 +484,13 @@ gst_wl_display_thread_run (gpointer data)
     wl_display_flush (priv->display);
 
     if (gst_poll_wait (priv->wl_fd_poll, GST_CLOCK_TIME_NONE) < 0) {
-      gboolean normal = (errno == EBUSY);
+      err = errno;
+      normal = (err == EBUSY);
       wl_display_cancel_read (priv->display);
       if (normal)
         break;
+      else if (err == EINTR)
+        continue;
       else
         goto error;
     }
