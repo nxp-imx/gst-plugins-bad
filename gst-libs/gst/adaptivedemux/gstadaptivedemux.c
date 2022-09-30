@@ -152,6 +152,12 @@ GST_DEBUG_CATEGORY (adaptivedemux_debug);
 #define GST_ADAPTIVE_DEMUX_SEGMENT_LOCK(d) g_mutex_lock (GST_ADAPTIVE_DEMUX_SEGMENT_GET_LOCK (d))
 #define GST_ADAPTIVE_DEMUX_SEGMENT_UNLOCK(d) g_mutex_unlock (GST_ADAPTIVE_DEMUX_SEGMENT_GET_LOCK (d))
 
+#define SUBTITLE_TEMPL_CAPS \
+      "application/x-subtitle; application/x-subtitle-sami; " \
+        "application/x-subtitle-tmplayer; application/x-subtitle-mpl2; " \
+        "application/x-subtitle-dks; application/x-subtitle-qttext;" \
+        "application/x-subtitle-lrc; application/x-subtitle-vtt;" \
+        "text/x-raw, format= { pango-markup, utf8 }"
 enum
 {
   PROP_0,
@@ -1857,6 +1863,43 @@ gst_adaptive_demux_handle_seek_event (GstAdaptiveDemux * demux, GstPad * pad,
   return ret;
 }
 
+static gboolean gst_adaptive_demux_is_subtitle_stream (GstAdaptiveDemuxStream *stream)
+{
+  gboolean ret = FALSE;
+  GstCaps *caps;
+  GstCaps *templ_caps =
+  gst_caps_from_string (SUBTITLE_TEMPL_CAPS);
+
+  caps = gst_pad_get_current_caps (stream->pad);
+  ret = gst_caps_is_subset (caps, templ_caps);
+  gst_caps_unref (caps);
+  gst_caps_unref (templ_caps);
+
+  return ret;
+}
+
+static gboolean
+gst_adaptive_demux_push_subtitle_src_event (GstAdaptiveDemux * demux, GstEvent * event)
+{
+  GList *iter;
+  gboolean ret = TRUE;
+
+  for (iter = demux->streams; iter; iter = g_list_next (iter)) {
+    GstAdaptiveDemuxStream *stream = iter->data;
+    gst_event_ref (event);
+
+    if (gst_adaptive_demux_is_subtitle_stream (stream)) {
+      if (stream->last_ret == GST_FLOW_EOS) {
+        ret = ret & gst_pad_push_event (stream->pad, event);
+        stream->last_ret = GST_FLOW_OK;
+        GST_DEBUG_OBJECT (stream->pad, "sending EOS");
+      }
+    }
+  }
+  gst_event_unref (event);
+  return ret;
+}
+
 static gboolean
 gst_adaptive_demux_src_event (GstPad * pad, GstObject * parent,
     GstEvent * event)
@@ -1886,13 +1929,32 @@ gst_adaptive_demux_src_event (GstPad * pad, GstObject * parent,
       stream = gst_adaptive_demux_find_stream_for_pad (demux, pad);
 
       if (stream) {
+        GST_DEBUG_OBJECT (stream->pad, "Received reconfigure event");
         if (!stream->cancelled && gst_adaptive_demux_is_running (demux) &&
-            stream->last_ret == GST_FLOW_NOT_LINKED) {
+            (stream->last_ret == GST_FLOW_NOT_LINKED || stream->last_ret == GST_FLOW_EOS)) {
+          if (stream->last_ret == GST_FLOW_EOS) {
+            if (!gst_adaptive_demux_is_subtitle_stream (stream)) {
+              gst_event_unref (event);
+              GST_MANIFEST_UNLOCK (demux);
+              return TRUE;
+            } else {
+              if (gst_task_get_state (stream->download_task) == GST_TASK_STARTED) {
+                GST_DEBUG_OBJECT (stream->pad, "downloading subtitle data, ignore it");
+                gst_event_unref (event);
+                GST_MANIFEST_UNLOCK (demux);
+                return TRUE;
+              }
+              GST_DEBUG_OBJECT (stream->pad, "download subtitle data again");
+              stream->restart_download = FALSE;
+            }
+          } else {
+            GST_DEBUG_OBJECT (stream->pad, "Restarting download loop");
+            stream->restart_download = TRUE;
+          }
           stream->last_ret = GST_FLOW_OK;
-          stream->restart_download = TRUE;
           stream->need_header = TRUE;
           stream->discont = TRUE;
-          GST_DEBUG_OBJECT (stream->pad, "Restarting download loop");
+          
           gst_task_start (stream->download_task);
         }
         gst_event_unref (event);
@@ -3879,6 +3941,12 @@ gst_adaptive_demux_stream_download_loop (GstAdaptiveDemuxStream * stream)
           ret = GST_FLOW_OK;
         }
       }
+
+      if (gst_adaptive_demux_is_subtitle_stream (stream)) {
+        GST_DEBUG_OBJECT (stream->pad, "not sending EOS");
+        ret = GST_FLOW_OK;
+      }
+
       break;
 
     case GST_FLOW_NOT_LINKED:
@@ -3974,6 +4042,7 @@ end_of_manifest:
       if (demux->next_streams == NULL && demux->prepared_streams == NULL) {
         GST_DEBUG_OBJECT (stream->src, "Pushing EOS on pad");
         gst_adaptive_demux_stream_push_event (stream, gst_event_new_eos ());
+        gst_adaptive_demux_push_subtitle_src_event(demux, gst_event_new_eos ());
       } else {
         GST_DEBUG_OBJECT (stream->src,
             "Stream is EOS, but we're switching fragments. Not sending.");
