@@ -57,7 +57,6 @@ typedef struct _GstWlDisplayPrivate
   struct zwp_fullscreen_shell_v1 *fullscreen_shell;
   struct wp_single_pixel_buffer_manager_v1 *single_pixel_buffer;
   struct wl_shm *shm;
-  struct wl_output *output;
   struct wp_viewporter *viewporter;
   struct zwp_linux_dmabuf_v1 *dmabuf;
   struct zwp_alpha_compositing_v1 *alpha_compositing;
@@ -67,6 +66,7 @@ typedef struct _GstWlDisplayPrivate
   GArray *shm_formats;
   GArray *dmabuf_formats;
   GArray *dmabuf_modifiers;
+  GArray *outputs;
 
   /* real display resolution */
   gint width, height;
@@ -109,6 +109,7 @@ gst_wl_display_init (GstWlDisplay * self)
   priv->shm_formats = g_array_new (FALSE, FALSE, sizeof (uint32_t));
   priv->dmabuf_formats = g_array_new (FALSE, FALSE, sizeof (uint32_t));
   priv->dmabuf_modifiers = g_array_new (FALSE, FALSE, sizeof (guint64));
+  priv->outputs = g_array_new (FALSE, FALSE, sizeof (struct wl_output *));
   priv->wl_fd_poll = gst_poll_new (TRUE);
   priv->buffers = g_hash_table_new (g_direct_hash, g_direct_equal);
   priv->width = -1;
@@ -132,6 +133,8 @@ gst_wl_ref_wl_buffer (gpointer key, gpointer value, gpointer user_data)
 static void
 gst_wl_display_finalize (GObject * gobject)
 {
+  guint i;
+  struct wl_output *output = NULL;
   GstWlDisplay *self = GST_WL_DISPLAY (gobject);
   GstWlDisplayPrivate *priv = gst_wl_display_get_instance_private (self);
 
@@ -170,6 +173,15 @@ gst_wl_display_finalize (GObject * gobject)
   if (priv->xdg_wm_base)
     xdg_wm_base_destroy (priv->xdg_wm_base);
 
+  if (priv->seat)
+    wl_seat_destroy (priv->seat);
+
+  if (priv->pointer)
+    wl_pointer_destroy (priv->pointer);
+
+  if (priv->touch)
+    wl_touch_destroy (priv->touch);
+
   if (priv->fullscreen_shell)
     zwp_fullscreen_shell_v1_release (priv->fullscreen_shell);
 
@@ -190,6 +202,15 @@ gst_wl_display_finalize (GObject * gobject)
 
   if (priv->explicit_sync)
     zwp_linux_explicit_synchronization_v1_destroy (priv->explicit_sync);
+
+  if (priv->outputs) {
+    for (i = 0; i < priv->outputs->len; i++) {
+      output = g_array_index (priv->outputs, struct wl_output *, i);
+      if (output)
+        wl_output_destroy (output);
+    }
+    g_array_unref (priv->outputs);
+  }
 
   if (priv->registry)
     wl_registry_destroy (priv->registry);
@@ -455,9 +476,11 @@ registry_handle_global (void *data, struct wl_registry *registry,
     priv->hdr10_metadata =
         wl_registry_bind (registry, id, &zwp_hdr10_metadata_v1_interface, 1);
   } else if (g_strcmp0 (interface, "wl_output") == 0) {
-    priv->output =
+    struct wl_output *output;
+    output =
 	wl_registry_bind (registry, id, &wl_output_interface, MIN (version, 2));
-    wl_output_add_listener (priv->output, &output_listener, self);
+    wl_output_add_listener (output, &output_listener, self);
+    g_array_append_val (priv->outputs, output);
   }
 }
 
