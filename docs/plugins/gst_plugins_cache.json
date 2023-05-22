@@ -256415,6 +256415,18 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "binary": {
+                        "blurb": "Enable or disable binary QR codes, where binary data is not converted to text",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "cache": {
                         "blurb": "Enable or disable the inter-image result cache",
                         "conditionally-available": false,
