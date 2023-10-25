@@ -249332,10 +249332,404 @@
     },
     "v4l2codecs": {
         "description": "V4L2 CODEC Accelerators plugin",
-        "elements": {},
+        "elements": {
+            "v4l2slav1dec": {
+                "author": "Daniel Almeida <daniel.almeida@collabora.com>",
+                "description": "A V4L2 based AV1 video decoder",
+                "hierarchy": [
+                    "v4l2slav1dec",
+                    "GstAV1Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-av1:\n      alignment: frame\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            },
+            "v4l2slh264dec": {
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
+                "description": "A V4L2 based H.264 video decoder",
+                "hierarchy": [
+                    "v4l2slh264dec",
+                    "GstH264Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-h264:\n  stream-format: { (string)avc, (string)avc3, (string)byte-stream }\n      alignment: au\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            },
+            "v4l2slh265dec": {
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
+                "description": "A V4L2 based H.265 video decoder",
+                "hierarchy": [
+                    "v4l2slh265dec",
+                    "GstH265Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-h265:\n  stream-format: { (string)hvc1, (string)hev1, (string)byte-stream }\n      alignment: au\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            },
+            "v4l2slmpeg2dec": {
+                "author": "Daniel Almeida <daniel.almeida@collabora.com>",
+                "description": "A V4L2 based Mpeg2 video decoder",
+                "hierarchy": [
+                    "v4l2slmpeg2dec",
+                    "GstMpeg2Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/mpeg:\n   systemstream: false\n    mpegversion: 2\n        profile: { (string)main, (string)simple }\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            },
+            "v4l2slvp8alphadecodebin": {
+                "author": "Daniel Almeida <daniel.almeida@collabora.com>",
+                "description": "Wrapper bin to decode VP8 with alpha stream.",
+                "hierarchy": [
+                    "v4l2slvp8alphadecodebin",
+                    "GstV4l2CodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp8:\n    codec-alpha: true\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "primary + 11"
+            },
+            "v4l2slvp8dec": {
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
+                "description": "A V4L2 based VP8 video decoder",
+                "hierarchy": [
+                    "v4l2slvp8dec",
+                    "GstVp8Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp8:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            },
+            "v4l2slvp9alphadecodebin": {
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
+                "description": "Wrapper bin to decode VP9 with alpha stream.",
+                "hierarchy": [
+                    "v4l2slvp9alphadecodebin",
+                    "GstV4l2CodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp9:\n    codec-alpha: true\n      alignment: frame\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "primary + 11"
+            },
+            "v4l2slvp9dec": {
+                "author": "Daniel Almeida <daniel.almeida@collabora.com>",
+                "description": "A V4L2 based VP9 video decoder",
+                "hierarchy": [
+                    "v4l2slvp9dec",
+                    "GstVp9Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp9:\n      alignment: frame\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "media-device": {
+                        "blurb": "Path to the media device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/mediaX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "video-device": {
+                        "blurb": "Path to the video device node",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "/dev/videoX",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "primary + 1"
+            }
+        },
         "filename": "gstv4l2codecs",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstV4l2CodecAlphaDecodeBin": {
+                "hierarchy": [
+                    "GstV4l2CodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "kind": "object"
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
