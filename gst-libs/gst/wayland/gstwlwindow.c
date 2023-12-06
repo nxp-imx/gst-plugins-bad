@@ -660,14 +660,10 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   GstVideoRectangle src = { 0, };
   GstVideoRectangle dst = { 0, };
   GstVideoRectangle res;
-  int wp_src_width;
-  int wp_src_height;
-
-  wl_fixed_t src_x = wl_fixed_from_int (priv->src_x / priv->scale);
-  wl_fixed_t src_y = wl_fixed_from_int (priv->src_y / priv->scale);
-  wl_fixed_t src_width = wl_fixed_from_int (priv->src_width / priv->scale);
-  wl_fixed_t src_height =
-      wl_fixed_from_int (priv->src_height / priv->scale);
+  int wp_src_width = -1;
+  int wp_src_height = -1;
+  int wp_src_x = priv->src_x;
+  int wp_src_y = priv->src_y;
 
   switch (priv->buffer_transform) {
     case WL_OUTPUT_TRANSFORM_NORMAL:
@@ -676,8 +672,8 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
     case WL_OUTPUT_TRANSFORM_FLIPPED_180:
       src.w = priv->scaled_width;
       src.h = priv->video_height;
-      wp_src_width = priv->video_width;
-      wp_src_height = priv->video_height;
+      wp_src_width = priv->src_width;
+      wp_src_height = priv->src_height;
       break;
     case WL_OUTPUT_TRANSFORM_90:
     case WL_OUTPUT_TRANSFORM_270:
@@ -685,8 +681,8 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
     case WL_OUTPUT_TRANSFORM_FLIPPED_270:
       src.w = priv->video_height;
       src.h = priv->scaled_width;
-      wp_src_width = priv->video_height;
-      wp_src_height = priv->video_width;
+      wp_src_width = priv->src_height;
+      wp_src_height = priv->src_width;
       break;
     default:
       g_assert_not_reached ();
@@ -699,9 +695,12 @@ gst_wl_window_resize_video_surface (GstWlWindow * self, gboolean commit)
   if (priv->video_viewport) {
     gst_video_center_rect (&src, &dst, &res, TRUE);
     wp_viewport_set_destination (priv->video_viewport, res.w, res.h);
-    if (src_width != wl_fixed_from_int (-1 / priv->scale))
+    if (wp_src_width != -1 && wp_src_height != -1)
       wp_viewport_set_source (priv->video_viewport,
-          src_x, src_y, src_width, src_height);
+          wl_fixed_from_int (wp_src_x / priv->scale),
+          wl_fixed_from_int (wp_src_y / priv->scale),
+          wl_fixed_from_int (wp_src_width / priv->scale),
+          wl_fixed_from_int (wp_src_height / priv->scale));
   } else {
     gst_video_center_rect (&src, &dst, &res, FALSE);
   }
