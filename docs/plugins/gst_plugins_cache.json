@@ -248905,11 +248905,216 @@
                     }
                 },
                 "rank": "primary"
+            },
+            "yolosegv8tensordec": {
+                "author": "Daniel Morin <daniel.morin@collabora.com>, Santosh Mahto <santosh.mahto@collabora.com>",
+                "description": "Decode tensors output from the inference of Yolo or FastSAM model (segmentation) on video frames. It works with YOLO version > 8 and FastSAM models.",
+                "hierarchy": [
+                    "GstYoloSegTensorDecoder",
+                    "GstYoloTensorDecoder",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Tensordecoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "secondary"
+            },
+            "yolotensordec": {
+                "author": "Daniel Morin <daniel.morin@collabora.com>, Santosh Mahto <santosh.mahto@collabora.com>",
+                "description": "Decode tensors output from the inference of YOLO Object Detection or FastSAM model (Detection)on video frames. This works on YOLO version 5 and later(v11), and FastSAM models.",
+                "hierarchy": [
+                    "GstYoloTensorDecoder",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Tensordecoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "box-confidence-threshold": {
+                        "blurb": "Boxes with a location confidence level inferior to this threshold will be excluded",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.4",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "class-confidence-threshold": {
+                        "blurb": "Classes with a confidence level inferior to this threshold will be excluded",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.4",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "iou-threshold": {
+                        "blurb": "Maximum intersection-over-union between bounding boxes to consider them distinct.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.7",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "label-file": {
+                        "blurb": "Label file",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "max-detections": {
+                        "blurb": "Maximum object/masks detections.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "100",
+                        "max": "-1",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    }
+                },
+                "rank": "primary"
             }
         },
         "filename": "gsttensordecoders",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstYoloTensorDecoder": {
+                "hierarchy": [
+                    "GstYoloTensorDecoder",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "kind": "object",
+                "properties": {
+                    "box-confidence-threshold": {
+                        "blurb": "Boxes with a location confidence level inferior to this threshold will be excluded",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.4",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "class-confidence-threshold": {
+                        "blurb": "Classes with a confidence level inferior to this threshold will be excluded",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.4",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "iou-threshold": {
+                        "blurb": "Maximum intersection-over-union between bounding boxes to consider them distinct.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.7",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "label-file": {
+                        "blurb": "Label file",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "max-detections": {
+                        "blurb": "Maximum object/masks detections.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "100",
+                        "max": "-1",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    }
+                }
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
