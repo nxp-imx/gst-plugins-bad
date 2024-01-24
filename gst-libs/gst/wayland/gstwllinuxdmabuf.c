@@ -137,12 +137,29 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
   params = zwp_linux_dmabuf_v1_create_params (gst_wl_display_get_dmabuf_v1
       (display));
 
+  if (vmeta) {
+    width += vmeta->alignment.padding_left + vmeta->alignment.padding_right;
+    height += vmeta->alignment.padding_top + vmeta->alignment.padding_bottom;
+    GST_DEBUG_OBJECT (display, "padding left: %d, right: %d, top: %d, bottom: %d",
+          vmeta->alignment.padding_left, vmeta->alignment.padding_right,
+          vmeta->alignment.padding_top, vmeta->alignment.padding_bottom);
+    GST_DEBUG_OBJECT (display, "padding size: %dx%d", width, height);
+  }
+
   for (i = 0; i < nplanes; i++) {
     guint offset, stride, mem_idx, length;
     gsize skip;
 
     offset = offsets[i];
     stride = strides[i];
+    /* adjust the offset to take into account left and top */
+    if (vmeta && (vmeta->alignment.padding_left || vmeta->alignment.padding_top)) {
+      gint vedge, hedge;
+      hedge = GST_VIDEO_FORMAT_INFO_SCALE_WIDTH (drm_info->vinfo.finfo, i, vmeta->alignment.padding_left);
+      vedge = GST_VIDEO_FORMAT_INFO_SCALE_HEIGHT (drm_info->vinfo.finfo, i, vmeta->alignment.padding_top);
+      offset -= ((vedge * stride) + (hedge * GST_VIDEO_INFO_COMP_PSTRIDE (&drm_info->vinfo, i)));
+    }
+
     if (gst_buffer_find_memory (buf, offset, 1, &mem_idx, &length, &skip)) {
       GstMemory *m = gst_buffer_peek_memory (buf, mem_idx);
       gint fd = gst_dmabuf_memory_get_fd (m);
