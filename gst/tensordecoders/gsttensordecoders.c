@@ -1,9 +1,8 @@
-
-/*
- * GStreamer gstreamer-onnx
- * Copyright (C) 2021 Collabora Ltd
+/* GStreamer object detection overlay
+ * Copyright (C) <2024> Collabora Ltd.
+ *  @author: Daniel Morin <daniel.morin@collabora.com>
  *
- * gstonnx.c
+ * gsttensordecoders.c
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,20 +19,31 @@
  * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#   include "config.h"
 #endif
 
-#include "gstonnxinference.h"
+#include "gstssdobjectdetector.h"
 
+/**
+ * SECTION:plugin-tensordecoders
+ *
+ * Tensor decoders
+ *
+ * Since: 1.26
+ */
 static gboolean
 plugin_init (GstPlugin * plugin)
 {
-  return GST_ELEMENT_REGISTER (onnx_inference, plugin);
+  gboolean ret = FALSE;
+  ret |= GST_ELEMENT_REGISTER (ssd_object_detector, plugin);
+
+  return ret;
 }
 
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
     GST_VERSION_MINOR,
-    onnx,
-    "ONNX neural network plugin",
-    plugin_init, VERSION, GST_LICENSE, GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN);
+    tensordecoders,
+    "Tensor decoders elements",
+    plugin_init, VERSION, GST_LICENSE, GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)

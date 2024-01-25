@@ -245050,6 +245050,86 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "tensordecoders": {
+        "description": "Tensor decoders elements",
+        "elements": {
+            "ssdobjectdetector": {
+                "author": "Aaron Boxer <aaron.boxer@collabora.com>, Marcus Edel <marcus.edel@collabora.com>",
+                "description": "Apply tensor output from inference to detect objects in video frames",
+                "hierarchy": [
+                    "GstSsdObjectDetector",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "TensorDecoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "label-file": {
+                        "blurb": "Label file",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "score-threshold": {
+                        "blurb": "Threshold for deciding when to remove boxes based on score",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.3",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "size-threshold": {
+                        "blurb": "Threshold for deciding when to remove boxes based on proportion of the image",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.9",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    }
+                },
+                "rank": "primary"
+            }
+        },
+        "filename": "gsttensordecoders",
+        "license": "LGPL",
+        "other-types": {},
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "timecode": {
         "description": "Timecode-related elements",
         "elements": {

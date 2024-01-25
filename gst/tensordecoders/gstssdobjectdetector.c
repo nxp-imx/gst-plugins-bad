@@ -2,7 +2,7 @@
  * GStreamer gstreamer-ssdobjectdetector
  * Copyright (C) 2021 Collabora Ltd.
  *
- * gstssdobjectdetector.cpp
+ * gstssdobjectdetector.c
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
