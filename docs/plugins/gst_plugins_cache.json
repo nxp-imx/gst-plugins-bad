@@ -7849,6 +7849,18 @@
                         "type": "guint64",
                         "writable": true
                     },
+                    "input-meta-processing": {
+                        "blurb": "Controls how input closed caption meta is processed",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "append (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstCCCombinerInputProcessing",
+                        "writable": true
+                    },
                     "max-scheduled": {
                         "blurb": "Maximum number of buffers to queue for scheduling",
                         "conditionally-available": false,
@@ -8151,6 +8163,26 @@
                         "desc": "Write 608 padding as valid",
                         "name": "valid",
                         "value": "0x00000002"
+                    }
+                ]
+            },
+            "GstCCCombinerInputProcessing": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "append aggregated CC to existing metas on video buffer",
+                        "name": "append",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "drop existing CC metas on input video buffer",
+                        "name": "drop",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "discard aggregated CC when input video buffers hold CC metas already",
+                        "name": "favor",
+                        "value": "2"
                     }
                 ]
             },
