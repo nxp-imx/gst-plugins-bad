@@ -220960,14 +220960,14 @@
                         "writable": true
                     },
                     "scte-35-null-interval": {
-                        "blurb": "Set the interval (in ticks of the 90kHz clock) for writing SCTE-35 NULL (heartbeat) packets. (only valid if scte-35-pid is different from 0)",
+                        "blurb": "Set the interval (in ticks of the 90kHz clock) for writing SCTE-35 NULL (heartbeat) packets. 0=disable (only valid if scte-35-pid is different from 0)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "27000000",
                         "max": "-1",
-                        "min": "1",
+                        "min": "0",
                         "mutable": "null",
                         "readable": true,
                         "type": "guint",
