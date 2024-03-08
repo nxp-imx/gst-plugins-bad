@@ -7809,6 +7809,32 @@
                     }
                 },
                 "properties": {
+                    "cea608-padding-strategy": {
+                        "blurb": "What transformations to perform on CEA-608 padding data",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "valid",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstCCBufferCea608PaddingStrategy",
+                        "writable": true
+                    },
+                    "cea608-padding-valid-timeout": {
+                        "blurb": "How long after receiving valid non-padding CEA-608 data to keep writing valid CEA-608 padding bytes",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "18446744073709551615",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    },
                     "max-scheduled": {
                         "blurb": "Maximum number of buffers to queue for scheduling",
                         "conditionally-available": false,
@@ -8071,6 +8097,21 @@
         "filename": "gstclosedcaption",
         "license": "LGPL",
         "other-types": {
+            "GstCCBufferCea608PaddingStrategy": {
+                "kind": "flags",
+                "values": [
+                    {
+                        "desc": "Remove padding from input data",
+                        "name": "input-remove",
+                        "value": "0x00000001"
+                    },
+                    {
+                        "desc": "Write 608 padding as valid",
+                        "name": "valid",
+                        "value": "0x00000002"
+                    }
+                ]
+            },
             "GstCCConverterCDPMode": {
                 "kind": "flags",
                 "values": [
