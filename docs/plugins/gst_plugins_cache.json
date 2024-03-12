@@ -7872,6 +7872,20 @@
                         "readable": true,
                         "type": "gboolean",
                         "writable": true
+                    },
+                    "schedule-timeout": {
+                        "blurb": "How long after not receiving caption data on the caption pad to continue adding (padding) caption data on output buffers",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "18446744073709551615",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
                     }
                 },
                 "rank": "none"
