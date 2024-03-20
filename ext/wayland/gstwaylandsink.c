@@ -51,6 +51,10 @@
 #include <gst/video/videooverlay.h>
 #include <linux/version.h>
 
+#ifdef HAVE_DMABUFHEAPS_ALLOCATOR
+#include <gst/allocators/gstdmabufheaps.h>
+#endif
+
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
@@ -77,6 +81,8 @@ enum
   PROP_DRM_DEVICE,
   PROP_LAST
 };
+
+#define ISALIGNED(a, b) (!(a & (b-1)))
 
 GST_DEBUG_CATEGORY (gstwayland_debug);
 #define GST_CAT_DEFAULT gstwayland_debug
@@ -691,7 +697,10 @@ static gboolean
 gst_wayland_update_pool (GstWaylandSink * self, GstAllocator * allocator)
 {
   gsize size = self->video_info.size;
+  gint w = GST_VIDEO_INFO_WIDTH (&self->video_info);
+  gint h = GST_VIDEO_INFO_HEIGHT (&self->video_info);
   GstStructure *config;
+  gboolean is_shm = GST_IS_SHM_ALLOCATOR (allocator);
 
   /* Pools with outstanding buffer cannot be reconfigured, so we must use
    * a new pool. */
@@ -705,6 +714,24 @@ gst_wayland_update_pool (GstWaylandSink * self, GstAllocator * allocator)
   config = gst_buffer_pool_get_config (self->pool);
   gst_buffer_pool_config_set_params (config, self->caps, size, 2, 0);
   gst_buffer_pool_config_set_allocator (config, allocator, NULL);
+
+  if (!is_shm && (!ISALIGNED (w, 16) || !ISALIGNED (h, 16))) {
+    GstVideoAlignment alignment;
+
+    memset (&alignment, 0, sizeof (GstVideoAlignment));
+    alignment.padding_right = GST_ROUND_UP_N (w, 16) - w;
+    alignment.padding_bottom = GST_ROUND_UP_N (h, 16) - h;
+
+    GST_DEBUG
+        ("align buffer pool, w(%d) h(%d), padding_right (%d), padding_bottom (%d)",
+        w, h, alignment.padding_right, alignment.padding_bottom);
+
+    gst_buffer_pool_config_add_option (config,
+        GST_BUFFER_POOL_OPTION_VIDEO_META);
+    gst_buffer_pool_config_add_option (config,
+         GST_BUFFER_POOL_OPTION_VIDEO_ALIGNMENT);
+    gst_buffer_pool_config_set_video_alignment (config, &alignment);
+  }
 
   if (!gst_buffer_pool_set_config (self->pool, config))
     return FALSE;
@@ -771,6 +798,35 @@ gst_wayland_activate_drm_dumb_pool (GstWaylandSink * self)
 }
 
 static gboolean
+gst_wayland_activate_dmaheaps_pool (GstWaylandSink * self)
+{
+#ifdef HAVE_DMABUFHEAPS_ALLOCATOR
+  GstAllocator *alloc = NULL;
+
+  if (self->pool && gst_buffer_pool_is_active (self->pool)) {
+    GstStructure *config = gst_buffer_pool_get_config (self->pool);
+    gboolean is_dmaheaps = FALSE;
+
+    if (gst_buffer_pool_config_get_allocator (config, &alloc, NULL) && alloc)
+      is_dmaheaps = GST_IS_DMABUFHEAPS_ALLOCATOR (alloc);
+
+    gst_structure_free (config);
+
+    if (is_dmaheaps)
+      return TRUE;
+  }
+
+  alloc = gst_dmabufheaps_allocator_obtain ();
+  gst_wayland_update_pool (self, alloc);
+  gst_object_unref (alloc);
+
+  return TRUE;
+#else
+  return FALSE;
+#endif
+}
+
+static gboolean
 gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
 {
   GstWaylandSink *self = GST_WAYLAND_SINK (bsink);;
@@ -796,7 +852,7 @@ gst_wayland_sink_set_caps (GstBaseSink * bsink, GstCaps * caps)
   }
 
   self->video_info_changed = TRUE;
-  self->skip_dumb_buffer_copy = FALSE;
+  self->skip_dma_buffer_copy = FALSE;
 
   /* free pooled buffer used with previous caps */
   if (self->pool) {
@@ -855,6 +911,7 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   GstCaps *caps;
   GstBufferPool *pool = NULL;
   gboolean need_pool;
+  GstAllocator *alloc = NULL;
   guint64 drm_modifier;
   GstVideoInfoDmaDrm drm_info;
   GstVideoInfo vinfo;
@@ -892,9 +949,39 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
     GstStructure *config;
     pool = gst_wl_video_buffer_pool_new ();
     config = gst_buffer_pool_get_config (pool);
+
+    gint w = GST_VIDEO_INFO_WIDTH (&self->video_info);
+    gint h = GST_VIDEO_INFO_HEIGHT (&self->video_info);
+
+    if (gst_wl_display_check_format_for_dmabuf (self->display, &self->drm_info)) {
+#ifdef HAVE_DMABUFHEAPS_ALLOCATOR
+      alloc = gst_dmabufheaps_allocator_obtain ();
+#endif
+    } else {
+      alloc = gst_shm_allocator_get ();
+    }
+
+    if (!ISALIGNED (w, 16) || !ISALIGNED (h, 16)) {
+      GstVideoAlignment alignment;
+
+      memset (&alignment, 0, sizeof (GstVideoAlignment));
+      alignment.padding_right = GST_ROUND_UP_N (w, 16) - w;
+      alignment.padding_bottom = GST_ROUND_UP_N (h, 16) - h;
+
+      GST_DEBUG_OBJECT
+          (self, "align buffer pool, w(%d) h(%d), padding_right (%d), padding_bottom (%d)",
+          w, h, alignment.padding_right, alignment.padding_bottom);
+
+      gst_buffer_pool_config_add_option (config,
+          GST_BUFFER_POOL_OPTION_VIDEO_ALIGNMENT);
+      gst_buffer_pool_config_set_video_alignment (config, &alignment);
+    }
+
     gst_buffer_pool_config_set_params (config, caps, size, 2, 0);
     gst_buffer_pool_config_set_allocator (config,
-        gst_shm_allocator_get (), NULL);
+        alloc, NULL);
+    gst_buffer_pool_config_add_option (config,
+          GST_BUFFER_POOL_OPTION_VIDEO_META);
     gst_buffer_pool_set_config (pool, config);
   }
 
@@ -903,9 +990,11 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
     g_object_unref (pool);
 
   if (!gst_video_is_dma_drm_caps (caps)) {
-    GstAllocator *alloc = gst_shm_allocator_get ();
-    gst_query_add_allocation_param (query, alloc, NULL);
-    g_object_unref (alloc);
+    if (alloc) {
+      gst_object_ref_sink (alloc);
+      gst_query_add_allocation_param (query, alloc, NULL);
+      g_object_unref (alloc);
+    }
   }
 
   gst_query_add_allocation_meta (query, GST_VIDEO_META_API_TYPE, NULL);
@@ -1091,7 +1180,7 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
       wbuf = gst_wl_linux_dmabuf_construct_wl_buffer (buffer, self->display,
           &self->drm_info);
 
-    if (!wbuf && !self->skip_dumb_buffer_copy) {
+    if (!wbuf && !self->skip_dma_buffer_copy) {
       /* DMABuf did not work, let try and make this a dmabuf, it does not matter
        * if it was a SHM since the compositor needs to copy that anyway, and
        * offloading the compositor from a copy helps maintaining a smoother
@@ -1099,8 +1188,12 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
        */
       GstVideoFrame src, dst;
 
-      if (!gst_wayland_activate_drm_dumb_pool (self)) {
-        self->skip_dumb_buffer_copy = TRUE;
+      if (gst_wayland_activate_dmaheaps_pool (self)) {
+        GST_WARNING_OBJECT (self, "active dmaheaps pool");
+      } else if (gst_wayland_activate_drm_dumb_pool (self)) {
+        GST_WARNING_OBJECT (self, "active drm dump pool");
+      } else {
+        self->skip_dma_buffer_copy = TRUE;
         goto handle_shm;
       }
 
@@ -1118,7 +1211,7 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
         if (G_UNLIKELY (!wbuf)) {
           GST_WARNING_OBJECT (self, "failed to import DRM Dumb dmabuf");
           gst_clear_buffer (&to_render);
-          self->skip_dumb_buffer_copy = TRUE;
+          self->skip_dma_buffer_copy = TRUE;
           goto handle_shm;
         }
 
