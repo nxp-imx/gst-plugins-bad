@@ -74,7 +74,7 @@ struct _GstWaylandSink
   GstVideoOrientationMethod current_rotate_method;
 
   gchar *drm_device;
-  gboolean skip_dumb_buffer_copy;
+  gboolean skip_dma_buffer_copy;
 
   /* fps print support */
   guint64 frame_showed;
