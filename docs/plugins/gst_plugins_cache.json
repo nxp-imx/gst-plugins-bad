@@ -8915,6 +8915,33 @@
                 },
                 "rank": "none"
             },
+            "h264ccextractor": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Extract GstVideoCaptionMeta from input H.264 stream",
+                "hierarchy": [
+                    "GstH264CCExtractor",
+                    "GstH264Decoder",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Video/Filter",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-h264:\n      alignment: au\n         parsed: true\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "closedcaption/x-cea-608:\n         format: { raw, s334-1a }\nclosedcaption/x-cea-708:\n         format: { cc_data, cdp }\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
             "line21decoder": {
                 "author": "Edward Hervey <edward@centricular.com>",
                 "description": "Extract line21 CC from SD video streams",
