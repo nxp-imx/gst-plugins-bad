@@ -1369,7 +1369,8 @@ dst_map_failed:
   }
 done:
   {
-    self->frame_showed++;
+    if (ret == GST_FLOW_OK)
+      self->frame_showed++;
     g_mutex_unlock (&self->render_lock);
     return ret;
   }
