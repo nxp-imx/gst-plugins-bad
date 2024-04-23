@@ -63,6 +63,9 @@ typedef struct _GstWlWindowPrivate
   GCond configure_cond;
   GMutex configure_mutex;
 
+  gboolean redraw_pending;
+  GCond redraw_wait;
+
   struct wl_shell_surface *shell_surface;
   struct zwp_blending_v1 *blend_func;
 
@@ -387,7 +390,9 @@ gst_wl_window_init (GstWlWindow * self)
   GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
 
   priv->configured = TRUE;
+  priv->redraw_pending = FALSE;
   g_cond_init (&priv->configure_cond);
+  g_cond_init (&priv->redraw_wait);
   g_mutex_init (&priv->configure_mutex);
   g_mutex_init (&priv->window_lock);
 
@@ -412,7 +417,13 @@ gst_wl_window_finalize (GObject * gobject)
   if (priv->staged_buffer)
     gst_wl_buffer_unref_buffer (priv->staged_buffer);
 
+  g_mutex_lock (&priv->window_lock);
+  priv->redraw_pending = FALSE;
+  g_cond_signal (&priv->redraw_wait);
+  g_mutex_unlock (&priv->window_lock);
+  
   g_cond_clear (&priv->configure_cond);
+  g_cond_clear (&priv->redraw_wait);
   g_mutex_clear (&priv->configure_mutex);
   g_mutex_clear (&priv->window_lock);
 
@@ -856,6 +867,8 @@ frame_redraw_callback (void *data, struct wl_callback *callback, uint32_t time)
   g_mutex_lock (&priv->window_lock);
   next_buffer = priv->next_buffer = priv->staged_buffer;
   priv->staged_buffer = NULL;
+  priv->redraw_pending = FALSE;
+  g_cond_signal (&priv->redraw_wait);
   g_mutex_unlock (&priv->window_lock);
 
   if (next_buffer || priv->clear_window)
@@ -978,6 +991,9 @@ gst_wl_window_render (GstWlWindow * self, GstWlBuffer * buffer,
   if (G_UNLIKELY (info))
     priv->next_video_info = gst_video_info_copy (info);
 
+  while (priv->redraw_pending)
+    g_cond_wait (&priv->redraw_wait, &priv->window_lock);
+
   if (priv->next_buffer && priv->staged_buffer) {
     GST_LOG_OBJECT (self, "buffer %p dropped (replaced)", priv->staged_buffer);
     gst_wl_buffer_unref_buffer (priv->staged_buffer);
@@ -986,6 +1002,7 @@ gst_wl_window_render (GstWlWindow * self, GstWlBuffer * buffer,
 
   if (!priv->next_buffer) {
     priv->next_buffer = buffer;
+    priv->redraw_pending = TRUE;
     priv->commit_callback =
         gst_wl_display_sync (priv->display, &commit_listener, self);
     wl_display_flush (gst_wl_display_get_display (priv->display));
