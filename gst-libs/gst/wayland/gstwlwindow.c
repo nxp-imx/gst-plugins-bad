@@ -95,6 +95,8 @@ typedef struct _GstWlWindowPrivate
   struct wl_callback *frame_callback;
   struct wl_callback *commit_callback;
 
+  GMutex commit_lock;
+
   /* the coordinate of video crop */
   gint src_x, src_y, src_width, src_height;
 
@@ -395,6 +397,7 @@ gst_wl_window_init (GstWlWindow * self)
   g_cond_init (&priv->redraw_wait);
   g_mutex_init (&priv->configure_mutex);
   g_mutex_init (&priv->window_lock);
+  g_mutex_init (&priv->commit_lock);
 
   priv->src_x = 0;
   priv->src_y = 0;
@@ -426,6 +429,7 @@ gst_wl_window_finalize (GObject * gobject)
   g_cond_clear (&priv->redraw_wait);
   g_mutex_clear (&priv->configure_mutex);
   g_mutex_clear (&priv->window_lock);
+  g_mutex_clear (&priv->commit_lock);
 
   if (priv->xdg_toplevel)
     xdg_toplevel_destroy (priv->xdg_toplevel);
@@ -903,6 +907,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
     gst_wl_window_set_opaque (self, info);
   }
 
+  g_mutex_lock (&priv->commit_lock);
   if (G_LIKELY (buffer)) {
     current_gstbuffer = gst_wl_buffer_get_current_gstbuffer (buffer);
     used_by_compositor = gst_wl_buffer_get_used_by_compositor (buffer);
@@ -951,6 +956,7 @@ gst_wl_window_commit_buffer (GstWlWindow * self, GstWlBuffer * buffer)
     priv->next_video_info = NULL;
   }
 
+  g_mutex_unlock (&priv->commit_lock);
 }
 
 static void
@@ -1104,14 +1110,17 @@ gst_wl_window_update_geometry (GstWlWindow * self)
     return;
 
   if (priv->scaled_width != 0) {
+    g_mutex_lock (&priv->commit_lock);
     wl_subsurface_set_sync (priv->video_subsurface);
     gst_wl_window_resize_video_surface (self, TRUE);
   }
 
   wl_surface_commit (priv->area_surface_wrapper);
 
-  if (priv->scaled_width != 0)
+  if (priv->scaled_width != 0) {
     wl_subsurface_set_desync (priv->video_subsurface);
+    g_mutex_unlock (&priv->commit_lock);
+  }
 }
 
 void
