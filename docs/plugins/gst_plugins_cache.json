@@ -227265,7 +227265,7 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-h264:\n  stream-format: { (string)avc, (string)avc3, (string)byte-stream }\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-high, (string)constrained-baseline, (string)baseline }\n      framerate: [ 0/1, 2147483647/1 ]\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
+                        "caps": "video/x-h264:\n  stream-format: { (string)avc, (string)avc3, (string)byte-stream }\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-high, (string)constrained-baseline, (string)baseline, (string)progressive-high }\n      framerate: [ 0/1, 2147483647/1 ]\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
