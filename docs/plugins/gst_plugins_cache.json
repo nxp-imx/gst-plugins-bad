@@ -3976,6 +3976,20 @@
                         "type": "guint",
                         "writable": true
                     },
+                    "timebase": {
+                        "blurb": "Fraction of one second that is the shortest interframe time - normally left as zero which will default to the framerate",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0/1",
+                        "max": "2147483647/1",
+                        "min": "0/1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstFraction",
+                        "writable": true
+                    },
                     "undershoot-pct": {
                         "blurb": "Rate control adaptation undershoot control",
                         "conditionally-available": false,
