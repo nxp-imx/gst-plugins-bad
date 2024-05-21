@@ -236393,6 +236393,18 @@
                         "type": "guint",
                         "writable": true
                     },
+                    "extra-connect-args": {
+                        "blurb": "librtmp-style arbitrary data to be appended to the \"connect\" command",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
                     "peak-kbps": {
                         "blurb": "Bitrate in kbit/sec to pace outgoing packets",
                         "conditionally-available": false,
@@ -236470,6 +236482,18 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "gboolean",
+                        "writable": true
+                    },
+                    "extra-connect-args": {
+                        "blurb": "librtmp-style arbitrary data to be appended to the \"connect\" command",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
                         "writable": true
                     },
                     "idle-timeout": {
