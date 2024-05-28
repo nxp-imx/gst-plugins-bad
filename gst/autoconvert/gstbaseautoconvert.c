@@ -104,6 +104,9 @@ static gboolean gst_base_auto_convert_internal_src_query (GstPad * pad,
     GstObject * parent, GstQuery * query);
 static GList *gst_base_auto_convert_get_or_load_filters_info (GstBaseAutoConvert
     * self);
+static gboolean
+gst_base_auto_convert_check_negotiation (GstBaseAutoConvert * self,
+    GstCaps * caps, GstEvent * caps_event);
 
 G_DECLARE_FINAL_TYPE (GstBaseAutoConvertPad, gst_base_auto_convert_pad, GST,
     BASE_AUTO_CONVERT_PAD, GstPad);
@@ -598,7 +601,7 @@ gst_base_auto_convert_get_element_internal_pads (GstBaseAutoConvert * self,
 
 static gboolean
 gst_base_auto_convert_activate_element (GstBaseAutoConvert * self,
-    GstElement * element, GstCaps * caps)
+    GstElement * element, GstCaps * caps, GstEvent * caps_event)
 {
   gboolean res = TRUE;
   GstPad *sinkpad = NULL, *srcpad = NULL;
@@ -685,6 +688,13 @@ gst_base_auto_convert_activate_element (GstBaseAutoConvert * self,
 
   gst_pad_sticky_events_foreach (self->sinkpad, sticky_event_push, self);
 
+  /* Should check caps negotiation result if we can really use it */
+  if (caps_event &&
+      !gst_base_auto_convert_check_negotiation (self, caps, caps_event)) {
+    GST_DEBUG_OBJECT (element, "Check caps negotiation failed");
+    goto error;
+  }
+
   gst_pad_push_event (self->sinkpad, gst_event_new_reconfigure ());
 
   GST_INFO_OBJECT (self, "Selected element %s",
@@ -754,6 +764,47 @@ gst_auto_convert_get_filter_info (GstBaseAutoConvert * self,
   return NULL;
 }
 
+static gboolean
+gst_base_auto_convert_check_negotiation (GstBaseAutoConvert * self,
+    GstCaps * caps, GstEvent * caps_event)
+{
+  GstPad *internal_srcpad;
+  GstPad *internal_sinkpad;
+  gboolean ret = FALSE;
+
+  internal_srcpad = gst_base_auto_convert_get_internal_srcpad (self);
+  internal_sinkpad = gst_base_auto_convert_get_internal_sinkpad (self);
+  if (!internal_srcpad || !internal_sinkpad) {
+    GST_DEBUG_OBJECT (self, "Could not get internal src or sink pad");
+    goto done;
+  }
+
+  /* Send caps event to trigger caps negotiation
+   * and get the internal sink caps to check caps
+   * negotiation result
+   */
+  if (!gst_pad_push_event (internal_srcpad, gst_event_ref (caps_event))) {
+    GST_DEBUG_OBJECT (self, "Sending caps event failed, %s:%s",
+        GST_DEBUG_PAD_NAME (internal_srcpad));
+    goto done;
+  }
+
+  if (!gst_pad_get_current_caps (internal_sinkpad)) {
+    GST_DEBUG_OBJECT (self, "Could not get caps, %s:%s",
+        GST_DEBUG_PAD_NAME (internal_sinkpad));
+  } else {
+    GST_DEBUG_OBJECT (self, "check caps negotiation success");
+    ret = TRUE;
+  }
+
+done:
+  if (internal_srcpad)
+    gst_object_unref (internal_srcpad);
+  if (internal_sinkpad)
+    gst_object_unref (internal_sinkpad);
+  return ret;
+}
+
 /*
  * If there is already an internal element, it will try to call set_caps on it
  *
@@ -764,7 +815,7 @@ gst_auto_convert_get_filter_info (GstBaseAutoConvert * self,
 
 static gboolean
 gst_base_auto_convert_sink_setcaps (GstBaseAutoConvert * self, GstCaps * caps,
-    gboolean check_downstream)
+    gboolean check_downstream, GstEvent * caps_event)
 {
   GList *tmp;
   GstCaps *other_caps = NULL;
@@ -810,6 +861,9 @@ gst_base_auto_convert_sink_setcaps (GstBaseAutoConvert * self, GstCaps * caps,
         }
         GST_DEBUG_OBJECT (self, "Filter %s can intersect", filter_info->name);
       }
+
+      if (res && caps_event)
+        res = gst_base_auto_convert_check_negotiation (self, caps, caps_event);
 
       if (res) {
         /* If we can set the new caps on the current element,
@@ -867,7 +921,8 @@ gst_base_auto_convert_sink_setcaps (GstBaseAutoConvert * self, GstCaps * caps,
       continue;
 
     /* And make it the current child */
-    if (gst_base_auto_convert_activate_element (self, element, caps)) {
+    if (gst_base_auto_convert_activate_element (self, element, caps,
+            caps_event)) {
       res = TRUE;
       break;
     }
@@ -1027,7 +1082,8 @@ gst_base_auto_convert_sink_chain (GstPad * pad, GstObject * parent,
     GST_INFO_OBJECT (parent, "Needs reconfigure.");
     /* if we need to reconfigure we pretend new caps arrived. This
      * will reconfigure the transform with the new output format. */
-    if (sinkcaps && !gst_base_auto_convert_sink_setcaps (self, sinkcaps, TRUE)) {
+    if (sinkcaps
+        && !gst_base_auto_convert_sink_setcaps (self, sinkcaps, TRUE, NULL)) {
       gst_clear_caps (&sinkcaps);
       GST_ERROR_OBJECT (self, "Could not reconfigure.");
 
@@ -1085,11 +1141,9 @@ gst_base_auto_convert_sink_event (GstPad * pad, GstObject * parent,
     GstCaps *caps;
 
     gst_event_parse_caps (event, &caps);
-    ret = gst_base_auto_convert_sink_setcaps (self, caps, FALSE);
-    if (!ret) {
-      gst_event_unref (event);
-      return ret;
-    }
+    ret = gst_base_auto_convert_sink_setcaps (self, caps, FALSE, event);
+    gst_event_unref (event);
+    return ret;
   }
 
   internal_srcpad = gst_base_auto_convert_get_internal_srcpad (self);
