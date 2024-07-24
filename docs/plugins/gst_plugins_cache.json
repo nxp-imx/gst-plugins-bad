@@ -250014,6 +250014,20 @@
                         "type": "gint64",
                         "writable": true
                     },
+                    "num-clients": {
+                        "blurb": "The number of clients that are connected currently",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "-1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": false
+                    },
                     "socket-path": {
                         "blurb": "The path to the control socket used to control the shared memory transport. This may be modified during the NULL->READY transition",
                         "conditionally-available": false,
