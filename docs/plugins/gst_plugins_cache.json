@@ -245929,6 +245929,18 @@
                         "type": "GstWebRTCSessionDescription",
                         "writable": false
                     },
+                    "reuse-source-pads": {
+                        "blurb": "If FALSE, webrtcbin will send EOS on source pads with inactive transceivers. TRUE to reuse pads after renegotiation with no EOS",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "sctp-transport": {
                         "blurb": "The WebRTC SCTP Transport",
                         "conditionally-available": false,
