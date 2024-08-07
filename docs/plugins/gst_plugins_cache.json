@@ -240879,6 +240879,11 @@
                         "desc": "Timecode from real time clock",
                         "name": "rtc",
                         "value": "5"
+                    },
+                    {
+                        "desc": "Buffer running time as timecode",
+                        "name": "running-time",
+                        "value": "6"
                     }
                 ]
             }
