@@ -3613,7 +3613,7 @@
                 "long-name": "AV1 Encoder",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n         format: { I420, Y42B, Y444, YV12 }\n      framerate: [ 0/1, 2147483647/1 ]\n          width: [ 4, 2147483647 ]\n         height: [ 4, 2147483647 ]\n",
+                        "caps": "video/x-raw:\n         format: { I420, Y42B, Y444, YV12 }\n      framerate: [ 0/1, 2147483647/1 ]\n          width: [ 4, 65536 ]\n         height: [ 4, 65536 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
