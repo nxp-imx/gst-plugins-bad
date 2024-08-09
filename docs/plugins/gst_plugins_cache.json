@@ -236545,19 +236545,24 @@
                 "kind": "enum",
                 "values": [
                     {
-                        "desc": "GST_RTMP_AUTHMOD_NONE",
+                        "desc": "Attempt no authentication",
                         "name": "none",
                         "value": "0"
                     },
                     {
-                        "desc": "GST_RTMP_AUTHMOD_AUTO",
+                        "desc": "Automatically switch to server-suggested method",
                         "name": "auto",
                         "value": "1"
                     },
                     {
-                        "desc": "GST_RTMP_AUTHMOD_ADOBE",
+                        "desc": "Adobe-style authentication",
                         "name": "adobe",
                         "value": "2"
+                    },
+                    {
+                        "desc": "Limelight Networks authentication",
+                        "name": "llnw",
+                        "value": "3"
                     }
                 ]
             },
