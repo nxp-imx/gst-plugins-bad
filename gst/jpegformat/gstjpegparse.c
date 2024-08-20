@@ -99,6 +99,8 @@ gst_jpeg_parse_handle_frame (GstBaseParse * bparse, GstBaseParseFrame * frame,
     gint * skipsize);
 static gboolean gst_jpeg_parse_set_sink_caps (GstBaseParse * parse,
     GstCaps * caps);
+static GstCaps *gst_jpeg_parse_get_sink_caps (GstBaseParse * parse,
+    GstCaps * caps);
 static gboolean gst_jpeg_parse_sink_event (GstBaseParse * parse,
     GstEvent * event);
 static gboolean gst_jpeg_parse_start (GstBaseParse * parse);
@@ -167,6 +169,7 @@ gst_jpeg_parse_class_init (GstJpegParseClass * klass)
   gstbaseparse_class->start = gst_jpeg_parse_start;
   gstbaseparse_class->stop = gst_jpeg_parse_stop;
   gstbaseparse_class->set_sink_caps = gst_jpeg_parse_set_sink_caps;
+  gstbaseparse_class->get_sink_caps = gst_jpeg_parse_get_sink_caps;
   gstbaseparse_class->sink_event = gst_jpeg_parse_sink_event;
   gstbaseparse_class->handle_frame = gst_jpeg_parse_handle_frame;
 
@@ -200,6 +203,58 @@ parse_avid (GstJpegParse * parse, const guint8 * data, guint16 len)
     parse->field_order = GST_VIDEO_FIELD_ORDER_TOP_FIELD_FIRST;
   GST_INFO_OBJECT (parse, "AVID: %s",
       gst_video_field_order_to_string (parse->field_order));
+}
+
+static void
+remove_fields (GstCaps * caps)
+{
+  guint i, n;
+
+  n = gst_caps_get_size (caps);
+  for (i = 0; i < n; i++) {
+    GstStructure *s = gst_caps_get_structure (caps, i);
+
+    gst_structure_remove_fields (s, "parsed", "colorimetry", NULL);
+  }
+}
+
+static GstCaps *
+gst_jpeg_parse_get_sink_caps (GstBaseParse * bparse, GstCaps * filter)
+{
+  GstJpegParse *parse = GST_JPEG_PARSE_CAST (bparse);
+  GstCaps *peercaps, *templ;
+  GstCaps *res;
+
+  templ = gst_pad_get_pad_template_caps (GST_BASE_PARSE_SINK_PAD (bparse));
+  if (filter) {
+    GstCaps *fcopy = gst_caps_copy (filter);
+    remove_fields (fcopy);
+    peercaps = gst_pad_peer_query_caps (GST_BASE_PARSE_SRC_PAD (bparse), fcopy);
+    gst_caps_unref (fcopy);
+  } else {
+    peercaps = gst_pad_peer_query_caps (GST_BASE_PARSE_SRC_PAD (bparse), NULL);
+  }
+
+  if (peercaps) {
+    peercaps = gst_caps_make_writable (peercaps);
+    remove_fields (peercaps);
+    res = gst_caps_intersect_full (peercaps, templ, GST_CAPS_INTERSECT_FIRST);
+    gst_caps_unref (templ);
+    gst_caps_unref (peercaps);
+  } else {
+    res = templ;
+  }
+
+  if (filter) {
+    GstCaps *tmp = gst_caps_intersect_full (filter, res,
+        GST_CAPS_INTERSECT_FIRST);
+    gst_caps_unref (res);
+    res = tmp;
+  }
+
+  GST_DEBUG_OBJECT (parse, "returning sink caps %" GST_PTR_FORMAT, res);
+
+  return res;
 }
 
 static gboolean
