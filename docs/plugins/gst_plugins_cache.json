@@ -38949,7 +38949,23 @@
         },
         "filename": "gstisac",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstIsacEncOutputFrameLen": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "30 ms",
+                        "name": "30 ms",
+                        "value": "30"
+                    },
+                    {
+                        "desc": "60 ms",
+                        "name": "60 ms, only usable in wideband mode (16 kHz)",
+                        "value": "60"
+                    }
+                ]
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
@@ -40624,7 +40640,28 @@
         },
         "filename": "gstldac",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstLdacEqmid": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "HQ",
+                        "name": "hq",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "SQ",
+                        "name": "sq",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "MQ",
+                        "name": "mq",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
@@ -244358,7 +244395,23 @@
         },
         "filename": "gstsvtav1",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstSvtAv1EncIntraRefreshType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Open GOP",
+                        "name": "CRA",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Closed GOP",
+                        "name": "IDR",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
@@ -244705,7 +244758,103 @@
         },
         "filename": "gstsvthevcenc",
         "license": "GPL",
-        "other-types": {},
+        "other-types": {
+            "GstSvtHevcEncBPyramid": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Flat",
+                        "name": "flat",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "2-Level Hierarchy",
+                        "name": "2-level-hierarchy",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "3-Level Hierarchy",
+                        "name": "3-level-hierarchy",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "4-Level Hierarchy",
+                        "name": "4-level-hierarchy",
+                        "value": "3"
+                    }
+                ]
+            },
+            "GstSvtHevcEncBaseLayerMode": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Use B-frames in the base layer pointing to the same past picture",
+                        "name": "B-frame",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Use P-frames in the base layer",
+                        "name": "P-frame",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstSvtHevcEncPredStruct": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Low Delay Prediction Structure with P/p pictures",
+                        "name": "low-delay-P",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Low Delay Prediction Structure with B/b pictures",
+                        "name": "low-delay-B",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Random Access Prediction Structure",
+                        "name": "random-access",
+                        "value": "2"
+                    }
+                ]
+            },
+            "GstSvtHevcEncRC": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Constant QP Control",
+                        "name": "cqp",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Variable Bitrate Contorol",
+                        "name": "vbr",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstSvtHevcEncTune": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Visually Optimized Mode",
+                        "name": "sq",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "PSNR/SSIM Optimized Mode",
+                        "name": "oq",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "VMAF Optimized Mode",
+                        "name": "vmaf",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
