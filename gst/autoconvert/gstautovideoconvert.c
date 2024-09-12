@@ -87,6 +87,13 @@ gst_auto_video_convert_init (GstAutoVideoConvert * autovideoconvert)
     },
     {
       .first_elements = { "capsfilter caps=\"video/x-raw\"", NULL, },
+      .colorspace_converters = { "imxvideoconvert_g2d", NULL },
+      .last_elements = { NULL, },
+      .filters = { NULL },
+      .rank = GST_RANK_PRIMARY + 1,
+    },
+    {
+      .first_elements = { "capsfilter caps=\"video/x-raw\"", NULL, },
       .colorspace_converters = { "videoconvertscale", NULL },
       .last_elements = { NULL, },
       .filters = { NULL },
