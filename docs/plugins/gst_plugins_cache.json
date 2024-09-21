@@ -243301,12 +243301,24 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "scale-method": {
-                        "blurb": "Scale method to use",
-                        "conditionally-available": false,
+                    "interpolation-method": {
+                        "blurb": "Interpolation method to use for scaling",
+                        "conditionally-available": true,
                         "construct": false,
                         "construct-only": false,
-                        "controllable": false,
+                        "controllable": true,
+                        "default": "default (0)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstVaInterpolationMethod",
+                        "writable": true
+                    },
+                    "scale-method": {
+                        "blurb": "Scale method to use",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
                         "default": "default (0)",
                         "mutable": "playing",
                         "readable": true,
