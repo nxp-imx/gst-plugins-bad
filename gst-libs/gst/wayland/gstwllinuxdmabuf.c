@@ -227,7 +227,7 @@ gst_wl_linux_dmabuf_construct_wl_buffer (GstBuffer * buf,
   /* Wait for the request answer */
   wl_display_flush (gst_wl_display_get_display (display));
   data.wbuf = (gpointer) 0x1;
-  timeout = g_get_monotonic_time () + G_TIME_SPAN_SECOND;
+  timeout = g_get_monotonic_time () + 10 * G_TIME_SPAN_SECOND;
   while (data.wbuf == (gpointer) 0x1) {
     if (!g_cond_wait_until (&data.cond, &data.lock, timeout)) {
       GST_ERROR_OBJECT (mem->allocator, "zwp_linux_buffer_params_v1 time out");
