@@ -708,6 +708,7 @@ gst_wayland_update_pool (GstWaylandSink * self, GstAllocator * allocator)
   gint w = GST_VIDEO_INFO_WIDTH (&self->video_info);
   gint h = GST_VIDEO_INFO_HEIGHT (&self->video_info);
   GstStructure *config;
+  gboolean is_shm = GST_IS_SHM_ALLOCATOR (allocator);
 
   /* Pools with outstanding buffer cannot be reconfigured, so we must use
    * a new pool. */
@@ -722,7 +723,7 @@ gst_wayland_update_pool (GstWaylandSink * self, GstAllocator * allocator)
   gst_buffer_pool_config_set_params (config, self->caps, size, 2, 0);
   gst_buffer_pool_config_set_allocator (config, allocator, NULL);
 
-  if (!ISALIGNED (w, 16) || !ISALIGNED (h, 16)) {
+  if (!is_shm && (!ISALIGNED (w, 16) || !ISALIGNED (h, 16))) {
     GstVideoAlignment alignment;
 
     memset (&alignment, 0, sizeof (GstVideoAlignment));
