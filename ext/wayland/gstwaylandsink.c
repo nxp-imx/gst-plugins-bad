@@ -1241,9 +1241,25 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
 handle_shm:
   if (!wbuf && gst_wl_display_check_format_for_shm (self->display,
           &self->video_info)) {
-    if (gst_buffer_n_memory (buffer) == 1 && gst_is_fd_memory (mem))
+    GstVideoInfo old_vinfo = self->video_info;
+    GstVideoMeta *vmeta = gst_buffer_get_video_meta (buffer);
+    if (vmeta) {
+      for (gint i = 0; i < vmeta->n_planes; i++) {
+        self->video_info.offset[i] = vmeta->offset[i];
+        self->video_info.stride[i] = vmeta->stride[i];
+      }
+      self->video_info.width = vmeta->width + vmeta->alignment.padding_left +
+           vmeta->alignment.padding_right;
+      self->video_info.height = vmeta->height + vmeta->alignment.padding_bottom +
+           vmeta->alignment.padding_top;
+      self->video_info.size = gst_buffer_get_size (buffer);
+    }
+
+    if (vmeta && gst_buffer_n_memory (buffer) == 1 && gst_is_fd_memory (mem))
       wbuf = gst_wl_shm_memory_construct_wl_buffer (mem, self->display,
           &self->video_info);
+
+    self->video_info = old_vinfo;
 
     /* If nothing worked, copy into our internal pool */
     if (!wbuf) {
