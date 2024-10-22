@@ -222936,7 +222936,7 @@
                         "presence": "sometimes"
                     },
                     "video_%%01x_%%05x": {
-                        "caps": "video/mpeg:\n    mpegversion: { (int)1, (int)2, (int)4 }\n   systemstream: false\nvideo/x-h264:\n  stream-format: byte-stream\nvideo/x-h265:\n  stream-format: byte-stream\nvideo/x-dirac:\nvideo/x-cavs:\nvideo/x-wmv:\n     wmvversion: 3\n         format: WVC1\nimage/x-jpc:\nimage/x-jxsc:\n",
+                        "caps": "video/mpeg:\n    mpegversion: { (int)1, (int)2, (int)4 }\n   systemstream: false\nvideo/x-h264:\n  stream-format: byte-stream\nvideo/x-h265:\n  stream-format: byte-stream\nvideo/x-vp9:\nvideo/x-dirac:\nvideo/x-cavs:\nvideo/x-wmv:\n     wmvversion: 3\n         format: WVC1\nimage/x-jpc:\nimage/x-jxsc:\n",
                         "direction": "src",
                         "presence": "sometimes"
                     }
@@ -223194,7 +223194,7 @@
                 "long-name": "MPEG Transport Stream Muxer",
                 "pad-templates": {
                     "sink_%%d": {
-                        "caps": "video/mpeg:\n         parsed: true\n    mpegversion: { (int)1, (int)2, (int)4 }\n   systemstream: false\nvideo/x-dirac:\nimage/x-jpc:\n      alignment: frame\nvideo/x-h264:\n  stream-format: byte-stream\n      alignment: { (string)au, (string)nal }\nvideo/x-h265:\n  stream-format: byte-stream\n      alignment: { (string)au, (string)nal }\naudio/mpeg:\n         parsed: true\n    mpegversion: 1\naudio/mpeg:\n         framed: true\n    mpegversion: { (int)2, (int)4 }\n  stream-format: { (string)adts, (string)raw }\naudio/x-lpcm:\n          width: { (int)16, (int)20, (int)24 }\n           rate: { (int)48000, (int)96000 }\n       channels: [ 1, 8 ]\n  dynamic_range: [ 0, 255 ]\n       emphasis: { (boolean)false, (boolean)true }\n           mute: { (boolean)false, (boolean)true }\naudio/x-ac3:\n         framed: true\naudio/x-dts:\n         framed: true\naudio/x-opus:\n       channels: [ 1, 255 ]\naudio/x-smpte-302m:\nsubpicture/x-dvb:\napplication/x-teletext:\nmeta/x-klv:\n         parsed: true\nmeta/x-id3:\n         parsed: true\nmeta/x-st-2038:\n      alignment: line\nimage/x-jpc:\n      alignment: frame\n        profile: [ 0, 49151 ]\nimage/x-jxsc:\n      alignment: frame\n       sampling: { (string)YCbCr-4:2:2, (string)YCbCr-4:4:4 }\n",
+                        "caps": "video/mpeg:\n         parsed: true\n    mpegversion: { (int)1, (int)2, (int)4 }\n   systemstream: false\nvideo/x-dirac:\nimage/x-jpc:\n      alignment: frame\nvideo/x-h264:\n  stream-format: byte-stream\n      alignment: { (string)au, (string)nal }\nvideo/x-h265:\n  stream-format: byte-stream\n      alignment: { (string)au, (string)nal }\naudio/mpeg:\n         parsed: true\n    mpegversion: 1\naudio/mpeg:\n         framed: true\n    mpegversion: { (int)2, (int)4 }\n  stream-format: { (string)adts, (string)raw }\naudio/x-lpcm:\n          width: { (int)16, (int)20, (int)24 }\n           rate: { (int)48000, (int)96000 }\n       channels: [ 1, 8 ]\n  dynamic_range: [ 0, 255 ]\n       emphasis: { (boolean)false, (boolean)true }\n           mute: { (boolean)false, (boolean)true }\naudio/x-ac3:\n         framed: true\naudio/x-dts:\n         framed: true\naudio/x-opus:\n       channels: [ 1, 255 ]\naudio/x-smpte-302m:\nsubpicture/x-dvb:\napplication/x-teletext:\nmeta/x-klv:\n         parsed: true\nmeta/x-id3:\n         parsed: true\nmeta/x-st-2038:\n      alignment: line\nvideo/x-vp9:\nimage/x-jpc:\n      alignment: frame\n        profile: [ 0, 49151 ]\nimage/x-jxsc:\n      alignment: frame\n       sampling: { (string)YCbCr-4:2:2, (string)YCbCr-4:4:4 }\n",
                         "direction": "sink",
                         "presence": "request",
                         "type": "GstBaseTsMuxPad"
@@ -223263,6 +223263,18 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "guint64",
+                        "writable": true
+                    },
+                    "enable-custom-mappings": {
+                        "blurb": "Enable custom mappings for which there are no official specifications",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
                         "writable": true
                     },
                     "pat-interval": {
