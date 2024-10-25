@@ -252567,7 +252567,7 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-h264:\n        profile: { (string)high, (string)main, (string)constrained-baseline, (string)baseline }\n  stream-format: { (string)avc, (string)byte-stream }\n      alignment: au\n",
+                        "caps": "video/x-h264:\n        profile: { (string)high, (string)main, (string)constrained-baseline, (string)baseline, (string)extended }\n  stream-format: { (string)avc, (string)byte-stream }\n      alignment: au\n",
                         "direction": "sink",
                         "presence": "always"
                     },
