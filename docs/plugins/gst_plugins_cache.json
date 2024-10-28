@@ -8023,6 +8023,20 @@
                         "type": "GstAggregatorPad"
                     }
                 },
+                "properties": {
+                    "force-live": {
+                        "blurb": "Always operate in live mode and aggregate on timeout regardless of whether any live sources are linked upstream",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": true,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
                 "rank": "none"
             },
             "line21decoder": {
