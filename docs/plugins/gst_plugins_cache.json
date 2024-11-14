@@ -253314,5 +253314,202 @@
         "source": "gst-plugins-bad",
         "tracers": {},
         "url": "Unknown package origin"
+    },
+    "zxing": {
+        "description": "ZXing bar code detector plugin",
+        "elements": {
+            "zxing": {
+                "author": "Stéphane Cerveau <scerveau@collabora.com>",
+                "description": "Detect bar codes in the video streams with zxing library",
+                "hierarchy": [
+                    "GstZXing",
+                    "GstVideoFilter",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Analyzer/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n         format: { ARGB, xRGB, Y444, Y42B, I420, Y41B, YUV9, YV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n         format: { ARGB, xRGB, Y444, Y42B, I420, Y41B, YUV9, YV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "attach-frame": {
+                        "blurb": "Attach a frame dump to each barcode message",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "format": {
+                        "blurb": "Barcode image format",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "all (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstBarCodeFormat",
+                        "writable": true
+                    },
+                    "message": {
+                        "blurb": "Post a barcode message for each detected code",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "try-faster": {
+                        "blurb": "Try faster to analyze the frame",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "try-rotate": {
+                        "blurb": "Try to rotate the frame to detect barcode (slower)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "marginal"
+            }
+        },
+        "filename": "gstzxing",
+        "license": "LGPL",
+        "other-types": {
+            "GstBarCodeFormat": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "ALL",
+                        "name": "all",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "AZTEC",
+                        "name": "aztec",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "CODABAR",
+                        "name": "codabar",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "CODE_39",
+                        "name": "code_39",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "CODE_93",
+                        "name": "code_93",
+                        "value": "4"
+                    },
+                    {
+                        "desc": "CODE_128",
+                        "name": "code_128",
+                        "value": "5"
+                    },
+                    {
+                        "desc": "PNG",
+                        "name": "png",
+                        "value": "6"
+                    },
+                    {
+                        "desc": "EAN_8",
+                        "name": "ean_8",
+                        "value": "7"
+                    },
+                    {
+                        "desc": "EAN_13",
+                        "name": "ean_13",
+                        "value": "8"
+                    },
+                    {
+                        "desc": "ITF",
+                        "name": "itf",
+                        "value": "9"
+                    },
+                    {
+                        "desc": "MAXICODE",
+                        "name": "maxicode",
+                        "value": "10"
+                    },
+                    {
+                        "desc": "PDF_417",
+                        "name": "pdf_417",
+                        "value": "11"
+                    },
+                    {
+                        "desc": "QR_CODE",
+                        "name": "qr_code",
+                        "value": "12"
+                    },
+                    {
+                        "desc": "RSS_14",
+                        "name": "rss_14",
+                        "value": "13"
+                    },
+                    {
+                        "desc": "RSS_EXPANDED",
+                        "name": "rss_expanded",
+                        "value": "14"
+                    },
+                    {
+                        "desc": "UPC_A",
+                        "name": "upc_a",
+                        "value": "15"
+                    },
+                    {
+                        "desc": "UPC_E",
+                        "name": "upc_e",
+                        "value": "16"
+                    },
+                    {
+                        "desc": "UPC_EAN_EXTENSION",
+                        "name": "upc_ean_expansion",
+                        "value": "17"
+                    }
+                ]
+            }
+        },
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
     }
 }
