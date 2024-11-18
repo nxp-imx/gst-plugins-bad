@@ -17182,7 +17182,7 @@
                         "writable": true
                     },
                     "mpd-root-path": {
-                        "blurb": "Path where the MPD and its fragents will be written",
+                        "blurb": "Path where the MPD and its fragments will be written",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
