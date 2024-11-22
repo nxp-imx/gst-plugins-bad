@@ -253815,6 +253815,16 @@
                         "return-type": "GstElement",
                         "when": "last"
                     },
+                    "request-post-rtp-aux-sender": {
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "GstWebRTCDTLSTransport"
+                            }
+                        ],
+                        "return-type": "GstElement",
+                        "when": "last"
+                    },
                     "set-local-description": {
                         "action": true,
                         "args": [
