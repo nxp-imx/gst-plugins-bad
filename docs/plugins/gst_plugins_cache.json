@@ -8183,6 +8183,11 @@
                         "desc": "discard aggregated CC when input video buffers hold CC metas already",
                         "name": "favor",
                         "value": "2"
+                    },
+                    {
+                        "desc": "discard aggregated CC even when input video buffers do not hold CC",
+                        "name": "force",
+                        "value": "3"
                     }
                 ]
             },
