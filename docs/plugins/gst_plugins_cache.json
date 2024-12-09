@@ -5565,6 +5565,21 @@
                         "value": "0"
                     }
                 ]
+            },
+            "GstVtencRateControl": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Average Bitrate",
+                        "name": "abr",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Constant Bitrate",
+                        "name": "cbr",
+                        "value": "1"
+                    }
+                ]
             }
         },
         "package": "GStreamer Bad Plug-ins",
