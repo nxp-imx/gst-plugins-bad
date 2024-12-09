@@ -18792,7 +18792,7 @@
                 "long-name": "Video CODEC Test Sink",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n         format: { Y444_12LE, I422_12LE, I420_12LE, Y444_10LE, I422_10LE, I420_10LE, Y444, Y42B, I420, NV12, GRAY8, GRAY10_LE16, GRAY10_LE32 }\n",
+                        "caps": "video/x-raw:\n         format: { Y444_12LE, I422_12LE, I420_12LE, Y444_10LE, I422_10LE, I420_10LE, Y444, Y42B, I420, NV12, GRAY8, GRAY10_LE16, GRAY10_LE32, GBR_10LE }\n",
                         "direction": "sink",
                         "presence": "always"
                     }
