@@ -4518,6 +4518,7 @@
                 "description": "H.264 encoder",
                 "hierarchy": [
                     "vtenc_h264",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -4654,6 +4655,7 @@
                 "description": "H.264 (HW only) encoder",
                 "hierarchy": [
                     "vtenc_h264_hw",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -4790,6 +4792,7 @@
                 "description": "H.265/HEVC encoder",
                 "hierarchy": [
                     "vtenc_h265",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -4925,6 +4928,7 @@
                 "description": "H.265/HEVC (HW only) encoder",
                 "hierarchy": [
                     "vtenc_h265_hw",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -5060,6 +5064,7 @@
                 "description": "H.265/HEVC with alpha encoder",
                 "hierarchy": [
                     "vtenc_h265a",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -5195,6 +5200,7 @@
                 "description": "H.265/HEVC with alpha (HW only) encoder",
                 "hierarchy": [
                     "vtenc_h265a_hw",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -5330,6 +5336,7 @@
                 "description": "Apple ProRes encoder",
                 "hierarchy": [
                     "vtenc_prores",
+                    "GstVTEnc",
                     "GstVideoEncoder",
                     "GstElement",
                     "GstObject",
@@ -5565,6 +5572,20 @@
                         "value": "0"
                     }
                 ]
+            },
+            "GstVTEnc": {
+                "hierarchy": [
+                    "GstVTEnc",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "kind": "object"
             },
             "GstVtencRateControl": {
                 "kind": "enum",
