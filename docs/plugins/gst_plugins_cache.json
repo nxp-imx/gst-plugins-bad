@@ -254996,6 +254996,160 @@
                 },
                 "rank": "none"
             },
+            "vulkanh264enc": {
+                "author": "Stéphane Cerveau <scerveau@igalia.com>, Victor Jaquez <vjaquez@igalia.com>",
+                "description": "A H.264 video encoder based on Vulkan",
+                "hierarchy": [
+                    "GstVulkanH264Encoder",
+                    "GstH264Encoder",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:VulkanImage):\n         format: NV12\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-h264:\n        profile: { (string)main, (string)high, (string)constrained-baseline }\n  stream-format: byte-stream\n      alignment: au\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "aud": {
+                        "blurb": "Insert AU (Access Unit) delimeter for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "bitrate": {
+                        "blurb": "The desired bitrate expressed in kbps (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "-1",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "max-qp": {
+                        "blurb": "Maximum quantization value for each frame (0: disabled)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "min-qp": {
+                        "blurb": "Minimum quantization value for each frame (0: disabled)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qp-b": {
+                        "blurb": "Constant quantization value for each B-frame slice",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qp-i": {
+                        "blurb": "Constant quantization value for each I-frame slice",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qp-p": {
+                        "blurb": "Constant quantization value for each P-frame slice",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "quality": {
+                        "blurb": "Video encoding quality level",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "2",
+                        "max": "10",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "rate-control": {
+                        "blurb": "The encoding rate control mode to use",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "cqp (1)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstVulkanEncoderRateControlMode",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
             "vulkanh265dec": {
                 "author": "Víctor Jáquez <vjaquez@igalia.com>",
                 "description": "A H.265 video decoder based on Vulkan",
@@ -255427,6 +255581,32 @@
                         "writable": true
                     }
                 }
+            },
+            "GstVulkanEncoderRateControlMode": {
+                "ignore-enum-members": true,
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Driver's default",
+                        "name": "default",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Constant quantizer",
+                        "name": "cqp",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Constant bitrate",
+                        "name": "cbr",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Variable bitrate",
+                        "name": "vbr",
+                        "value": "4"
+                    }
+                ]
             },
             "GstVulkanStereoDownmix": {
                 "kind": "enum",
