@@ -4788,7 +4788,7 @@
                 "rank": "primary"
             },
             "vtenc_h265": {
-                "author": "Ole André Vadla Ravnås <oleavr@soundrop.com>, Dominik Röttsches <dominik.rottsches@intel.com>",
+                "author": "Piotr Brzeziński <piotr@centricular.com>",
                 "description": "H.265/HEVC encoder",
                 "hierarchy": [
                     "vtenc_h265",
@@ -4924,7 +4924,7 @@
                 "rank": "primary"
             },
             "vtenc_h265_hw": {
-                "author": "Ole André Vadla Ravnås <oleavr@soundrop.com>, Dominik Röttsches <dominik.rottsches@intel.com>",
+                "author": "Piotr Brzeziński <piotr@centricular.com>",
                 "description": "H.265/HEVC (HW only) encoder",
                 "hierarchy": [
                     "vtenc_h265_hw",
@@ -5060,7 +5060,7 @@
                 "rank": "primary"
             },
             "vtenc_h265a": {
-                "author": "Ole André Vadla Ravnås <oleavr@soundrop.com>, Dominik Röttsches <dominik.rottsches@intel.com>",
+                "author": "Piotr Brzeziński <piotr@centricular.com>",
                 "description": "H.265/HEVC with alpha encoder",
                 "hierarchy": [
                     "vtenc_h265a",
@@ -5196,7 +5196,7 @@
                 "rank": "primary"
             },
             "vtenc_h265a_hw": {
-                "author": "Ole André Vadla Ravnås <oleavr@soundrop.com>, Dominik Röttsches <dominik.rottsches@intel.com>",
+                "author": "Piotr Brzeziński <piotr@centricular.com>",
                 "description": "H.265/HEVC with alpha (HW only) encoder",
                 "hierarchy": [
                     "vtenc_h265a_hw",
@@ -5332,7 +5332,7 @@
                 "rank": "primary"
             },
             "vtenc_prores": {
-                "author": "Ole André Vadla Ravnås <oleavr@soundrop.com>, Dominik Röttsches <dominik.rottsches@intel.com>",
+                "author": "Nirbheek Chauhan <nirbheek@centricular.com>",
                 "description": "Apple ProRes encoder",
                 "hierarchy": [
                     "vtenc_prores",
