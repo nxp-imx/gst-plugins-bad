@@ -5778,6 +5778,179 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "asio": {
+        "description": "Steinberg ASIO plugin",
+        "elements": {
+            "asiosink": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Stream audio from an audio capture device through ASIO",
+                "hierarchy": [
+                    "GstAsioSink",
+                    "GstAudioBaseSink",
+                    "GstBaseSink",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Source/Audio/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "buffer-size": {
+                        "blurb": "Preferred buffer size (0 for default)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "0",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "device-clsid": {
+                        "blurb": "ASIO device CLSID as a string",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "occupy-all-channels": {
+                        "blurb": "When enabled, ASIO device will allocate resources for all in/output channels",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "output-channels": {
+                        "blurb": "Comma-separated list of ASIO channels to output",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "secondary"
+            },
+            "asiosrc": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Stream audio from an audio capture device through ASIO",
+                "hierarchy": [
+                    "GstAsioSrc",
+                    "GstAudioBaseSrc",
+                    "GstPushSrc",
+                    "GstBaseSrc",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Source/Audio/Hardware",
+                "pad-templates": {
+                    "src": {
+                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "buffer-size": {
+                        "blurb": "Preferred buffer size (0 for default)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "0",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "device-clsid": {
+                        "blurb": "ASIO device CLSID as a string",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "input-channels": {
+                        "blurb": "Comma-separated list of ASIO channels to capture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "loopback": {
+                        "blurb": "Open the sink device for loopback recording",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "occupy-all-channels": {
+                        "blurb": "When enabled, ASIO device will allocate resources for all in/output channels",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "secondary"
+            }
+        },
+        "filename": "gstasio",
+        "license": "LGPL",
+        "other-types": {},
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "assrender": {
         "description": "ASS/SSA subtitle renderer",
         "elements": {
