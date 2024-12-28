@@ -253040,6 +253040,108 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "webview2": {
+        "description": "WebView2 plugin",
+        "elements": {
+            "webview2src": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Creates a video stream rendered by WebView2",
+                "hierarchy": [
+                    "GstWebView2Src",
+                    "GstBaseSrc",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstURIHandler"
+                ],
+                "klass": "Source/Video",
+                "pad-templates": {
+                    "src": {
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: BGRA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n\nvideo/x-raw(memory:D3D12Memory):\n         format: BGRA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\nvideo/x-raw:\n         format: BGRA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "adapter": {
+                        "blurb": "DXGI Adapter index (-1 for any device)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "2147483647",
+                        "min": "-1",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "javascript": {
+                        "blurb": "Javascript to run on nevigation completed",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "location": {
+                        "blurb": "The URL to display",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "about:blank",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "processing-deadline": {
+                        "blurb": "Maximum processing time for a buffer in nanoseconds",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "20000000",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    },
+                    "user-data-folder": {
+                        "blurb": "Absolute path to WebView2 user data folder location.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    }
+                },
+                "rank": "marginal"
+            }
+        },
+        "filename": "gstwebview2",
+        "license": "LGPL",
+        "other-types": {},
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "wic": {
         "description": "Windows Imaging Component (WIC) plugin",
         "elements": {
