@@ -239232,7 +239232,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -239387,7 +239387,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -239910,7 +239910,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -240243,7 +240243,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\nvideo/x-raw:\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\nvideo/x-raw:\n         format: { NV12, YUY2, BGRA }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -240316,7 +240316,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n\nvideo/x-raw(memory:VAMemory):\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, Y410 }\n          width: [ 16, 8192 ]\n         height: [ 16, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
