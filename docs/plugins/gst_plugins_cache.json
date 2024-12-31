@@ -14932,7 +14932,7 @@
                 "klass": "Source/Video",
                 "pad-templates": {
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: BGRA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n    colorimetry: sRGB\nvideo/x-raw:\n         format: BGRA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n    colorimetry: sRGB\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { BGRA, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n    colorimetry: sRGB\nvideo/x-raw:\n         format: { BGRA, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\npixel-aspect-ratio: 1/1\n    colorimetry: sRGB\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -15070,6 +15070,18 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "gboolean",
+                        "writable": true
+                    },
+                    "tonemap": {
+                        "blurb": "Tonemapping method to use when HDR capturing is enabled",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "linear (0)",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "GstD3D12ScreenCaptureTonemap",
                         "writable": true
                     },
                     "window-capture-mode": {
@@ -16536,6 +16548,21 @@
                     {
                         "desc": "Windows Graphics Capture",
                         "name": "wgc",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstD3D12ScreenCaptureTonemap": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Linear scaling",
+                        "name": "linear",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Reinhard tonemap",
+                        "name": "reinhard",
                         "value": "1"
                     }
                 ]
