@@ -14767,7 +14767,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: RGBA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: RGBA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -14783,6 +14783,20 @@
                         "max": "2147483647",
                         "min": "0",
                         "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "mip-levels": {
+                        "blurb": "Mipmap levels to use (0 = maximum level)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "65535",
+                        "min": "0",
+                        "mutable": "null",
                         "readable": true,
                         "type": "guint",
                         "writable": true
