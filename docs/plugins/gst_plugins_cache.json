@@ -14074,6 +14074,20 @@
                         "type": "gdouble",
                         "writable": true
                     },
+                    "max-mip-levels": {
+                        "blurb": "Maximum mip levels of shader resource to create if viewport size is smaller than shader resource (0 = maximum level)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "65535",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
                     "method": {
                         "blurb": "Method used for sampling",
                         "conditionally-available": false,
@@ -14767,7 +14781,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE, GRAY8, GRAY16_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { VUYA, RGBA, AYUV64, RGBA64_LE, GRAY8, GRAY16_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -14927,6 +14941,20 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "guint64",
+                        "writable": true
+                    },
+                    "max-mip-levels": {
+                        "blurb": "Maximum mip levels of shader resource to create if viewport size is smaller than shader resource (0 = maximum level)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "65535",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
                         "writable": true
                     }
                 },
@@ -15231,6 +15259,20 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "gdouble",
+                        "writable": true
+                    },
+                    "max-mip-levels": {
+                        "blurb": "Maximum mip levels of shader resource to create if viewport size is smaller than shader resource (0 = maximum level)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "65535",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
                         "writable": true
                     },
                     "msaa": {
@@ -15648,6 +15690,20 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "gdouble",
+                        "writable": true
+                    },
+                    "max-mip-levels": {
+                        "blurb": "Maximum mip levels of shader resource to create if viewport size is smaller than shader resource (0 = maximum level)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "65535",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
                         "writable": true
                     },
                     "msaa": {
