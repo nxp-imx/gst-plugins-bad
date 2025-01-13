@@ -250745,7 +250745,7 @@
                         "writable": false
                     }
                 },
-                "rank": "none"
+                "rank": "primary + 1"
             },
             "vapostproc": {
                 "author": "Víctor Jáquez <vjaquez@igalia.com>",
