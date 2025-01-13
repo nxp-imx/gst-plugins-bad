@@ -247098,6 +247098,253 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "svtjpegxs": {
+        "description": "Scalable Video Technology for JPEG XS (SVT-JPEG-XS)",
+        "elements": {
+            "svtjpegxsdec": {
+                "author": "Tim-Philipp Müller <tim centricular com>",
+                "description": "Scalable Video Technology for JPEG XS Decoder",
+                "hierarchy": [
+                    "GstSvtJpegXsDec",
+                    "GstVideoDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "image/x-jxsc:\n      alignment: frame\n interlace-mode: { (string)progressive, (string)fields }\n       sampling: { (string)YCbCr-4:4:4, (string)YCbCr-4:2:2, (string)YCbCr-4:2:0 }\n          depth: { (int)8, (int)10, (int)12 }\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n         format: { Y444, Y42B, I420, Y444_10LE, I422_10LE, I420_10LE, Y444_12LE, I422_12LE, I420_12LE }\n interlace-mode: { (string)progressive, (string)interleaved }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "threads": {
+                        "blurb": "Number of threads to use (0 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    }
+                },
+                "rank": "secondary"
+            },
+            "svtjpegxsenc": {
+                "author": "Tim-Philipp Müller <tim centricular com>",
+                "description": "Scalable Video Technology for JPEG XS Encoder",
+                "hierarchy": [
+                    "GstSvtJpegXsEnc",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n         format: { Y444, Y42B, I420, Y444_10LE, I422_10LE, I420_10LE, Y444_12LE, I422_12LE, I420_12LE }\n interlace-mode: progressive\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { Y444, Y42B, I420, Y444_10LE, I422_10LE, I420_10LE, Y444_12LE, I422_12LE, I420_12LE }\n interlace-mode: interleaved\n    field-order: { (string)top-field-first, (string)bottom-field-first }\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "image/x-jxsc:\n      alignment: frame\n          width: [ 16, 16384 ]\n         height: [ 16, 16384 ]\n interlace-mode: { (string)progressive, (string)fields }\n       sampling: { (string)YCbCr-4:4:4, (string)YCbCr-4:2:2, (string)YCbCr-4:2:0 }\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "bits-per-pixel": {
+                        "blurb": "Bits per pixel (can be a fractional number, e.g. 3.75)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "3",
+                        "max": "100",
+                        "min": "0.001",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "coding-signs": {
+                        "blurb": "Coding signs handling strategy",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "disable (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstSvtJpegXsEncCodingSignsType",
+                        "writable": true
+                    },
+                    "decomp-h": {
+                        "blurb": "Horizontal decomposition (has to be great or equal to decomp-v)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "5",
+                        "max": "5",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "decomp-v": {
+                        "blurb": "Vertical decomposition",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "2",
+                        "max": "2",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "quant-mode": {
+                        "blurb": "Quantization Mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "deadzone (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstSvtJpegXsEncQuantModeType",
+                        "writable": true
+                    },
+                    "rate-control-mode": {
+                        "blurb": "Rate Control Mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "cbr-precinct (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstSvtJpegXsEncRateControlModeType",
+                        "writable": true
+                    },
+                    "slice-height": {
+                        "blurb": "The height of each slice in pixel lines (per thread processing unit)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "16",
+                        "max": "16",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "threads": {
+                        "blurb": "Number of threads to use (0 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    }
+                },
+                "rank": "secondary"
+            }
+        },
+        "filename": "gstsvtjpegxs",
+        "license": "LGPL",
+        "other-types": {
+            "GstSvtJpegXsEncCodingSignsType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Disable",
+                        "name": "disable",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Fast",
+                        "name": "fast",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Full",
+                        "name": "full",
+                        "value": "2"
+                    }
+                ]
+            },
+            "GstSvtJpegXsEncQuantModeType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Deadzone",
+                        "name": "deadzone",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Uniform",
+                        "name": "uniform",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstSvtJpegXsEncRateControlModeType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "CBR budget per precinct",
+                        "name": "cbr-precinct",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "CBR budget per precinct move padding",
+                        "name": "cbr-precinct-move-padding",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "CBR budget per slice",
+                        "name": "cbr-slice",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "switchbin": {
         "description": "switchbin",
         "elements": {
