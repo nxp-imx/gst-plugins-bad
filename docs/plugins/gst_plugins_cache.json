@@ -235109,6 +235109,87 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "openaptx": {
+        "description": "Open Source implementation of Audio Processing Technology codec (aptX)",
+        "elements": {
+            "openaptxdec": {
+                "author": "Igor V. Kovalenko <igor.v.kovalenko@gmail.com>, Thomas Weißschuh <thomas@t-8ch.de>",
+                "description": "Decode an aptX or aptX-HD audio stream using libopenaptx",
+                "hierarchy": [
+                    "GstOpenaptxDec",
+                    "GstAudioDecoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Decoder/Audio",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "audio/aptx-hd:\n       channels: 2\n           rate: [ 1, 2147483647 ]\naudio/aptx:\n       channels: 2\n           rate: [ 1, 2147483647 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "audio/x-raw:\n         format: S24LE\n           rate: [ 1, 2147483647 ]\n       channels: 2\n         layout: interleaved\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "autosync": {
+                        "blurb": "Gracefully handle partially corrupted stream in which some bytes are missing",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
+            "openaptxenc": {
+                "author": "Igor V. Kovalenko <igor.v.kovalenko@gmail.com>, Thomas Weißschuh <thomas@t-8ch.de>",
+                "description": "Encode an aptX or aptX-HD audio stream using libopenaptx",
+                "hierarchy": [
+                    "GstOpenaptxEnc",
+                    "GstAudioEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Audio",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "audio/x-raw:\n         format: S24LE\n           rate: [ 1, 2147483647 ]\n       channels: 2\n         layout: interleaved\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "audio/aptx-hd:\n       channels: 2\n           rate: [ 1, 2147483647 ]\naudio/aptx:\n       channels: 2\n           rate: [ 1, 2147483647 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            }
+        },
+        "filename": "gstopenaptx",
+        "license": "LGPL",
+        "other-types": {},
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "opencv": {
         "description": "GStreamer OpenCV Plugins",
         "elements": {
