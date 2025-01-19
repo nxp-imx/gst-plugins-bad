@@ -228639,6 +228639,66 @@
     "nvcodec": {
         "description": "GStreamer NVCODEC plugin",
         "elements": {
+            "cudacompositor": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "A CUDA compositor",
+                "hierarchy": [
+                    "GstCudaCompositor",
+                    "GstVideoAggregator",
+                    "GstAggregator",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Filter/Editor/Video/Compositor/Hardware",
+                "pad-templates": {
+                    "sink_%%u": {
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, RGBP, BGRP, GBR, GBRA, GBR_10LE, GBR_12LE, GBR_16LE, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "request",
+                        "type": "GstCudaCompositorPad"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, RGBP, BGRP, GBR, GBRA, GBR_10LE, GBR_12LE, GBR_16LE, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always",
+                        "type": "GstAggregatorPad"
+                    }
+                },
+                "properties": {
+                    "cuda-device-id": {
+                        "blurb": "Set the GPU device to use for operations (-1 = auto)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "2147483647",
+                        "min": "-1",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "ignore-inactive-pads": {
+                        "blurb": "Avoid timing out waiting for inactive pads",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
             "cudaconvert": {
                 "author": "Seungha Yang <seungha.yang@navercorp.com>",
                 "description": "Converts video from one colorspace to another using CUDA",
@@ -228733,7 +228793,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw:\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, Y444, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, YUY2, UYVY, RGBP, BGRP, GBR, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw:\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, Y444, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, YUY2, UYVY, RGBP, BGRP, GBR, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { I420, YV12, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, BGRx, RGBx, Y42B, I422_10LE, I422_12LE, GBR, GBR, GBR_10LE, GBR_12LE, GBR_16LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -228766,7 +228826,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "/tmp/gst.cuda.ipc",
+                        "default": "",
                         "mutable": "ready",
                         "readable": true,
                         "type": "gchararray",
@@ -228827,7 +228887,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "/tmp/gst.cuda.ipc",
+                        "default": "",
                         "mutable": "ready",
                         "readable": true,
                         "type": "gchararray",
@@ -228962,7 +229022,7 @@
                 "klass": "Filter/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, Y444, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, YUY2, UYVY, RGBP, BGRP, GBR, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw:\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, Y444, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, YUY2, UYVY, RGBP, BGRP, GBR, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { I420, YV12, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, BGRx, RGBx, Y42B, I422_10LE, I422_12LE, GBR, GBR, GBR_10LE, GBR_12LE, GBR_16LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:CUDAMemory):\n         format: { I420, YV12, NV12, NV21, P010_10LE, P012_LE, P016_LE, I420_10LE, I420_12LE, Y444, Y444_10LE, Y444_12LE, Y444_16LE, BGRA, RGBA, RGBx, BGRx, ARGB, ABGR, RGB, BGR, BGR10A2_LE, RGB10A2_LE, Y42B, I422_10LE, I422_12LE, YUY2, UYVY, RGBP, BGRP, GBR, GBR_10LE, GBR_12LE, GBR_16LE, GBRA, VUYA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -228992,17 +229052,31 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-av1:\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n        profile: main\n  stream-format: obu-stream\n      alignment: tu\n",
+                        "caps": "video/x-av1:\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n        profile: main\n      alignment: tu\n  stream-format: obu-stream\n",
                         "direction": "src",
                         "presence": "always"
                     }
                 },
                 "properties": {
+                    "adapter-luid": {
+                        "blurb": "DXGI Adapter LUID (Locally Unique Identifier) to use",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "9223372036854775807",
+                        "min": "-9223372036854775808",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint64",
+                        "writable": true
+                    },
                     "aq-strength": {
                         "blurb": "Adaptive Quantization Strength when spatial-aq is enabled from 1 (low) to 15 (aggressive), (0 = autoselect)",
                         "conditionally-available": false,
@@ -229408,7 +229482,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -229469,20 +229543,6 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "gboolean",
-                        "writable": true
-                    },
-                    "b-frames": {
-                        "blurb": "Number of B-frames between I and P",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "4",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
                         "writable": true
                     },
                     "bframes": {
@@ -229593,90 +229653,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
                     "multi-pass": {
                         "blurb": "Multi pass encoding",
                         "conditionally-available": false,
@@ -229711,20 +229687,6 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "GstNvEncoderPreset",
-                        "writable": true
-                    },
-                    "qp-b": {
-                        "blurb": "Constant QP value for B frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
                         "writable": true
                     },
                     "qp-const": {
@@ -229771,20 +229733,6 @@
                     },
                     "qp-const-p": {
                         "blurb": "Constant QP value for P frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "qp-i": {
-                        "blurb": "Constant QP value for I frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -229907,32 +229855,6 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "gint",
-                        "writable": true
-                    },
-                    "qp-p": {
-                        "blurb": "Constant QP value for P frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "vbr (1)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderRCMode",
                         "writable": true
                     },
                     "rc-lookahead": {
@@ -230047,18 +229969,6 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
                     "zerolatency": {
                         "blurb": "Zero latency operation (no reordering delay)",
                         "conditionally-available": false,
@@ -230092,7 +230002,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -230153,20 +230063,6 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "gboolean",
-                        "writable": true
-                    },
-                    "b-frames": {
-                        "blurb": "Number of B-frames between I and P",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "5",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
                         "writable": true
                     },
                     "bframes": {
@@ -230265,90 +230161,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
                     "multi-pass": {
                         "blurb": "Multi pass encoding",
                         "conditionally-available": false,
@@ -230383,20 +230195,6 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "GstNvEncoderPreset",
-                        "writable": true
-                    },
-                    "qp-b": {
-                        "blurb": "Constant QP value for B frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
                         "writable": true
                     },
                     "qp-const": {
@@ -230443,20 +230241,6 @@
                     },
                     "qp-const-p": {
                         "blurb": "Constant QP value for P frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "qp-i": {
-                        "blurb": "Constant QP value for I frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -230581,32 +230365,6 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-p": {
-                        "blurb": "Constant QP value for P frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "vbr (1)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderRCMode",
-                        "writable": true
-                    },
                     "rc-lookahead": {
                         "blurb": "Number of frames for frame type lookahead",
                         "conditionally-available": true,
@@ -230719,18 +230477,6 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
                     "zerolatency": {
                         "blurb": "Zero latency operation (no reordering delay)",
                         "conditionally-available": false,
@@ -230761,12 +230507,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-av1:\n      alignment: frame\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n        profile: { (string)main }\n",
+                        "caps": "video/x-av1:\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n      alignment: frame\n        profile: main\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { I420, I420_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -230863,12 +230609,12 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-av1:\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n        profile: main\n  stream-format: obu-stream\n      alignment: tu\n",
+                        "caps": "video/x-av1:\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n        profile: main\n      alignment: tu\n  stream-format: obu-stream\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -231261,11 +231007,11 @@
                 },
                 "rank": "primary + 1"
             },
-            "nvcudah264enc": {
+            "nvd3d11av1enc": {
                 "author": "Seungha Yang <seungha@centricular.com>",
-                "description": "Encode H.264 video streams using NVCODEC API CUDA Mode",
+                "description": "Encode AV1 video streams using NVCODEC API Direct3D11 Mode",
                 "hierarchy": [
-                    "GstNvCudaH264Enc",
+                    "GstNvD3D11Av1Enc",
                     "GstNvEncoder",
                     "GstVideoEncoder",
                     "GstElement",
@@ -231279,17 +231025,31 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, Y444 }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, Y444 }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444 }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-h264:\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n        profile: { (string)main, (string)high, (string)constrained-baseline, (string)baseline, (string)high-4:4:4 }\n  stream-format: { (string)avc, (string)byte-stream }\n      alignment: au\n",
+                        "caps": "video/x-av1:\n          width: [ 192, 8192 ]\n         height: [ 128, 8192 ]\n        profile: main\n      alignment: tu\n  stream-format: obu-stream\n",
                         "direction": "src",
                         "presence": "always"
                     }
                 },
                 "properties": {
+                    "adapter-luid": {
+                        "blurb": "DXGI Adapter LUID (Locally Unique Identifier) of associated GPU",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "9223372036854775807",
+                        "min": "-9223372036854775808",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint64",
+                        "writable": false
+                    },
                     "aq-strength": {
                         "blurb": "Adaptive Quantization Strength when spatial-aq is enabled from 1 (low) to 15 (aggressive), (0 = autoselect)",
                         "conditionally-available": false,
@@ -231304,18 +231064,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "aud": {
-                        "blurb": "Use AU (Access Unit) delimiter",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "true",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
                     "b-adapt": {
                         "blurb": "Enable adaptive B-frame insert when lookahead is enabled",
                         "conditionally-available": true,
@@ -231328,14 +231076,14 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "b-frames": {
+                    "bframes": {
                         "blurb": "Number of B-frames between I and P",
                         "conditionally-available": true,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "0",
-                        "max": "4",
+                        "max": "7",
                         "min": "0",
                         "mutable": "playing",
                         "readable": true,
@@ -231356,18 +231104,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "cabac": {
-                        "blurb": "Enable CABAC entropy coding",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "true",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
                     "const-quality": {
                         "blurb": "Target Constant Quality level for VBR mode (0 = automatic)",
                         "conditionally-available": false,
@@ -231382,27 +231118,13 @@
                         "type": "gdouble",
                         "writable": true
                     },
-                    "cuda-device-id": {
-                        "blurb": "CUDA device ID of associated GPU",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "2147483647",
-                        "min": "0",
-                        "mutable": "null",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": false
-                    },
                     "gop-size": {
                         "blurb": "Number of frames between intra frames (-1 = infinite)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "30",
+                        "default": "75",
                         "max": "2147483647",
                         "min": "-1",
                         "mutable": "playing",
@@ -231436,90 +231158,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
                     "multi-pass": {
                         "blurb": "Multi pass encoding",
                         "conditionally-available": false,
@@ -231550,64 +231188,136 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "p4 (11)",
+                        "default": "default (0)",
                         "mutable": "playing",
                         "readable": true,
                         "type": "GstNvEncoderPreset",
                         "writable": true
                     },
-                    "qp-b": {
+                    "qp-const-b": {
                         "blurb": "Constant QP value for B frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "-1",
-                        "max": "51",
+                        "max": "255",
                         "min": "-1",
                         "mutable": "playing",
                         "readable": true,
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-i": {
+                    "qp-const-i": {
                         "blurb": "Constant QP value for I frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "-1",
-                        "max": "51",
+                        "max": "255",
                         "min": "-1",
                         "mutable": "playing",
                         "readable": true,
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-p": {
+                    "qp-const-p": {
                         "blurb": "Constant QP value for P frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "-1",
-                        "max": "51",
+                        "max": "255",
                         "min": "-1",
                         "mutable": "playing",
                         "readable": true,
                         "type": "gint",
                         "writable": true
                     },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
+                    "qp-max-b": {
+                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "vbr (1)",
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
                         "mutable": "playing",
                         "readable": true,
-                        "type": "GstNvEncoderRCMode",
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-i": {
+                        "blurb": "Maximum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-p": {
+                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-b": {
+                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-i": {
+                        "blurb": "Minimum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-p": {
+                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "255",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
                         "writable": true
                     },
                     "rc-lookahead": {
@@ -231624,16 +231334,16 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "repeat-sequence-header": {
-                        "blurb": "Insert sequence headers (SPS/PPS) per IDR",
+                    "rc-mode": {
+                        "blurb": "Rate Control Mode",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "false",
+                        "default": "default (0)",
                         "mutable": "playing",
                         "readable": true,
-                        "type": "gboolean",
+                        "type": "GstNvEncoderRCMode",
                         "writable": true
                     },
                     "spatial-aq": {
@@ -231698,472 +231408,8 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "weighted-pred": {
-                        "blurb": "Enables Weighted Prediction",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    }
-                },
-                "rank": "none"
-            },
-            "nvcudah265enc": {
-                "author": "Seungha Yang <seungha@centricular.com>",
-                "description": "Encode H.265 video streams using NVCODEC API CUDA Mode",
-                "hierarchy": [
-                    "GstNvCudaH265Enc",
-                    "GstNvEncoder",
-                    "GstVideoEncoder",
-                    "GstElement",
-                    "GstObject",
-                    "GInitiallyUnowned",
-                    "GObject"
-                ],
-                "interfaces": [
-                    "GstPreset"
-                ],
-                "klass": "Codec/Encoder/Video/Hardware",
-                "pad-templates": {
-                    "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
-                        "direction": "sink",
-                        "presence": "always"
-                    },
-                    "src": {
-                        "caps": "video/x-h265:\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n        profile: { (string)main, (string)main-10, (string)main-444, (string)main-444-10 }\n  stream-format: { (string)hvc1, (string)hev1, (string)byte-stream }\n      alignment: au\n",
-                        "direction": "src",
-                        "presence": "always"
-                    }
-                },
-                "properties": {
-                    "aq-strength": {
-                        "blurb": "Adaptive Quantization Strength when spatial-aq is enabled from 1 (low) to 15 (aggressive), (0 = autoselect)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "15",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "aud": {
-                        "blurb": "Use AU (Access Unit) delimiter",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "true",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "b-adapt": {
-                        "blurb": "Enable adaptive B-frame insert when lookahead is enabled",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "b-frames": {
-                        "blurb": "Number of B-frames between I and P",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "5",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "bitrate": {
-                        "blurb": "Bitrate in kbit/sec (0 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "2048000",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "const-quality": {
-                        "blurb": "Target Constant Quality level for VBR mode (0 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "51",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gdouble",
-                        "writable": true
-                    },
-                    "cuda-device-id": {
-                        "blurb": "CUDA device ID of associated GPU",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "2147483647",
-                        "min": "0",
-                        "mutable": "null",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": false
-                    },
-                    "gop-size": {
-                        "blurb": "Number of frames between intra frames (-1 = infinite)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "30",
-                        "max": "2147483647",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "i-adapt": {
-                        "blurb": "Enable adaptive I-frame insert when lookahead is enabled",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "max-bitrate": {
-                        "blurb": "Maximum Bitrate in kbit/sec (ignored in CBR mode)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "2048000",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "multi-pass": {
-                        "blurb": "Multi pass encoding",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "default (0)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderMultiPass",
-                        "writable": true
-                    },
-                    "nonref-p": {
-                        "blurb": "Automatic insertion of non-reference P-frames",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "preset": {
-                        "blurb": "Encoding Preset",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "p4 (11)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderPreset",
-                        "writable": true
-                    },
-                    "qp-b": {
-                        "blurb": "Constant QP value for B frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "qp-i": {
-                        "blurb": "Constant QP value for I frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "qp-p": {
-                        "blurb": "Constant QP value for P frame (-1 = default)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "vbr (1)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderRCMode",
-                        "writable": true
-                    },
-                    "rc-lookahead": {
-                        "blurb": "Number of frames for frame type lookahead",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "32",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "repeat-sequence-header": {
-                        "blurb": "Insert sequence headers (SPS/PPS) per IDR, ignored if negotiated stream-format is \"hvc1\"",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "spatial-aq": {
-                        "blurb": "Spatial Adaptive Quantization",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "strict-gop": {
-                        "blurb": "Minimize GOP-to-GOP rate fluctuations",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "temporal-aq": {
-                        "blurb": "Temporal Adaptive Quantization",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "tune": {
-                        "blurb": "Encoding tune",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "default (0)",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "GstNvEncoderTune",
-                        "writable": true
-                    },
-                    "vbv-buffer-size": {
-                        "blurb": "VBV(HRD) Buffer Size in kbits (0 = NVENC default)",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0",
-                        "max": "-1",
-                        "min": "0",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "guint",
-                        "writable": true
-                    },
-                    "weighted-pred": {
-                        "blurb": "Enables Weighted Prediction",
-                        "conditionally-available": true,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "false",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gboolean",
-                        "writable": true
-                    },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
+                    "zerolatency": {
+                        "blurb": "Zero latency operation (no reordering delay)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -232195,12 +231441,12 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, Y444 }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444 }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-h264:\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n        profile: { (string)main, (string)high, (string)constrained-high, (string)constrained-baseline, (string)baseline, (string)high-4:4:4 }\n  stream-format: { (string)avc, (string)byte-stream }\n      alignment: au\n",
+                        "caps": "video/x-h264:\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n        profile: { (string)main, (string)high, (string)constrained-baseline, (string)baseline, (string)high-4:4:4 }\n  stream-format: { (string)byte-stream, (string)avc }\n      alignment: au\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -232258,7 +231504,7 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "b-frames": {
+                    "bframes": {
                         "blurb": "Number of B-frames between I and P",
                         "conditionally-available": true,
                         "construct": false,
@@ -232318,7 +231564,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "30",
+                        "default": "75",
                         "max": "2147483647",
                         "min": "-1",
                         "mutable": "playing",
@@ -232352,90 +231598,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
                     "multi-pass": {
                         "blurb": "Multi pass encoding",
                         "conditionally-available": false,
@@ -232466,13 +231628,27 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "p4 (11)",
+                        "default": "default (0)",
                         "mutable": "playing",
                         "readable": true,
                         "type": "GstNvEncoderPreset",
                         "writable": true
                     },
-                    "qp-b": {
+                    "qp-const": {
+                        "blurb": "DEPRECATED, use qp-const-{i,p,b} properties instead",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-const-b": {
                         "blurb": "Constant QP value for B frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232486,7 +231662,7 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-i": {
+                    "qp-const-i": {
                         "blurb": "Constant QP value for I frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232500,7 +231676,7 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-p": {
+                    "qp-const-p": {
                         "blurb": "Constant QP value for P frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232514,16 +231690,116 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
+                    "qp-max": {
+                        "blurb": "DEPRECATED, Use qp-max-{i,p,b} properties instead",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "vbr (1)",
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
                         "mutable": "playing",
                         "readable": true,
-                        "type": "GstNvEncoderRCMode",
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-b": {
+                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-i": {
+                        "blurb": "Maximum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-p": {
+                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min": {
+                        "blurb": "DEPRECATED, Use qp-min-{i,p,b} properties instead",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-b": {
+                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-i": {
+                        "blurb": "Minimum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-p": {
+                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
                         "writable": true
                     },
                     "rc-lookahead": {
@@ -232538,6 +231814,18 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "guint",
+                        "writable": true
+                    },
+                    "rc-mode": {
+                        "blurb": "Rate Control Mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "default (0)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstNvEncoderRCMode",
                         "writable": true
                     },
                     "repeat-sequence-header": {
@@ -232626,8 +231914,8 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
+                    "zerolatency": {
+                        "blurb": "Zero latency operation (no reordering delay)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -232659,12 +231947,12 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-h265:\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n        profile: { (string)main, (string)main-10, (string)main-444, (string)main-444-10 }\n  stream-format: { (string)hvc1, (string)hev1, (string)byte-stream }\n      alignment: au\n",
+                        "caps": "video/x-h265:\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n        profile: { (string)main, (string)main-10, (string)main-444, (string)main-444-10 }\n  stream-format: { (string)byte-stream, (string)hvc1, (string)hev1 }\n      alignment: au\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -232722,7 +232010,7 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "b-frames": {
+                    "bframes": {
                         "blurb": "Number of B-frames between I and P",
                         "conditionally-available": true,
                         "construct": false,
@@ -232770,7 +232058,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "30",
+                        "default": "75",
                         "max": "2147483647",
                         "min": "-1",
                         "mutable": "playing",
@@ -232804,90 +232092,6 @@
                         "type": "guint",
                         "writable": true
                     },
-                    "max-qp-b": {
-                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-i": {
-                        "blurb": "Maximum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "max-qp-p": {
-                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-b": {
-                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-i": {
-                        "blurb": "Minimum QP value for I frame, (-1 = disabled)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
-                    "min-qp-p": {
-                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "-1",
-                        "max": "51",
-                        "min": "-1",
-                        "mutable": "playing",
-                        "readable": true,
-                        "type": "gint",
-                        "writable": true
-                    },
                     "multi-pass": {
                         "blurb": "Multi pass encoding",
                         "conditionally-available": false,
@@ -232918,13 +232122,27 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "p4 (11)",
+                        "default": "default (0)",
                         "mutable": "playing",
                         "readable": true,
                         "type": "GstNvEncoderPreset",
                         "writable": true
                     },
-                    "qp-b": {
+                    "qp-const": {
+                        "blurb": "DEPRECATED, use qp-const-{i,p,b} properties instead",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-const-b": {
                         "blurb": "Constant QP value for B frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232938,7 +232156,7 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-i": {
+                    "qp-const-i": {
                         "blurb": "Constant QP value for I frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232952,7 +232170,7 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "qp-p": {
+                    "qp-const-p": {
                         "blurb": "Constant QP value for P frame (-1 = default)",
                         "conditionally-available": false,
                         "construct": false,
@@ -232966,16 +232184,116 @@
                         "type": "gint",
                         "writable": true
                     },
-                    "rate-control": {
-                        "blurb": "Rate Control Method",
+                    "qp-max": {
+                        "blurb": "DEPRECATED, Use qp-max-{i,p,b} properties instead",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "vbr (1)",
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
                         "mutable": "playing",
                         "readable": true,
-                        "type": "GstNvEncoderRCMode",
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-b": {
+                        "blurb": "Maximum QP value for B frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-i": {
+                        "blurb": "Maximum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-max-p": {
+                        "blurb": "Maximum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min": {
+                        "blurb": "DEPRECATED, Use qp-min-{i,p,b} properties instead",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-b": {
+                        "blurb": "Minimum QP value for B frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-i": {
+                        "blurb": "Minimum QP value for I frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "qp-min-p": {
+                        "blurb": "Minimum QP value for P frame, (-1 = automatic)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "51",
+                        "min": "-1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gint",
                         "writable": true
                     },
                     "rc-lookahead": {
@@ -232990,6 +232308,18 @@
                         "mutable": "playing",
                         "readable": true,
                         "type": "guint",
+                        "writable": true
+                    },
+                    "rc-mode": {
+                        "blurb": "Rate Control Mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "default (0)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstNvEncoderRCMode",
                         "writable": true
                     },
                     "repeat-sequence-header": {
@@ -233078,8 +232408,8 @@
                         "type": "gboolean",
                         "writable": true
                     },
-                    "zero-reorder-delay": {
-                        "blurb": "Zero latency operation (i.e., num_reorder_frames = 0)",
+                    "zerolatency": {
+                        "blurb": "Zero latency operation (no reordering delay)",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -233108,12 +232438,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-h264:\n  stream-format: { (string)avc, (string)avc3, (string)byte-stream }\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-high, (string)constrained-baseline, (string)baseline, (string)progressive-high }\n      framerate: [ 0/1, 2147483647/1 ]\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
+                        "caps": "video/x-h264:\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n  stream-format: { (string)avc, (string)avc3, (string)byte-stream }\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-high, (string)constrained-baseline, (string)baseline, (string)progressive-high }\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -233210,7 +232540,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, Y444, VUYA, RGBA, RGBx, BGRA, BGRx }\n          width: [ 160, 4096 ]\n         height: [ 64, 4096 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -233713,12 +233043,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-h265:\n  stream-format: { (string)hev1, (string)hvc1, (string)byte-stream }\n      alignment: au\n        profile: { (string)main, (string)main-10, (string)main-12, (string)main-444, (string)main-444-10, (string)main-444-12 }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n",
+                        "caps": "video/x-h265:\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n  stream-format: { (string)hev1, (string)hvc1, (string)byte-stream }\n      alignment: au\n        profile: { (string)main, (string)main-10, (string)main-12, (string)main-444, (string)main-444-10, (string)main-444-12 }\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, P012_LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, P012_LE, Y444, GBR }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, P012_LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, P012_LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE, P012_LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { I420, I420_10LE, I420_12LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { I420, I420_10LE, I420_12LE, Y444, Y444_16LE, GBR }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, P012_LE, Y444, Y444_16LE, GBR, GBR_16LE }\n          width: [ 144, 8192 ]\n         height: [ 144, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -233815,7 +233145,7 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: { NV12, P010_10LE, Y444, Y444_16LE, GBR, GBR_16LE, VUYA, RGBA, RGBx, BGRA, BGRx, RGB10A2_LE }\n          width: [ 144, 8192 ]\n         height: [ 48, 8192 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -234478,7 +233808,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\nvideo/x-raw:\n         format: NV12\n          width: [ 48, 4096 ]\n         height: [ 16, 4096 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -234572,12 +233902,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-vp9:\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n        profile: { (string)0, (string)2 }\n      alignment: frame\n",
+                        "caps": "video/x-vp9:\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n      alignment: frame\n        profile: { (string)0, (string)2 }\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n",
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { I420, I420_10LE, I420_12LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n\nvideo/x-raw(memory:GLMemory):\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE, P012_LE }\n          width: [ 128, 8192 ]\n         height: [ 128, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -234698,6 +234028,144 @@
                         "writable": true
                     }
                 }
+            },
+            "GstCudaCompositorOperator": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Source",
+                        "name": "source",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Over",
+                        "name": "over",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstCudaCompositorPad": {
+                "hierarchy": [
+                    "GstCudaCompositorPad",
+                    "GstVideoAggregatorPad",
+                    "GstAggregatorPad",
+                    "GstPad",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "kind": "object",
+                "properties": {
+                    "alpha": {
+                        "blurb": "Alpha of the picture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "1",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "height": {
+                        "blurb": "Height of the picture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "-2147483648",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "operator": {
+                        "blurb": "Blending operator to use for blending this pad over the previous ones",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "over (1)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstCudaCompositorOperator",
+                        "writable": true
+                    },
+                    "sizing-policy": {
+                        "blurb": "Sizing policy to use for image scaling",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "none (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstCudaCompositorSizingPolicy",
+                        "writable": true
+                    },
+                    "width": {
+                        "blurb": "Width of the picture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "-2147483648",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "xpos": {
+                        "blurb": "X position of the picture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "-2147483648",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "ypos": {
+                        "blurb": "Y position of the picture",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "2147483647",
+                        "min": "-2147483648",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    }
+                }
+            },
+            "GstCudaCompositorSizingPolicy": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "None: Image is scaled to fill configured destination rectangle without padding or keeping the aspect ratio",
+                        "name": "none",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Keep Aspect Ratio: Image is scaled to fit destination rectangle specified by GstD3D12CompositorPad:{xpos, ypos, width, height} with preserved aspect ratio. Resulting image will be centered in the destination rectangle with padding if necessary",
+                        "name": "keep-aspect-ratio",
+                        "value": "1"
+                    }
+                ]
             },
             "GstCudaIpcIOMode": {
                 "kind": "enum",
