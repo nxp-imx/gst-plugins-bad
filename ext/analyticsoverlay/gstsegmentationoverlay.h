@@ -1,8 +1,8 @@
-/* GStreamer object detection overlay
- * Copyright (C) <2022> Collabora Ltd.
+/* GStreamer segmentation overlay
+ * Copyright (C) <2024> Collabora Ltd.
  *  @author: Daniel Morin <daniel.morin@collabora.com>
  *
- * gstanalyticsoverlay.c
+ * gstsegmentationoverlay.h
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,35 +20,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#ifndef __GST_SEGMENTATION_OVERLAY_H__
+#define __GST_SEGMENTATION_OVERLAY_H__
 
-#include "gstobjectdetectionoverlay.h"
-#include "gstsegmentationoverlay.h"
+#include <gst/video/gstvideofilter.h>
 
-/**
- * SECTION:plugin-analyticsoverlay
- *
- * Analytics overlay
- *
- * See also: @objectdetectionoverlay
- * Since: 1.24
- */
+G_BEGIN_DECLS
 
-static gboolean
-plugin_init (GstPlugin * plugin)
-{
-  gboolean ret = FALSE;
+#define GST_TYPE_SEGMENTATION_OVERLAY \
+  (gst_segmentation_overlay_get_type())
 
-  ret |= GST_ELEMENT_REGISTER (objectdetectionoverlay, plugin);
-  ret |= GST_ELEMENT_REGISTER (segmentationoverlay, plugin);
+G_DECLARE_FINAL_TYPE (GstSegmentationOverlay, gst_segmentation_overlay,
+    GST, SEGMENTATION_OVERLAY, GstVideoFilter)
 
-  return ret;
-}
+GST_ELEMENT_REGISTER_DECLARE (segmentationoverlay);
 
-GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
-    GST_VERSION_MINOR,
-    analyticsoverlay,
-    "Analytics-meta overlay elements",
-    plugin_init, VERSION, GST_LICENSE, GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)
+G_END_DECLS
+#endif /* __GST_SEGMENTATION_OVERLAY_H__ */
