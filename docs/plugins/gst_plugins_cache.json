@@ -8694,7 +8694,7 @@
                         "construct-only": false,
                         "controllable": false,
                         "default": "valid",
-                        "mutable": "playing",
+                        "mutable": "ready",
                         "readable": true,
                         "type": "GstCCBufferCea608PaddingStrategy",
                         "writable": true
@@ -8708,7 +8708,7 @@
                         "default": "18446744073709551615",
                         "max": "18446744073709551615",
                         "min": "0",
-                        "mutable": "playing",
+                        "mutable": "ready",
                         "readable": true,
                         "type": "guint64",
                         "writable": true
@@ -8772,7 +8772,7 @@
                         "default": "18446744073709551615",
                         "max": "18446744073709551615",
                         "min": "0",
-                        "mutable": "playing",
+                        "mutable": "ready",
                         "readable": true,
                         "type": "guint64",
                         "writable": true
