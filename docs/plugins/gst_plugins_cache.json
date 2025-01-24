@@ -252100,7 +252100,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-h266:\n         parsed: true\n  stream-format: { (string)byte-stream }\n      alignment: { (string)au, (string)nal }\n",
+                        "caps": "video/x-h266:\n         parsed: true\n  stream-format: { (string)vvc1, (string)vvi1, (string)byte-stream }\n      alignment: { (string)au, (string)nal }\n",
                         "direction": "src",
                         "presence": "always"
                     }
