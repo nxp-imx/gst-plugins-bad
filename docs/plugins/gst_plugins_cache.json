@@ -234777,6 +234777,318 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "nvdswrapper": {
+        "description": "NVIDIA DeepStream wrapper plugin",
+        "elements": {
+            "nvdsdewarp": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Performs dewraping using NVIDIA DeepStream NVWarp360 API",
+                "hierarchy": [
+                    "GstNvDsDewarp",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Effect/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: RGBA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:CUDAMemory):\n         format: RGBA\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "bottom-angle": {
+                        "blurb": "Bottom angle of view in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-90",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "control": {
+                        "blurb": "Projection specific control value",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.6",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "device-id": {
+                        "blurb": "CUDA Device ID",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "-1",
+                        "max": "2147483647",
+                        "min": "-1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint",
+                        "writable": true
+                    },
+                    "fov": {
+                        "blurb": "Source field of view in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "180",
+                        "max": "3.40282e+38",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "pitch": {
+                        "blurb": "Pitch rotation angle in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "roll": {
+                        "blurb": "Roll rotation angle in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "rotation-axes": {
+                        "blurb": "Rotation Axes to apply. X rotation rotates the view upward, Y rightward, and Z clockwise. Default is \"YXZ\" as known as yaw, pitch, roll",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "yxz (2)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstNvDsDewarpAxes",
+                        "writable": true
+                    },
+                    "top-angle": {
+                        "blurb": "Top angle of view in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "90",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "warp-type": {
+                        "blurb": "Warp type to use. \"wrap-type=none\" will enable passthrough mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "none (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstNvDsDewarpWarp",
+                        "writable": true
+                    },
+                    "yaw": {
+                        "blurb": "Yaw rotation angle in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            }
+        },
+        "filename": "gstnvdswrapper",
+        "license": "LGPL",
+        "other-types": {
+            "GstNvDsDewarpAxes": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "XYZ",
+                        "name": "xyz",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "XZY",
+                        "name": "xzy",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "YXZ",
+                        "name": "yxz",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "YZX",
+                        "name": "yzx",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "ZXY",
+                        "name": "zxy",
+                        "value": "4"
+                    },
+                    {
+                        "desc": "ZYX",
+                        "name": "zyx",
+                        "value": "5"
+                    }
+                ]
+            },
+            "GstNvDsDewarpWarp": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "None",
+                        "name": "none",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Fisheye Pushbroom",
+                        "name": "fisheye-pushbroom",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Fisheye Rotcylinder",
+                        "name": "fisheye-rotcylinder",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Perspective Perspective",
+                        "name": "perspective-perspective",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "Fisheye Perspective",
+                        "name": "fisheye-perspective",
+                        "value": "4"
+                    },
+                    {
+                        "desc": "Fisheye Fisheye",
+                        "name": "fisheye-fisheye",
+                        "value": "5"
+                    },
+                    {
+                        "desc": "Fisheye Cylinder",
+                        "name": "fisheye-cylinder",
+                        "value": "6"
+                    },
+                    {
+                        "desc": "Fisheye Equirect",
+                        "name": "fisheye-equirect",
+                        "value": "7"
+                    },
+                    {
+                        "desc": "Fisheye Panini",
+                        "name": "fisheye-panini",
+                        "value": "8"
+                    },
+                    {
+                        "desc": "Perspective Equirect",
+                        "name": "perspective-equirect",
+                        "value": "9"
+                    },
+                    {
+                        "desc": "Perspective Panini",
+                        "name": "perspective-panini",
+                        "value": "10"
+                    },
+                    {
+                        "desc": "Equirect Cylinder",
+                        "name": "equirect-cylinder",
+                        "value": "11"
+                    },
+                    {
+                        "desc": "Equirect Equirect",
+                        "name": "equirect-equirect",
+                        "value": "12"
+                    },
+                    {
+                        "desc": "Equirect Fisheye",
+                        "name": "equirect-fisheye",
+                        "value": "13"
+                    },
+                    {
+                        "desc": "Equirect Panini",
+                        "name": "equirect-panini",
+                        "value": "14"
+                    },
+                    {
+                        "desc": "Equirect Perspective",
+                        "name": "equirect-perspective",
+                        "value": "15"
+                    },
+                    {
+                        "desc": "Equirect Pushbroom",
+                        "name": "equirect-pushbroom",
+                        "value": "16"
+                    },
+                    {
+                        "desc": "Equirect Sterographic",
+                        "name": "equirect-stereographic",
+                        "value": "17"
+                    },
+                    {
+                        "desc": "Equirect Rotcylinder",
+                        "name": "equirect-rotcylinder",
+                        "value": "18"
+                    }
+                ]
+            }
+        },
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "openal": {
         "description": "OpenAL plugin library",
         "elements": {
