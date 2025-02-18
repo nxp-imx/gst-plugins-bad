@@ -228202,7 +228202,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "18446744073709551615",
+                        "default": "0",
                         "max": "18446744073709551615",
                         "min": "0",
                         "mutable": "null",
