@@ -234329,6 +234329,17 @@
                         "readable": true,
                         "type": "GstNvEncoderSeiInsertMode",
                         "writable": true
+                    },
+                    "extern-cuda-bufferpool": {
+                        "blurb": "GstCudaBufferPool prepared by application",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "GstObject",
+                        "writable": true
                     }
                 }
             },
