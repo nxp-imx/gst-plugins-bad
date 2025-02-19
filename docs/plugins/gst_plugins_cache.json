@@ -41598,7 +41598,7 @@
                 "long-name": "KMS video sink",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n         format: { BGRA, RGBA, P016_LE, P010_10LE, NV24, BGRx, RGBx, RGB, BGR, Y42B, NV61, NV16, UYVY, YVYU, YUY2, I420, YV12, NV21, NV12, RGB16, BGR16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw:\n         format: { BGRA, RGBA, P016_LE, NV12_10LE40, P010_10LE, NV24, BGRx, RGBx, RGB, BGR, Y42B, NV61, NV16, UYVY, YVYU, YUY2, I420, YV12, NV21, NV12, RGB16, BGR16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     }
