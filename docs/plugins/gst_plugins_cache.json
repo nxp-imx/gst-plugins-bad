@@ -249833,7 +249833,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -249886,7 +249886,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -249939,7 +249939,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -249992,7 +249992,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -250075,7 +250075,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -250158,7 +250158,7 @@
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12_10LE40, P010_10LE, NV12_10LE40_4L4, MT2110T, MT2110R, NV12, YUY2, NV12_4L4, NV12_32L32, NV12_16L32S, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { MT2110R, MT2110T, NV12_10LE40_4L4, NV12_10LE40, P010_10LE, YUY2, NV12_16L32S, NV12_32L32, NV12_4L4, NV12, I420 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
