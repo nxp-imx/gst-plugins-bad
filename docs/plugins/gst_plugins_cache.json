@@ -8942,6 +8942,32 @@
                 },
                 "rank": "none"
             },
+            "h264ccinserter": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Insert closed caption data to H.264 streams",
+                "hierarchy": [
+                    "GstH264CCInserter",
+                    "GstCodecCCInserter",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Video/Filter",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-h264:\n      alignment: au\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-h264:\n      alignment: au\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
             "h265ccextractor": {
                 "author": "Seungha Yang <seungha@centricular.com>",
                 "description": "Extract GstVideoCaptionMeta from input H.265 stream",
@@ -8963,6 +8989,32 @@
                     },
                     "src": {
                         "caps": "closedcaption/x-cea-608:\n         format: { raw, s334-1a }\nclosedcaption/x-cea-708:\n         format: { cc_data, cdp }\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
+            "h265ccinserter": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Insert closed caption data to H.265 streams",
+                "hierarchy": [
+                    "GstH265CCInserter",
+                    "GstCodecCCInserter",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Codec/Video/Filter",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-h265:\n      alignment: au\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-h265:\n      alignment: au\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -9153,6 +9205,57 @@
                         "value": "3"
                     }
                 ]
+            },
+            "GstCodecCCInsertMetaOrder": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Decode",
+                        "name": "decode",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Display",
+                        "name": "display",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstCodecCCInserter": {
+                "hierarchy": [
+                    "GstCodecCCInserter",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "kind": "object",
+                "properties": {
+                    "caption-meta-order": {
+                        "blurb": "Order of caption metas attached on buffers. In case of \"display\" order, inserter will reorder captions to decoding order",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "decode (0)",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "GstCodecCCInsertMetaOrder",
+                        "writable": true
+                    },
+                    "remove-caption-meta": {
+                        "blurb": "Remove caption meta from outgoing video buffers",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                }
             },
             "GstLine21DecoderMode": {
                 "kind": "enum",
