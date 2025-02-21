@@ -246801,7 +246801,7 @@
                         "writable": true
                     },
                     "logical-processors": {
-                        "blurb": "Number of logical CPU cores to be used. 0: auto",
+                        "blurb": "Number of logical CPU cores to be used. Deprecated and replaced with level-of-parallelism in SVT-AV1 3.0.0. 0: auto",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
