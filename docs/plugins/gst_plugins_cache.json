@@ -3524,6 +3524,18 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "filled-box": {
+                        "blurb": "Draw a filled box",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "labels-color": {
                         "blurb": "Color (ARGB) to use for object labels",
                         "conditionally-available": false,
