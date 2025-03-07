@@ -243704,6 +243704,18 @@
                     }
                 },
                 "properties": {
+                    "automatic-association-id": {
+                        "blurb": "Whether a SCTP Association ID should be automatically generated.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "local-sctp-port": {
                         "blurb": "Local sctp port for the sctp association. The remote port is configured via the GstSctpEnc element.",
                         "conditionally-available": false,
