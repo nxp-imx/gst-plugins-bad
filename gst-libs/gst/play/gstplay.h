@@ -388,6 +388,13 @@ void         gst_play_set_subtitle_video_offset        (GstPlay    * play,
                                                         gint64 offset);
 
 GST_PLAY_API
+void           gst_play_set_seek_accurate              (GstPlay * play,
+                                                        gboolean accurate);
+
+GST_PLAY_API
+gboolean       gst_play_get_seek_accurate               (GstPlay * play);
+
+GST_PLAY_API
 gboolean       gst_play_set_config                  (GstPlay * play,
                                                      GstStructure * config);
 
