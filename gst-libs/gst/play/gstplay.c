@@ -195,6 +195,7 @@ struct _GstPlay
   GstClockTime last_seek_time;  /* Only set from main context */
   GSource *seek_source;
   GstClockTime seek_position;
+  gboolean seek_accurate;
 
   GstStreamCollection *collection;
   gchar *video_sid;
@@ -3042,6 +3043,7 @@ gst_play_seek_internal_locked (GstPlay * self)
   self->seek_position = GST_CLOCK_TIME_NONE;
   self->seek_pending = TRUE;
   rate = self->rate;
+  accurate = self->seek_accurate;
   g_mutex_unlock (&self->lock);
 
   remove_tick_source (self);
@@ -3049,7 +3051,8 @@ gst_play_seek_internal_locked (GstPlay * self)
 
   flags |= GST_SEEK_FLAG_FLUSH;
 
-  accurate = gst_play_config_get_seek_accurate (self->config);
+  accurate |= gst_play_config_get_seek_accurate (self->config);
+  gst_play_config_set_seek_accurate (self->config, accurate);
 
   if (accurate) {
     flags |= GST_SEEK_FLAG_ACCURATE;
@@ -4399,6 +4402,30 @@ gst_play_set_subtitle_video_offset (GstPlay * self, gint64 offset)
   g_return_if_fail (GST_IS_PLAY (self));
 
   g_object_set (self, "subtitle-video-offset", offset, NULL);
+}
+
+void
+gst_play_set_seek_accurate (GstPlay * self, gboolean accurate)
+{
+  g_return_if_fail (GST_IS_PLAY (self));
+
+  g_mutex_lock (&self->lock);
+  self->seek_accurate = accurate;
+  g_mutex_unlock (&self->lock);
+}
+
+gboolean
+gst_play_get_seek_accurate (GstPlay * self)
+{
+  gboolean seek_accurate = FALSE;
+
+  g_return_val_if_fail (GST_IS_PLAY (self), FALSE);
+
+  g_mutex_lock (&self->lock);
+  self->seek_accurate = seek_accurate;
+  g_mutex_unlock (&self->lock);
+
+  return seek_accurate;
 }
 
 
