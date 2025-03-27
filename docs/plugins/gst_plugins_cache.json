@@ -257669,44 +257669,6 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
-    "y4mdec": {
-        "description": "Demuxes/decodes YUV4MPEG streams",
-        "elements": {
-            "y4mdec": {
-                "author": "David Schleef <ds@schleef.org>",
-                "description": "Demuxes/decodes YUV4MPEG streams",
-                "hierarchy": [
-                    "GstY4mDec",
-                    "GstElement",
-                    "GstObject",
-                    "GInitiallyUnowned",
-                    "GObject"
-                ],
-                "klass": "Codec/Demuxer",
-                "long-name": "YUV4MPEG demuxer/decoder",
-                "pad-templates": {
-                    "sink": {
-                        "caps": "application/x-yuv4mpeg:\n     y4mversion: 2\n",
-                        "direction": "sink",
-                        "presence": "always"
-                    },
-                    "src": {
-                        "caps": "video/x-raw:\n         format: { I420, Y41B, Y42B, Y444, I420_10LE, I422_10LE, Y444_10LE, I420_12LE, I422_12LE, Y444_12LE, Y444_16LE, GRAY8, GRAY16_LE }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
-                        "direction": "src",
-                        "presence": "always"
-                    }
-                },
-                "rank": "secondary"
-            }
-        },
-        "filename": "gsty4mdec",
-        "license": "LGPL",
-        "other-types": {},
-        "package": "GStreamer Bad Plug-ins",
-        "source": "gst-plugins-bad",
-        "tracers": {},
-        "url": "Unknown package origin"
-    },
     "zbar": {
         "description": "zbar barcode scanner",
         "elements": {
