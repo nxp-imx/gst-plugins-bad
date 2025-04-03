@@ -235257,6 +235257,178 @@
         "tracers": {},
         "url": "Unknown package origin"
     },
+    "onnx": {
+        "description": "ONNX neural network plugin",
+        "elements": {
+            "onnxinference": {
+                "author": "Aaron Boxer <aaron.boxer@collabora.com>",
+                "description": "Apply neural network to video frames and create tensor output",
+                "hierarchy": [
+                    "GstOnnxInference",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Effect/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n         format: { RGB, RGBA, BGR, BGRA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n         format: { RGB, RGBA, BGR, BGRA }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "execution-provider": {
+                        "blurb": "ONNX execution provider",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "cpu (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstOnnxExecutionProvider",
+                        "writable": true
+                    },
+                    "input-image-format": {
+                        "blurb": "Input image format",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "hwc (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstMlInputImageFormat",
+                        "writable": true
+                    },
+                    "input-tensor-offset": {
+                        "blurb": "offset each tensor value by this value",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "3.40282e+38",
+                        "min": "-3.40282e+38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "input-tensor-scale": {
+                        "blurb": "Divide each tensor value by this value",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "3.40282e+38",
+                        "min": "1.17549e-38",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "model-file": {
+                        "blurb": "ONNX model file",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "optimization-level": {
+                        "blurb": "ONNX optimization level",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "disable-all (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstOnnxOptimizationLevel",
+                        "writable": true
+                    }
+                },
+                "rank": "primary"
+            }
+        },
+        "filename": "gstonnx",
+        "license": "LGPL",
+        "other-types": {
+            "GstMlInputImageFormat": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Height Width Channel (HWC) a.k.a. interleaved image data format",
+                        "name": "hwc",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Channel Height Width (CHW) a.k.a. planar image data format",
+                        "name": "chw",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstOnnxExecutionProvider": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "CPU execution provider",
+                        "name": "cpu",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "CUDA execution provider",
+                        "name": "cuda",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstOnnxOptimizationLevel": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Disable all optimization",
+                        "name": "disable-all",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Enable basic optimizations (redundant node removals))",
+                        "name": "enable-basic",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Enable extended optimizations (redundant node removals + node fusions)",
+                        "name": "enable-extended",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Enable all possible optimizations",
+                        "name": "enable-all",
+                        "value": "3"
+                    }
+                ]
+            }
+        },
+        "package": "GStreamer Bad Plug-ins",
+        "source": "gst-plugins-bad",
+        "tracers": {},
+        "url": "Unknown package origin"
+    },
     "openal": {
         "description": "OpenAL plugin library",
         "elements": {
