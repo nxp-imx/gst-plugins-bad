@@ -251207,6 +251207,330 @@
                 },
                 "rank": "none"
             },
+            "vah264lpenc": {
+                "author": "He Junyan <junyan.he@intel.com>",
+                "description": "VA-API based H.264 low power video encoder",
+                "hierarchy": [
+                    "GstVaH264LPEnc",
+                    "GstVaBaseEnc",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:VAMemory):\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-h264:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "aud": {
+                        "blurb": "Insert AU (Access Unit) delimeter for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "b-frames": {
+                        "blurb": "Number of B frames between I and P reference frames",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "31",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "b-pyramid": {
+                        "blurb": "Enable the b-pyramid reference structure in the GOP",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "bitrate": {
+                        "blurb": "The desired bitrate expressed in kbps (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2048000",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "cabac": {
+                        "blurb": "Enable CABAC entropy coding mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "cc-insert": {
+                        "blurb": "Insert CEA-708 Closed Captions",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "cpb-size": {
+                        "blurb": "The desired max CPB size in Kb (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2048000",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "dct8x8": {
+                        "blurb": "Enable adaptive use of 8x8 transforms in I-frames",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "i-frames": {
+                        "blurb": "Force the number of I frames insertion within one GOP, not including the first IDR frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1023",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "key-int-max": {
+                        "blurb": "The maximal distance between two keyframes. It decides the size of GOP (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1024",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "max-qp": {
+                        "blurb": "Maximum quantizer value for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "51",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "mbbrc": {
+                        "blurb": "Macroblock level Bitrate Control. Not available in CQP mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "auto (2)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstVaFeature",
+                        "writable": true
+                    },
+                    "min-qp": {
+                        "blurb": "Minimum quantizer value for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "num-slices": {
+                        "blurb": "Number of slices per frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "200",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpb": {
+                        "blurb": "The quantizer value for B frame. Available only in CQP mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpi": {
+                        "blurb": "The quantizer value for I frame. In CQP mode, it specifies the QP of I frame. In ICQ and QVBR modes, it specifies a quality factor. In other modes, it is ignored",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpp": {
+                        "blurb": "The quantizer value for P frame. Available only in CQP mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "rate-control": {
+                        "blurb": "The desired rate control mode for the encoder",
+                        "conditionally-available": true,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "cqp (16)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstVaEncoderRateControl_H264_LP_renderD128",
+                        "writable": true
+                    },
+                    "ref-frames": {
+                        "blurb": "Number of reference frames, including both the forward and the backward",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "3",
+                        "max": "16",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "target-percentage": {
+                        "blurb": "The percentage for 'target bitrate'/'maximum bitrate' (Only in VBR)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "66",
+                        "max": "100",
+                        "min": "50",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "target-usage": {
+                        "blurb": "The target usage to control and balance the encoding speed/quality",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "4",
+                        "max": "7",
+                        "min": "1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "trellis": {
+                        "blurb": "Enable the trellis quantization method",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
             "vah265dec": {
                 "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "VA-API based H.265 video decoder",
@@ -251564,6 +251888,322 @@
                 },
                 "rank": "none"
             },
+            "vah265lpenc": {
+                "author": "He Junyan <junyan.he@intel.com>",
+                "description": "VA-API based H.265 low power video encoder",
+                "hierarchy": [
+                    "GstVaH265LPEnc",
+                    "GstVaBaseEnc",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:VAMemory):\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-h265:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "aud": {
+                        "blurb": "Insert AU (Access Unit) delimeter for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "b-frames": {
+                        "blurb": "Number of B frames between I and P reference frames",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "31",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "b-pyramid": {
+                        "blurb": "Enable the b-pyramid reference structure in the GOP",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "bitrate": {
+                        "blurb": "The desired bitrate expressed in kbps (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2048000",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "cpb-size": {
+                        "blurb": "The desired max CPB size in Kb (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "2048000",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "i-frames": {
+                        "blurb": "Force the number of I frames insertion within one GOP, not including the first IDR frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1023",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "key-int-max": {
+                        "blurb": "The maximal distance between two keyframes. It decides the size of GOP (0: auto-calculate)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1024",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "max-qp": {
+                        "blurb": "Maximum quantizer value for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "51",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "mbbrc": {
+                        "blurb": "Macroblock level Bitrate Control. It is not compatible with CQP",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "auto (2)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstVaFeature",
+                        "writable": true
+                    },
+                    "min-qp": {
+                        "blurb": "Minimum quantizer value for each frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "num-slices": {
+                        "blurb": "Number of slices per frame",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "200",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "num-tile-cols": {
+                        "blurb": "The number of columns for tile encoding",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "20",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "num-tile-rows": {
+                        "blurb": "The number of rows for tile encoding",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "22",
+                        "min": "1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpb": {
+                        "blurb": "The quantizer value for B frame. This is available only in CQP mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpi": {
+                        "blurb": "The quantizer value for I frame. In CQP mode, it specifies the QP of I frame. In ICQ and QVBR modes, it specifies a quality factor. In other modes, it is ignored",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "qpp": {
+                        "blurb": "The quantizer value for P frame. This is available only in CQP mode",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "26",
+                        "max": "51",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "rate-control": {
+                        "blurb": "The desired rate control mode for the encoder",
+                        "conditionally-available": true,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "cqp (16)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstVaEncoderRateControl_H265_LP_renderD128",
+                        "writable": true
+                    },
+                    "ref-frames": {
+                        "blurb": "Number of reference frames, including both the forward and the backward",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "3",
+                        "max": "15",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "target-percentage": {
+                        "blurb": "The percentage for 'target bitrate'/'maximum bitrate' (Only in VBR)",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "66",
+                        "max": "100",
+                        "min": "50",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "target-usage": {
+                        "blurb": "The target usage to control and balance the encoding speed/quality",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "4",
+                        "max": "7",
+                        "min": "1",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    },
+                    "trellis": {
+                        "blurb": "Enable the trellis quantization method",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
             "vajpegdec": {
                 "author": "Víctor Jáquez <vjaquez@igalia.com>",
                 "description": "VA-API based JPEG image decoder",
@@ -251601,6 +252241,52 @@
                         "readable": true,
                         "type": "gchararray",
                         "writable": false
+                    }
+                },
+                "rank": "none"
+            },
+            "vajpegenc": {
+                "author": "He Junyan <junyan.he@intel.com>",
+                "description": "VA-API based JPEG video encoder",
+                "hierarchy": [
+                    "GstVaJpegEnc",
+                    "GstVaBaseEnc",
+                    "GstVideoEncoder",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstPreset"
+                ],
+                "klass": "Codec/Encoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:VAMemory):\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { NV12 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "image/jpeg:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "quality": {
+                        "blurb": "Quality factor for encoding",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "50",
+                        "max": "100",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
                     }
                 },
                 "rank": "none"
@@ -251687,6 +252373,60 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "auto-contrast": {
+                        "blurb": "Enable auto contrast",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "false",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "brightness": {
+                        "blurb": "Color brightness value",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "100",
+                        "min": "-100",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "contrast": {
+                        "blurb": "Color contrast value",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "1",
+                        "max": "10",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "denoise": {
+                        "blurb": "Noise reduction factor",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "64",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
                     "disable-passthrough": {
                         "blurb": "Forces passing buffers through the postprocessor",
                         "conditionally-available": false,
@@ -251697,6 +252437,32 @@
                         "mutable": "ready",
                         "readable": true,
                         "type": "gboolean",
+                        "writable": true
+                    },
+                    "hdr-tone-mapping": {
+                        "blurb": "Enable HDR to SDR tone mapping",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "false",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
+                    "hue": {
+                        "blurb": "Color hue value",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "0",
+                        "max": "180",
+                        "min": "-180",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
                         "writable": true
                     },
                     "interpolation-method": {
@@ -251711,6 +252477,20 @@
                         "type": "GstVaInterpolationMethod",
                         "writable": true
                     },
+                    "saturation": {
+                        "blurb": "Color saturation value",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "1",
+                        "max": "10",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
                     "scale-method": {
                         "blurb": "Scale method to use",
                         "conditionally-available": true,
@@ -251722,9 +252502,79 @@
                         "readable": true,
                         "type": "GstVaScaleMethod",
                         "writable": true
+                    },
+                    "sharpen": {
+                        "blurb": "Sharpening/blurring filter",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "44",
+                        "max": "64",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "skin-tone": {
+                        "blurb": "Skin Tone Enhancenment filter",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "3",
+                        "max": "9",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "video-direction": {
+                        "blurb": "Video direction: rotation and flipping",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": true,
+                        "default": "identity (0)",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "GstVideoOrientationMethod",
+                        "writable": true
                     }
                 },
                 "rank": "none"
+            },
+            "vavp8alphadecodebin": {
+                "author": "Cheung Yik Pang <pang.cheung@harmonicinc.com>",
+                "description": "Wrapper bin to decode VP8 with alpha stream.",
+                "hierarchy": [
+                    "GstVaVp8AlphaDecodeBin",
+                    "GstVaCodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp8:\n    codec-alpha: true\n      alignment: frame\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "primary + 11"
             },
             "vavp8dec": {
                 "author": "He Junyan <junyan.he@intel.com>",
@@ -251765,7 +252615,37 @@
                         "writable": false
                     }
                 },
-                "rank": "none"
+                "rank": "primary + 1"
+            },
+            "vavp9alphadecodebin": {
+                "author": "Cheung Yik Pang <pang.cheung@harmonicinc.com>",
+                "description": "Wrapper bin to decode VP9 with alpha stream.",
+                "hierarchy": [
+                    "GstVaVp9AlphaDecodeBin",
+                    "GstVaCodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Codec/Decoder/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-vp9:\n    codec-alpha: true\n      alignment: frame\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "primary + 11"
             },
             "vavp9dec": {
                 "author": "Víctor Jáquez <vjaquez@igalia.com>",
@@ -251875,6 +252755,20 @@
                         "writable": false
                     }
                 }
+            },
+            "GstVaCodecAlphaDecodeBin": {
+                "hierarchy": [
+                    "GstVaCodecAlphaDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "kind": "object"
             },
             "GstVaCompositorPad": {
                 "hierarchy": [
@@ -252000,6 +252894,16 @@
                     }
                 ]
             },
+            "GstVaEncoderRateControl_H264_LP_renderD128": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Constant Quantizer",
+                        "name": "cqp",
+                        "value": "16"
+                    }
+                ]
+            },
             "GstVaEncoderRateControl_H264_renderD128": {
                 "kind": "enum",
                 "values": [
@@ -252013,6 +252917,31 @@
                         "name": "vbr",
                         "value": "4"
                     },
+                    {
+                        "desc": "Video Conferencing Mode (Non HRD compliant)",
+                        "name": "vcm",
+                        "value": "8"
+                    },
+                    {
+                        "desc": "Constant Quantizer",
+                        "name": "cqp",
+                        "value": "16"
+                    },
+                    {
+                        "desc": "Intelligent Constant Quality",
+                        "name": "icq",
+                        "value": "64"
+                    },
+                    {
+                        "desc": "Quality defined VBR",
+                        "name": "qvbr",
+                        "value": "1024"
+                    }
+                ]
+            },
+            "GstVaEncoderRateControl_H265_LP_renderD128": {
+                "kind": "enum",
+                "values": [
                     {
                         "desc": "Constant Quantizer",
                         "name": "cqp",
@@ -252034,9 +252963,24 @@
                         "value": "4"
                     },
                     {
+                        "desc": "Video Conferencing Mode (Non HRD compliant)",
+                        "name": "vcm",
+                        "value": "8"
+                    },
+                    {
                         "desc": "Constant Quantizer",
                         "name": "cqp",
                         "value": "16"
+                    },
+                    {
+                        "desc": "Intelligent Constant Quality",
+                        "name": "icq",
+                        "value": "64"
+                    },
+                    {
+                        "desc": "Quality defined VBR",
+                        "name": "qvbr",
+                        "value": "1024"
                     }
                 ]
             },
