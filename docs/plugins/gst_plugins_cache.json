@@ -240454,7 +240454,7 @@
                         "writable": true
                     }
                 },
-                "rank": "primary"
+                "rank": "none"
             },
             "qsvh265dec": {
                 "author": "Seungha Yang <seungha@centricular.com>",
@@ -240787,7 +240787,7 @@
                         "writable": true
                     }
                 },
-                "rank": "primary"
+                "rank": "none"
             },
             "qsvjpegdec": {
                 "author": "Seungha Yang <seungha@centricular.com>",
@@ -240860,7 +240860,7 @@
                         "writable": true
                     }
                 },
-                "rank": "primary"
+                "rank": "none"
             },
             "qsvvp9dec": {
                 "author": "Seungha Yang <seungha@centricular.com>",
@@ -241099,6 +241099,18 @@
                         "readable": true,
                         "type": "gint64",
                         "writable": false
+                    },
+                    "device-path": {
+                        "blurb": "DRM device path",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": false
                     }
                 }
             },
@@ -241128,6 +241140,18 @@
                         "mutable": "null",
                         "readable": true,
                         "type": "gint64",
+                        "writable": false
+                    },
+                    "device-path": {
+                        "blurb": "DRM device path",
+                        "conditionally-available": true,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
                         "writable": false
                     },
                     "low-latency": {
