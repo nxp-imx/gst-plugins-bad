@@ -256350,7 +256350,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "NULL",
+                        "default": "about:blank",
                         "mutable": "null",
                         "readable": true,
                         "type": "gchararray",
@@ -256375,6 +256375,17 @@
                             {
                                 "name": "arg0",
                                 "type": "GBytes"
+                            }
+                        ],
+                        "return-type": "void",
+                        "when": "last"
+                    },
+                    "run-javascript": {
+                        "action": true,
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "gchararray"
                             }
                         ],
                         "return-type": "void",
@@ -256423,7 +256434,7 @@
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
-                        "default": "NULL",
+                        "default": "about:blank",
                         "mutable": "null",
                         "readable": true,
                         "type": "gchararray",
@@ -256448,6 +256459,17 @@
                             {
                                 "name": "arg0",
                                 "type": "GBytes"
+                            }
+                        ],
+                        "return-type": "void",
+                        "when": "last"
+                    },
+                    "run-javascript": {
+                        "action": true,
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "gchararray"
                             }
                         ],
                         "return-type": "void",
