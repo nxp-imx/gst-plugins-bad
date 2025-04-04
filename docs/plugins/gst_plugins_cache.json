@@ -252040,26 +252040,6 @@
                     }
                 ]
             },
-            "GstVaFeature": {
-                "kind": "enum",
-                "values": [
-                    {
-                        "desc": "GST_VA_FEATURE_DISABLED",
-                        "name": "disabled",
-                        "value": "0"
-                    },
-                    {
-                        "desc": "GST_VA_FEATURE_ENABLED",
-                        "name": "enabled",
-                        "value": "1"
-                    },
-                    {
-                        "desc": "GST_VA_FEATURE_AUTO",
-                        "name": "auto",
-                        "value": "2"
-                    }
-                ]
-            },
             "GstVaInterpolationMethod": {
                 "kind": "enum",
                 "values": [
