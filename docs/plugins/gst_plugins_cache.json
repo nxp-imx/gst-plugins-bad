@@ -248052,7 +248052,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "TensorDecoder/Video",
+                "klass": "Tensordecoder/Video",
                 "pad-templates": {
                     "sink": {
                         "caps": "video/x-raw:\n",
