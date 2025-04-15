@@ -53,7 +53,12 @@ struct _GstKMSSink {
   gint conn_id;
   gint crtc_id;
   gint plane_id;
+  gint primary_plane_id;
   guint pipe;
+
+  /* fps print support */
+  guint64 frame_showed;
+  GstClockTime run_time;
 
   /* crtc data */
   guint16 hdisplay, vdisplay;
@@ -64,6 +69,11 @@ struct _GstKMSSink {
   gboolean has_prime_export;
   gboolean has_async_page_flip;
   gboolean can_scale;
+
+  /* global alpha */
+  gboolean is_kmsproperty_set;
+  guint global_alpha;
+  gboolean hantro_tile_enabled;
 
   gboolean modesetting_enabled;
   gboolean restore_crtc;
