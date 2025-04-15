@@ -365,6 +365,13 @@ gst_kms_allocator_add_fb (GstKMSAllocator * alloc, GstKMSMemory * kmsmem,
   h = GST_VIDEO_INFO_HEIGHT (vinfo);
   fmt = gst_drm_format_from_video (GST_VIDEO_INFO_FORMAT (vinfo));
 
+  if (modifier == DRM_FORMAT_MOD_AMPHION_TILED) {
+    /* for amphion vpu frame, need align fb width to 8
+     * and height to 256 */
+    w = GST_ROUND_UP_8 (w);
+    h = GST_ROUND_UP_N (h, 256);
+  }
+
   for (i = 0; i < num_planes; i++) {
     pitches[i] = GST_VIDEO_INFO_PLANE_STRIDE (vinfo, i);
     offsets[i] = in_offsets[i];
