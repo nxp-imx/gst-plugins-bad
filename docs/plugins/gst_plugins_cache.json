@@ -249203,6 +249203,20 @@
                     }
                 },
                 "properties": {
+                    "min-memory-size": {
+                        "blurb": "Minimum size to allocate in the case a copy into shared memory is needed.",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "9223372036854775807",
+                        "min": "-1",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gint64",
+                        "writable": true
+                    },
                     "socket-path": {
                         "blurb": "The path to the control socket used to control the shared memory transport. This may be modified during the NULL->READY transition",
                         "conditionally-available": false,
