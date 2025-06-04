@@ -3524,6 +3524,20 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "expire-overlay": {
+                        "blurb": "Re-uses the last overlay for the specified amount of time before expiring it (in ns), MAX for never",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1000000000",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    },
                     "filled-box": {
                         "blurb": "Draw a filled box",
                         "conditionally-available": false,
