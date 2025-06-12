@@ -255902,6 +255902,18 @@
                         "type": "gchararray",
                         "writable": true
                     },
+                    "force-aspect-ratio": {
+                        "blurb": "When enabled, scaling will respect original aspect ratio",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "fullscreen": {
                         "blurb": "Whether the surface should be made fullscreen ",
                         "conditionally-available": false,
