@@ -248726,6 +248726,62 @@
                 },
                 "rank": "primary"
             },
+            "ioutracker": {
+                "author": "Santosh Mahto <santosh.mahto@collabora.com>",
+                "description": "Track the objects across frames based on Intersection-over-Union (IoU)",
+                "hierarchy": [
+                    "GstIouTracker",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Analyzer/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "iou-score-threshold": {
+                        "blurb": "Threshold for deciding wether the object is same in different frames",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.5",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "min-frame-count-for-lost-track": {
+                        "blurb": "Min number of consecutive frames where object is absent before track is considered lost",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "5",
+                        "max": "-1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": true
+                    }
+                },
+                "rank": "primary"
+            },
             "ssdobjectdetector": {
                 "author": "Aaron Boxer <aaron.boxer@collabora.com>, Marcus Edel <marcus.edel@collabora.com>",
                 "description": "Apply tensor output from inference to detect objects in video frames",
