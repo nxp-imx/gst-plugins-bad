@@ -917,8 +917,10 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
       allocator = gst_shm_allocator_get ();
   }
 
-  drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
-  gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+  if (IS_AMPHION()) {
+    drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
+    gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
+  }
 
   if (self->enable_tile && HAS_DCSS ()) {
     drm_modifier = DRM_FORMAT_MOD_VSI_G1_TILED;
