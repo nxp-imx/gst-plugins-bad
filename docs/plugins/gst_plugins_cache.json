@@ -256197,7 +256197,7 @@
                         "construct-only": false,
                         "controllable": false,
                         "default": "false",
-                        "mutable": "null",
+                        "mutable": "playing",
                         "readable": true,
                         "type": "gboolean",
                         "writable": true
@@ -256220,7 +256220,7 @@
                         "construct-only": false,
                         "controllable": false,
                         "default": "identity (0)",
-                        "mutable": "null",
+                        "mutable": "playing",
                         "readable": true,
                         "type": "GstVideoOrientationMethod",
                         "writable": true
