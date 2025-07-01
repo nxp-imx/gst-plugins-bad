@@ -30,6 +30,7 @@
 #include "gstwlwindow.h"
 #include "gstwlutils.h"
 #include "gstimxcommon.h"
+#include "gstwlbuffer_private.h"
 
 #include "fullscreen-shell-unstable-v1-client-protocol.h"
 #include "single-pixel-buffer-v1-client-protocol.h"
@@ -411,8 +412,16 @@ gst_wl_window_finalize (GObject * gobject)
   GstWlWindow *self = GST_WL_WINDOW (gobject);
   GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
 
-  gst_wl_display_callback_destroy (priv->display, &priv->frame_callback);
+  g_mutex_lock (&priv->window_lock);
+  /* last buffer is rendered but not committed, set used_by_compositor
+   * to avoid memory leak */
+  if (priv->commit_callback && priv->next_buffer)
+    gst_wl_buffer_set_used_by_compositor (priv->next_buffer, TRUE);
+
   gst_wl_display_callback_destroy (priv->display, &priv->commit_callback);
+  g_mutex_unlock (&priv->window_lock);
+
+  gst_wl_display_callback_destroy (priv->display, &priv->frame_callback);
   gst_wl_display_object_destroy (priv->display,
       (gpointer *) & priv->xdg_toplevel, (GDestroyNotify) xdg_toplevel_destroy);
   gst_wl_display_object_destroy (priv->display,
