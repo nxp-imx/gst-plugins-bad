@@ -81,6 +81,7 @@
 #endif
 
 #include "gstwlbuffer.h"
+#include "gstwlbuffer_private.h"
 
 #include "linux-explicit-synchronization-unstable-v1-client-protocol.h"
 
