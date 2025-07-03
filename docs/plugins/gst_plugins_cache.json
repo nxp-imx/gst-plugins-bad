@@ -21810,7 +21810,7 @@
                         "writable": false
                     },
                     "pem": {
-                        "blurb": "A string containing a X509 certificate and RSA private key in PEM format",
+                        "blurb": "A string containing a X509 certificate and private key in PEM format",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -22034,7 +22034,7 @@
                         "writable": false
                     },
                     "pem": {
-                        "blurb": "A string containing a X509 certificate and RSA private key in PEM format",
+                        "blurb": "A string containing a X509 certificate and private key in PEM format",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
