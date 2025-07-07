@@ -39893,7 +39893,7 @@
                         "construct-only": false,
                         "controllable": false,
                         "default": "identity (0)",
-                        "mutable": "null",
+                        "mutable": "playing",
                         "readable": true,
                         "type": "GstVideoOrientationMethod",
                         "writable": true
