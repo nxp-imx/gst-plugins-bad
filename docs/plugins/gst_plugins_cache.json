@@ -248609,62 +248609,6 @@
                 },
                 "rank": "primary"
             },
-            "facedetector": {
-                "author": "The original repository of the Ultra Light Face Detection is located at https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB.Raghavendra Rao <raghavendra.rao@collabora.com>",
-                "description": "Detect tensor output from the inference of Ultra Light Face Detection to detect the faces in video frames.",
-                "hierarchy": [
-                    "GstFaceDetectorTensorDecoder",
-                    "GstBaseTransform",
-                    "GstElement",
-                    "GstObject",
-                    "GInitiallyUnowned",
-                    "GObject"
-                ],
-                "klass": "Tensordecoder/Video",
-                "pad-templates": {
-                    "sink": {
-                        "caps": "video/x-raw:\n",
-                        "direction": "sink",
-                        "presence": "always"
-                    },
-                    "src": {
-                        "caps": "video/x-raw:\n",
-                        "direction": "src",
-                        "presence": "always"
-                    }
-                },
-                "properties": {
-                    "iou-threshold": {
-                        "blurb": "Threshold for removing boxes based on proportion of the image",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0.3",
-                        "max": "1",
-                        "min": "0",
-                        "mutable": "null",
-                        "readable": true,
-                        "type": "gfloat",
-                        "writable": true
-                    },
-                    "score-threshold": {
-                        "blurb": "Threshold for deciding when to remove boxes based on score",
-                        "conditionally-available": false,
-                        "construct": false,
-                        "construct-only": false,
-                        "controllable": false,
-                        "default": "0.6",
-                        "max": "1",
-                        "min": "0",
-                        "mutable": "null",
-                        "readable": true,
-                        "type": "gfloat",
-                        "writable": true
-                    }
-                },
-                "rank": "primary"
-            },
             "ssdobjectdetector": {
                 "author": "Aaron Boxer <aaron.boxer@collabora.com>, Marcus Edel <marcus.edel@collabora.com>",
                 "description": "Apply tensor output from inference to detect objects in video frames",
@@ -248723,6 +248667,62 @@
                         "construct-only": false,
                         "controllable": false,
                         "default": "0.9",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    }
+                },
+                "rank": "primary"
+            },
+            "ultralightfacedetectortensordec": {
+                "author": "Raghavendra Rao <raghavendra.rao@collabora.com>",
+                "description": "Detect tensor output from the inference of Ultra Light Face Detection to detect the faces in video frames.The original repository of the Ultra Light Face Detection is located at https://github.com/Linzaer/Ultra-Light-Fast-Generic-Face-Detector-1MB.",
+                "hierarchy": [
+                    "GstFaceDetectorTensorDecoder",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Tensordecoder/Video",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw:\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "iou-threshold": {
+                        "blurb": "Threshold for removing boxes based on proportion of the image",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.3",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gfloat",
+                        "writable": true
+                    },
+                    "score-threshold": {
+                        "blurb": "Threshold for deciding when to remove boxes based on score",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.6",
                         "max": "1",
                         "min": "0",
                         "mutable": "null",
