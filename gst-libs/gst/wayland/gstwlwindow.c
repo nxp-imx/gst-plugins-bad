@@ -319,11 +319,10 @@ gst_wl_window_finalize (GObject * gobject)
    * to avoid memory leak */
   if (priv->commit_callback && priv->next_buffer)
     gst_wl_buffer_set_used_by_compositor (priv->next_buffer, TRUE);
-
-  gst_wl_display_callback_destroy (priv->display, &priv->commit_callback);
   g_mutex_unlock (&priv->window_lock);
 
   gst_wl_display_callback_destroy (priv->display, &priv->frame_callback);
+  gst_wl_display_callback_destroy (priv->display, &priv->commit_callback);
   gst_wl_display_object_destroy (priv->display,
       (gpointer *) & priv->xdg_toplevel, (GDestroyNotify) xdg_toplevel_destroy);
   gst_wl_display_object_destroy (priv->display,
