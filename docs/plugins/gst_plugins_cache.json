@@ -3589,6 +3589,18 @@
                         "readable": true,
                         "type": "guint",
                         "writable": true
+                    },
+                    "tracking-outline-colors": {
+                        "blurb": "In the presence of tracking information, each object will get its own color, ignores object-detection-outline-color",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
                     }
                 },
                 "rank": "none"
