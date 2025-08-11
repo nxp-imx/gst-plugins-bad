@@ -3524,6 +3524,18 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "draw-tracking-labels": {
+                        "blurb": "Draw object tracking labels",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "expire-overlay": {
                         "blurb": "Re-uses the last overlay for the specified amount of time before expiring it (in ns), MAX for never",
                         "conditionally-available": false,
