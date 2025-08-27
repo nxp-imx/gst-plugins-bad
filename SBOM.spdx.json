@@ -1,0 +1,102 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2025-08-24T08:05:31Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.20"
+  },
+  "name": "gst-plugins-bad-LF_6.12.34_2.1.0",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://nxp.com/spdx/b4ebfe3a-7cbf-4289-b01c-6734dc538e8c",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-b4ebfe3a-7cbf-4289-b01c-6734dc538e8c",
+      "name": "gst-plugins-bad",
+      "versionInfo": "LF_6.12.34_2.1.0",
+      "licenseConcluded": "(LGPL-2.1-or-later)",
+      "licenseDeclared": "(LGPL-2.1-or-later)",
+      "downloadLocation": "https://github.com/nxp-imx/gst-plugins-bad -b lf-6.12.34-2.1.0",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-cdca1008-6a47-47c1-9a9f-efd281077b7f",
+      "name": "GStreamer",
+      "versionInfo": "1.26.0",
+      "licenseConcluded": "LGPL-2.1-or-later",
+      "licenseDeclared": "(GPL-3.0-or-later OR LGPL-2.1-or-later OR LGPL-2.0-or-later)",
+      "homepage": "https://gstreamer.freedesktop.org/",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: freedesktop_org",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:debian_package:gstreamer1.0-plugins-good:1.26.0:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:debian_package:gstreamer1.0-qt5:1.26.0:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:debian_package:gst-plugins-good1.0:1.26.0:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:debian_package:gstreamer1.0-qt6:1.26.0:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:debian_package:gstreamer1.0-gtk3:1.26.0:1:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "OTHER",
+          "referenceLocator": "5c13e612-36d9-451e-b5a3-e247d4e2536b",
+          "referenceType": "BlackDuck-ComponentOrigin"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-58e0c7d8-33e1-4e4a-811b-d2f8b4d47d87",
+      "name": "onevpl",
+      "versionInfo": "2023.3.0",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://github.com/oneapi-src/oneVPL",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: onevpl",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-b4ebfe3a-7cbf-4289-b01c-6734dc538e8c"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-b4ebfe3a-7cbf-4289-b01c-6734dc538e8c",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-cdca1008-6a47-47c1-9a9f-efd281077b7f"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-b4ebfe3a-7cbf-4289-b01c-6734dc538e8c",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-58e0c7d8-33e1-4e4a-811b-d2f8b4d47d87"
+    }
+  ]
+}
