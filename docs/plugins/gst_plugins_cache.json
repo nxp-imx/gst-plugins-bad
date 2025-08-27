@@ -256807,6 +256807,17 @@
                         "return-type": "gboolean",
                         "when": "last"
                     },
+                    "close": {
+                        "action": true,
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "GstPromise"
+                            }
+                        ],
+                        "return-type": "void",
+                        "when": "last"
+                    },
                     "create-answer": {
                         "action": true,
                         "args": [
