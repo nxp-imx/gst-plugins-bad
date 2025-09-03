@@ -1275,7 +1275,8 @@ gst_base_auto_convert_getcaps (GstBaseAutoConvert * self, GstCaps * filter,
   for (kb = filters_info; kb; kb = g_list_next (kb)) {
     GstAutoConvertFilterInfo *filter_info = kb->data;
     GstElement *element = NULL;
-    GstCaps *element_caps;
+    GstCaps *element_caps = NULL;
+    GstCaps *result;
     InternalPads *pads;
 
     if (filter) {
@@ -1308,26 +1309,34 @@ gst_base_auto_convert_getcaps (GstBaseAutoConvert * self, GstCaps * filter,
           gst_pad_peer_query_caps ((dir ==
               GST_PAD_SINK) ? pads->src : pads->sink, filter);
       internal_pads_unref (pads);
-      if (element_caps)
-        caps = gst_caps_merge (caps, element_caps);
-
       gst_object_unref (element);
-
-      /* Early out, any is absorbing */
-      if (gst_caps_is_any (caps))
-        goto out;
-    } else {
-      GstCaps *static_caps =
-          dir == GST_PAD_SRC ? filter_info->src_caps : filter_info->sink_caps;
-
-      if (static_caps) {
-        caps = gst_caps_merge (caps, static_caps);
-      }
-
-      /* Early out, any is absorbing */
-      if (gst_caps_is_any (caps))
-        goto out;
     }
+
+    GstCaps *static_caps =
+        dir == GST_PAD_SRC ? filter_info->src_caps : filter_info->sink_caps;
+
+    if (static_caps)
+      result = gst_caps_ref(static_caps);
+    else
+      result = gst_caps_new_any();
+
+    if (element_caps) {
+      GstCaps *tmp = gst_caps_intersect_full (element_caps, result,
+            GST_CAPS_INTERSECT_FIRST);
+      gst_caps_take (&result, tmp);
+      gst_caps_unref (element_caps);
+    }
+
+    if (filter) {
+      GstCaps *tmp = gst_caps_intersect_full (filter, result,
+            GST_CAPS_INTERSECT_FIRST);
+      gst_caps_take (&result, tmp);
+    }
+    caps = gst_caps_merge (caps, result);
+
+    /* Early out, any is absorbing */
+    if (gst_caps_is_any (caps))
+      goto out;
   }
 
 
