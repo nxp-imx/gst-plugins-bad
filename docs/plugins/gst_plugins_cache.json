@@ -256240,6 +256240,18 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "fullscreen-output": {
+                        "blurb": "The name of the wayland output to fullscreen to.",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "NULL",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
                     "render-rectangle": {
                         "blurb": "The render rectangle ('<x, y, width, height>')",
                         "conditionally-available": false,
