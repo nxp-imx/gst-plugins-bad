@@ -64,6 +64,7 @@ typedef struct _GstWlWindowPrivate
   GMutex configure_mutex;
   gboolean redraw_pending;
   GCond redraw_wait;
+  gboolean ready_to_finalize;
 
   /* the size and position of the area_(sub)surface */
   GstVideoRectangle render_rectangle;
@@ -301,6 +302,7 @@ gst_wl_window_init (GstWlWindow * self)
 
   priv->configured = TRUE;
   priv->redraw_pending = FALSE;
+  priv->ready_to_finalize = FALSE;
   g_cond_init (&priv->configure_cond);
   g_cond_init (&priv->redraw_wait);
   g_mutex_init (&priv->configure_mutex);
@@ -317,8 +319,10 @@ gst_wl_window_finalize (GObject * gobject)
   g_mutex_lock (&priv->window_lock);
   /* last buffer is rendered but not committed, set used_by_compositor
    * to avoid memory leak */
-  if (priv->commit_callback && priv->next_buffer)
+  if (priv->commit_callback && priv->next_buffer) {
     gst_wl_buffer_set_used_by_compositor (priv->next_buffer, TRUE);
+    priv->ready_to_finalize = TRUE;
+  }
   g_mutex_unlock (&priv->window_lock);
 
   gst_wl_display_callback_destroy (priv->display, &priv->frame_callback);
@@ -966,6 +970,11 @@ commit_callback (void *data, struct wl_callback *callback, uint32_t serial)
   priv->commit_callback = NULL;
 
   g_mutex_lock (&priv->window_lock);
+  if (priv->ready_to_finalize) {
+    priv->ready_to_finalize = FALSE;
+    g_mutex_unlock (&priv->window_lock);
+    return;
+  }
   next_buffer = priv->next_buffer;
   g_mutex_unlock (&priv->window_lock);
 
