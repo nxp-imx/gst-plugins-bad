@@ -1915,6 +1915,8 @@ streams_selected_cb (G_GNUC_UNUSED GstBus * bus, GstMessage * msg,
       GST_DEBUG_OBJECT (self, "Selected audio track %s", stream_id);
       if (g_strcmp0 (self->audio_sid, stream_id) == 0 && self->audio_enabled) {
         found_audio = TRUE;
+      } else if (self->audio_sid == NULL && self->audio_enabled) {
+        self->audio_sid = g_strdup (stream_id);
       } else {
         GST_WARNING_OBJECT (self, "Unexpected audio stream id '%s' selected",
             stream_id);
@@ -1925,6 +1927,8 @@ streams_selected_cb (G_GNUC_UNUSED GstBus * bus, GstMessage * msg,
       GST_DEBUG_OBJECT (self, "Selected video track %s", stream_id);
       if (g_strcmp0 (self->video_sid, stream_id) == 0 && self->video_enabled) {
         found_video = TRUE;
+      } else if (self->video_sid == NULL && self->video_enabled) {
+        self->video_sid = g_strdup (stream_id);
       } else {
         GST_WARNING_OBJECT (self, "Unexpected video stream id '%s' selected",
             stream_id);
@@ -1935,6 +1939,8 @@ streams_selected_cb (G_GNUC_UNUSED GstBus * bus, GstMessage * msg,
       GST_DEBUG_OBJECT (self, "Selected subtitle track %s", stream_id);
       if (g_strcmp0 (self->subtitle_sid, stream_id) == 0) {
         found_subtitle = TRUE;
+      } else if (self->subtitle_sid == NULL) {
+        self->subtitle_sid = g_strdup (stream_id);
       } else {
         GST_WARNING_OBJECT (self, "Unexpected subtitle stream id '%s' selected",
             stream_id);
