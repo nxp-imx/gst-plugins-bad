@@ -228961,7 +228961,7 @@
                         "presence": "request"
                     },
                     "vanc_sink_%%u": {
-                        "caps": "closedcaption/x-cea-708:\n         format: cdp\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "meta/x-st-2038:\n      alignment: frame\n",
                         "direction": "sink",
                         "presence": "request"
                     },
