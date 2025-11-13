@@ -19768,6 +19768,18 @@
                         "type": "gboolean",
                         "writable": true
                     },
+                    "output-vanc": {
+                        "blurb": "Extract and output VANC as GstMeta (if present)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "persistent-id": {
                         "blurb": "Output device instance to use. Higher priority than \"device-number\".",
                         "conditionally-available": false,
