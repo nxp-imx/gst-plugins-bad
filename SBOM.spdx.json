@@ -1,0 +1,140 @@
+{
+  "SPDXID": "SPDXRef-DOCUMENT",
+  "spdxVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2025-11-12T06:51:43Z",
+    "creators": [
+      "Organization: NXP"
+    ],
+    "licenseListVersion": "3.20"
+  },
+  "name": "gst-plugins-bad-LF_6.12.49_2.2.0",
+  "dataLicense": "CC0-1.0",
+  "documentNamespace": "https://nxp.com/spdx/7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+  "packages": [
+    {
+      "SPDXID": "SPDXRef-package-58e0c7d8-33e1-4e4a-811b-d2f8b4d47d87",
+      "name": "onevpl",
+      "versionInfo": "2023.3.0",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://github.com/oneapi-src/oneVPL",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: onevpl",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+      "name": "gst-plugins-bad",
+      "versionInfo": "LF_6.12.49_2.2.0",
+      "licenseConcluded": "(LGPL-2.1-or-later)",
+      "licenseDeclared": "(LGPL-2.1-or-later)",
+      "downloadLocation": "https://github.com/nxp-imx/gst-plugins-bad -b lf-6.12.49-2.2.0",
+      "originator": "Organization: NXP",
+      "supplier": "NOASSERTION",
+      "externalRefs": [],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-9a4ac84e-9830-48f3-bc35-a596632d9cd3",
+      "name": "GStreamer",
+      "versionInfo": "1.26.6",
+      "licenseConcluded": "LGPL-2.1-or-later",
+      "licenseDeclared": "(LGPL-2.0-or-later OR GPL-2.0-or-later)",
+      "homepage": "https://gstreamer.freedesktop.org/",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: GStreamer",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gstreamer_project:gstreamer:1.26.6:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gstreamer:gstreamer:1.26.6:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        },
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:gstreamer:good_plug-ins:1.26.6:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-b0c1e297-e262-446f-a471-37735b26bc1b",
+      "name": "nvidia-video-codec-sdk",
+      "versionInfo": "0.1.2",
+      "licenseConcluded": "MIT",
+      "licenseDeclared": "MIT",
+      "homepage": "https://github.com/ViliamVadocz/nvidia-video-codec-sdk",
+      "downloadLocation": "https://crates.io/crates/nvidia-video-codec-sdk/0.1.2",
+      "originator": "Organization: crates",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "PACKAGE-MANAGER",
+          "referenceLocator": "pkg:cargo/nvidia-video-codec-sdk@0.1.2",
+          "referenceType": "purl"
+        },
+        {
+          "referenceCategory": "OTHER",
+          "referenceLocator": "b88ea10f-58bc-4d4d-8030-a3d3671e84a9",
+          "referenceType": "BlackDuck-ComponentOrigin"
+        }
+      ],
+      "filesAnalyzed": false
+    },
+    {
+      "SPDXID": "SPDXRef-package-bc2452ad-b650-4544-8ce1-d7248a5ee1ce",
+      "name": "pngquant",
+      "versionInfo": "2.4.0",
+      "licenseConcluded": "BSD-2-Clause",
+      "licenseDeclared": "GPL-2.0-or-later",
+      "homepage": "https://pngquant.org/",
+      "downloadLocation": "NOASSERTION",
+      "originator": "Organization: pngquant",
+      "supplier": "NOASSERTION",
+      "externalRefs": [
+        {
+          "referenceCategory": "SECURITY",
+          "referenceLocator": "cpe:2.3:a:pngquant:pngquant:2.4.0:*:*:*:*:*:*:*",
+          "referenceType": "cpe23Type"
+        }
+      ],
+      "filesAnalyzed": false
+    }
+  ],
+  "relationships": [
+    {
+      "spdxElementId": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-58e0c7d8-33e1-4e4a-811b-d2f8b4d47d87"
+    },
+    {
+      "spdxElementId": "SPDXRef-DOCUMENT",
+      "relationshipType": "DESCRIBES",
+      "relatedSpdxElement": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-9a4ac84e-9830-48f3-bc35-a596632d9cd3"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-b0c1e297-e262-446f-a471-37735b26bc1b"
+    },
+    {
+      "spdxElementId": "SPDXRef-package-7bf5e431-1e86-4d66-9cbc-76d9e147c761",
+      "relationshipType": "CONTAINS",
+      "relatedSpdxElement": "SPDXRef-package-bc2452ad-b650-4544-8ce1-d7248a5ee1ce"
+    }
+  ]
+}
