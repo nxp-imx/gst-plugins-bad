@@ -19581,6 +19581,18 @@
                         "type": "GstDecklinkModes",
                         "writable": true
                     },
+                    "output-vanc": {
+                        "blurb": "Output ancillary data from input buffers",
+                        "conditionally-available": false,
+                        "construct": true,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "persistent-id": {
                         "blurb": "Output device instance to use. Higher priority than \"device-number\".",
                         "conditionally-available": false,
