@@ -248686,7 +248686,7 @@
                 "klass": "Tensordecoder",
                 "pad-templates": {
                     "sink": {
-                        "caps": "ANY",
+                        "caps": "video/x-raw:\n        tensors: \"tensorgroups\\,\\ classification-generic-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)classification-generic-out\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 1\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)\\\\\\{\\\\\\ float32\\\\\\,\\\\\\ uint8\\\\\\ \\\\\\}\\\\\\;\\\\\\ tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)classification-generic-out\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)\\\\\\{\\\\\\ float32\\\\\\,\\\\\\ uint8\\\\\\ \\\\\\}\\\"\\ \\}\\;\"\nvideo/x-raw:\n        tensors: \"tensorgroups\\,\\ classification-generic-softmaxed-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)classification-generic-softmaxed-out\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 1\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)\\\\\\{\\\\\\ float32\\\\\\,\\\\\\ uint8\\\\\\ \\\\\\}\\\\\\;\\\\\\ tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)classification-generic-softmaxed-out\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)\\\\\\{\\\\\\ float32\\\\\\,\\\\\\ uint8\\\\\\ \\\\\\}\\\"\\ \\}\\;\"\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -248724,7 +248724,7 @@
                         "writable": true
                     }
                 },
-                "rank": "primary"
+                "rank": "secondary"
             },
             "ioutracker": {
                 "author": "Santosh Mahto <santosh.mahto@collabora.com>",
@@ -248796,7 +248796,7 @@
                 "klass": "Tensordecoder/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n",
+                        "caps": "video/x-raw:\n        tensors: \"tensorgroups\\,\\ ssd-mobilenet-v1-variant-1-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)generic-variant-1-out-count\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\,\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)ssd-mobilenet-v1-variant-1-out-scores\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ 0\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\,\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)ssd-mobilenet-v1-variant-1-out-boxes\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ 0\\\\\\,\\\\\\ 4\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\,\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)ssd-mobilenet-v1-variant-1-out-classes\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ \\\\\\[\\\\\\ 0\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ 0\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\ \\}\\;\"\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -248848,7 +248848,36 @@
                         "writable": true
                     }
                 },
-                "rank": "primary"
+                "rank": "secondary"
+            },
+            "tensordecodebin": {
+                "author": "Daniel Morin <daniel.morin@collabora.com>",
+                "description": "Tensor Decode Bin",
+                "hierarchy": [
+                    "GstTensorDecodeBin",
+                    "GstBin",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "interfaces": [
+                    "GstChildProxy"
+                ],
+                "klass": "Tensor Decoder Bin",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "ANY",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
             },
             "ultralightfacedetectortensordec": {
                 "author": "Raghavendra Rao <raghavendra.rao@collabora.com>",
@@ -248864,7 +248893,7 @@
                 "klass": "Tensordecoder/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n",
+                        "caps": "video/x-raw:\n        tensors: \"tensorgroups\\,\\ ultra-lightweight-face-detection-rfb-320-v1-variant-1-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)ssd-mobilenet-v1-variant-1-out-boxes\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ 1\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ 4\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\,\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)ultra-lightweight-face-detection-rfb-320-v1-variant-1-out-scores\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ 1\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ 2\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\ \\}\\;\"\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -248921,7 +248950,7 @@
                 "klass": "Tensordecoder/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n",
+                        "caps": "video/x-raw:\n        tensors: \"tensorgroups\\,\\ yolo-v8-segmentation-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)yolo-v8-segmentation-out-detections\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ 1\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\,\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)yolo-v8-segmentation-out-protos\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ 1\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\ \\}\\;\"\n",
                         "direction": "sink",
                         "presence": "always"
                     },
@@ -248933,9 +248962,9 @@
                 },
                 "rank": "secondary"
             },
-            "yolotensordec": {
+            "yolov8tensordec": {
                 "author": "Daniel Morin <daniel.morin@collabora.com>, Santosh Mahto <santosh.mahto@collabora.com>",
-                "description": "Decode tensors output from the inference of YOLO Object Detection or FastSAM model (Detection)on video frames. This works on YOLO version 5 and later(v11), and FastSAM models.",
+                "description": "Decode tensors output from the inference of YOLO Object Detection or FastSAM model (Detection)on video frames. This works on YOLO version 8 and later(v11), and FastSAM models.",
                 "hierarchy": [
                     "GstYoloTensorDecoder",
                     "GstBaseTransform",
@@ -248947,7 +248976,7 @@
                 "klass": "Tensordecoder/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n",
+                        "caps": "video/x-raw:\n        tensors: \"tensorgroups\\,\\ yolo-v8-out\\=\\(/set\\)\\{\\ \\(caps\\)\\\"tensor/strided\\\\\\,\\\\\\ tensor-id\\\\\\=\\\\\\(string\\\\\\)yolo-v8-out\\\\\\,\\\\\\ dims\\\\\\=\\\\\\(int\\\\\\)\\\\\\<\\\\\\ 1\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\,\\\\\\ \\\\\\[\\\\\\ 1\\\\\\,\\\\\\ 2147483647\\\\\\ \\\\\\]\\\\\\ \\\\\\>\\\\\\,\\\\\\ dims-order\\\\\\=\\\\\\(string\\\\\\)row-major\\\\\\,\\\\\\ type\\\\\\=\\\\\\(string\\\\\\)float32\\\"\\ \\}\\;\"\n",
                         "direction": "sink",
                         "presence": "always"
                     },
