@@ -39985,7 +39985,7 @@
                 "long-name": "Gtk Wayland Video Sink",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { BGR10A2_LE, RGB10A2_LE, AYUV, RGBA, ARGB, BGRA, ABGR, BGR10x2_LE, RGB10x2_LE, P010_10LE, NV12_10LE40, v308, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, I420, YV12, NV12, NV21, Y41B, YUV9, YVU9, BGR16, RGB16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { BGR10A2_LE, RGB10A2_LE, AYUV, RGBA, ARGB, BGRA, ABGR, BGR10x2_LE, RGB10x2_LE, P010_10LE, NV12_10LE40, Y444, v308, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, I420, YV12, NV12, NV21, Y41B, YUV9, YVU9, BGR16, RGB16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     }
@@ -256883,7 +256883,7 @@
                 "long-name": "wayland video sink",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { BGR10A2_LE, RGB10A2_LE, AYUV, RGBA, ARGB, BGRA, ABGR, BGR10x2_LE, RGB10x2_LE, P010_10LE, NV12_10LE40, v308, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, I420, YV12, NV12, NV21, Y41B, YUV9, YVU9, BGR16, RGB16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw(memory:DMABuf):\n         format: DMA_DRM\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\nvideo/x-raw:\n         format: { BGR10A2_LE, RGB10A2_LE, AYUV, RGBA, ARGB, BGRA, ABGR, BGR10x2_LE, RGB10x2_LE, P010_10LE, NV12_10LE40, Y444, v308, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, I420, YV12, NV12, NV21, Y41B, YUV9, YVU9, BGR16, RGB16 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     }
