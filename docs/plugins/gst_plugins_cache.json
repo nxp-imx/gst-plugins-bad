@@ -245849,7 +245849,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Codec/Decoder/Audio ",
+                "klass": "Codec/Decoder/Audio",
                 "long-name": "Siren Decoder element",
                 "pad-templates": {
                     "sink": {
@@ -245880,7 +245880,7 @@
                 "interfaces": [
                     "GstPreset"
                 ],
-                "klass": "Codec/Encoder/Audio ",
+                "klass": "Codec/Encoder/Audio",
                 "long-name": "Siren Encoder element",
                 "pad-templates": {
                     "sink": {
@@ -246001,7 +246001,7 @@
         "url": "Unknown package origin"
     },
     "smoothstreaming": {
-        "description": "Microsoft's Smooth Streaming format support ",
+        "description": "Microsoft's Smooth Streaming format support",
         "elements": {
             "mssdemux": {
                 "author": "Thiago Santos <thiago.sousa.santos@collabora.com>",
