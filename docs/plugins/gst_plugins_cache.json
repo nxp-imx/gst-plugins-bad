@@ -26866,7 +26866,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Filter/Analysis/Video",
+                "klass": "Filter/Analyzer/Video",
                 "long-name": "Video field analysis",
                 "pad-templates": {
                     "sink": {
