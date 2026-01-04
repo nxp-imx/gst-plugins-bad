@@ -254963,7 +254963,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Filter/Analysis",
+                "klass": "Video/Filter/Analyzer",
                 "long-name": "Zebra stripe overlay",
                 "pad-templates": {
                     "sink": {
