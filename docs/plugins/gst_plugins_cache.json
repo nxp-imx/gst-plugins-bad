@@ -19685,7 +19685,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Debug/video/Sink",
+                "klass": "Debug/Video/Sink",
                 "long-name": "Video CODEC Test Sink",
                 "pad-templates": {
                     "sink": {
