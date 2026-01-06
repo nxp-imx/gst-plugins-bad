@@ -7383,7 +7383,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Network",
+                "klass": "Source/Network",
                 "long-name": "Audio/Video Transport Protocol (AVTP) Source",
                 "pad-templates": {
                     "src": {
