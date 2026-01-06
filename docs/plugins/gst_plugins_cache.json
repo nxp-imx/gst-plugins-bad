@@ -19675,7 +19675,7 @@
                 "signals": {}
             },
             "videocodectestsink": {
-                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com",
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "Sink to test video CODEC conformance",
                 "hierarchy": [
                     "GstVideoCodecTestSink",
@@ -22517,7 +22517,7 @@
         "description": "DTLS decoder and encoder plugins",
         "elements": {
             "dtlsdec": {
-                "author": "Patrik Oldsberg patrik.oldsberg@ericsson.com",
+                "author": "Patrik Oldsberg <patrik.oldsberg@ericsson.com>",
                 "description": "Decodes DTLS packets",
                 "hierarchy": [
                     "GstDtlsDec",
@@ -22639,7 +22639,7 @@
                 }
             },
             "dtlsenc": {
-                "author": "Patrik Oldsberg patrik.oldsberg@ericsson.com",
+                "author": "Patrik Oldsberg <patrik.oldsberg@ericsson.com>",
                 "description": "Encodes packets with DTLS",
                 "hierarchy": [
                     "GstDtlsEnc",
@@ -22749,7 +22749,7 @@
                 }
             },
             "dtlssrtpdec": {
-                "author": "Patrik Oldsberg patrik.oldsberg@ericsson.com",
+                "author": "Patrik Oldsberg <patrik.oldsberg@ericsson.com>",
                 "description": "Decodes SRTP packets with a key received from DTLS",
                 "hierarchy": [
                     "GstDtlsSrtpDec",
@@ -22828,7 +22828,7 @@
                 "rank": "none"
             },
             "dtlssrtpdemux": {
-                "author": "Patrik Oldsberg patrik.oldsberg@ericsson.com",
+                "author": "Patrik Oldsberg <patrik.oldsberg@ericsson.com>",
                 "description": "Demultiplexes DTLS and SRTP packets",
                 "hierarchy": [
                     "GstDtlsSrtpDemux",
@@ -22859,7 +22859,7 @@
                 "rank": "none"
             },
             "dtlssrtpenc": {
-                "author": "Patrik Oldsberg patrik.oldsberg@ericsson.com",
+                "author": "Patrik Oldsberg <patrik.oldsberg@ericsson.com>",
                 "description": "Encodes SRTP packets with a key received from DTLS",
                 "hierarchy": [
                     "GstDtlsSrtpEnc",
@@ -42359,7 +42359,7 @@
                 }
             },
             "ipcslavepipeline": {
-                "author": "Vincent Penquerc'h <vincent.penquerch@collabora.co.uk",
+                "author": "Vincent Penquerc'h <vincent.penquerch@collabora.co.uk>",
                 "description": "Contains the slave part of an inter-process pipeline",
                 "hierarchy": [
                     "GstIpcSlavePipeline",
@@ -243171,7 +243171,7 @@
         "description": "Source and Sink for RIST TR-06-1 streaming specification",
         "elements": {
             "ristrtpdeext": {
-                "author": "Olivier Crete <olivier.crete@collabora.com",
+                "author": "Olivier Crete <olivier.crete@collabora.com>",
                 "description": "Removes RIST TR-06-2 RTP Header extension",
                 "hierarchy": [
                     "GstRistRtpDeext",
@@ -243225,7 +243225,7 @@
                 "rank": "none"
             },
             "ristrtpext": {
-                "author": "Olivier Crete <olivier.crete@collabora.com",
+                "author": "Olivier Crete <olivier.crete@collabora.com>",
                 "description": "Adds RIST TR-06-2 RTP Header extension",
                 "hierarchy": [
                     "GstRistRtpExt",
@@ -243417,7 +243417,7 @@
                 "rank": "none"
             },
             "ristsink": {
-                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com",
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "Sink that implements RIST TR-06-1 streaming specification",
                 "hierarchy": [
                     "GstRistSink",
@@ -243647,7 +243647,7 @@
                 "rank": "primary"
             },
             "ristsrc": {
-                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com",
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "Source that implements RIST TR-06-1 streaming specification",
                 "hierarchy": [
                     "GstRistSrc",
@@ -243882,7 +243882,7 @@
                 "rank": "primary"
             },
             "roundrobin": {
-                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com",
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "A round robin dispatcher element.",
                 "hierarchy": [
                     "GstRoundRobin",
@@ -255362,7 +255362,7 @@
                 "rank": "primary + 1"
             },
             "mpegvideoparse": {
-                "author": "Wim Taymans <wim.taymans@ccollabora.co.uk>, Jan Schmidt <thaytan@mad.scientist.com>, Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>",
+                "author": "Wim Taymans <wim.taymans@collabora.co.uk>, Jan Schmidt <thaytan@mad.scientist.com>, Mark Nauwelaerts <mark.nauwelaerts@collabora.co.uk>",
                 "description": "Parses and frames MPEG-1 and MPEG-2 elementary video streams",
                 "hierarchy": [
                     "GstMpegvParse",
@@ -257820,7 +257820,7 @@
         "description": "WebP plugin",
         "elements": {
             "webpdec": {
-                "author": "Sreerenj Balachandran <sreerenj.balachandrn@intel.com>",
+                "author": "Sreerenj Balachandran <sreerenj.balachandran@intel.com>",
                 "description": "Decode images from WebP format",
                 "hierarchy": [
                     "GstWebPDec",
@@ -258912,7 +258912,7 @@
                 "rank": "none"
             },
             "webrtcechoprobe": {
-                "author": "Nicolas Dufresne <nicolas.dufrsesne@collabora.com>",
+                "author": "Nicolas Dufresne <nicolas.dufresne@collabora.com>",
                 "description": "Gathers playback buffers for webrtcdsp",
                 "hierarchy": [
                     "GstWebrtcEchoProbe",
