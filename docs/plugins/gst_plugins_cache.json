@@ -244826,7 +244826,7 @@
                     "GstChildProxy",
                     "GstURIHandler"
                 ],
-                "klass": "Generic/Bin/Src",
+                "klass": "Generic/Bin/Source",
                 "long-name": "RTP Source element",
                 "pad-templates": {
                     "src_%%u": {
