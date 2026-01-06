@@ -37969,7 +37969,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "Ising0r",
                 "pad-templates": {
                     "src": {
@@ -38036,7 +38036,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "Lissajous0r",
                 "pad-templates": {
                     "src": {
@@ -38089,7 +38089,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "Nois0r",
                 "pad-templates": {
                     "src": {
@@ -38113,7 +38113,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "onecol0r",
                 "pad-templates": {
                     "src": {
@@ -38180,7 +38180,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "Partik0l",
                 "pad-templates": {
                     "src": {
@@ -38233,7 +38233,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "Plasma",
                 "pad-templates": {
                     "src": {
@@ -38342,7 +38342,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_B",
                 "pad-templates": {
                     "src": {
@@ -38409,7 +38409,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_C",
                 "pad-templates": {
                     "src": {
@@ -38488,7 +38488,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_G",
                 "pad-templates": {
                     "src": {
@@ -38595,7 +38595,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_I",
                 "pad-templates": {
                     "src": {
@@ -38702,7 +38702,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_L",
                 "pad-templates": {
                     "src": {
@@ -38755,7 +38755,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src/Video",
+                "klass": "Source/Video",
                 "long-name": "test_pat_R",
                 "pad-templates": {
                     "src": {
