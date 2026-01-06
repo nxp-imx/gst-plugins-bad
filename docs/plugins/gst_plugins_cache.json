@@ -251097,7 +251097,7 @@
                     "GInitiallyUnowned",
                     "GObject"
                 ],
-                "klass": "Src",
+                "klass": "Source",
                 "pad-templates": {
                     "src": {
                         "caps": "ANY",
