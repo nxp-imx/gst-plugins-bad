@@ -259314,11 +259314,56 @@
     "win32ipc": {
         "description": "Windows IPC plugin",
         "elements": {
+            "win32ipcsink": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Windows shared memory sink",
+                "hierarchy": [
+                    "GstWin32IpcSink",
+                    "GstWin32IpcBaseSink",
+                    "GstBaseSink",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Sink/Generic",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "ANY",
+                        "direction": "sink",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
+            "win32ipcsrc": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Windows shared memory source",
+                "hierarchy": [
+                    "GstWin32IpcSrc",
+                    "GstWin32IpcBaseSrc",
+                    "GstBaseSrc",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Source/Generic",
+                "pad-templates": {
+                    "src": {
+                        "caps": "ANY",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
             "win32ipcvideosink": {
                 "author": "Seungha Yang <seungha@centricular.com>",
                 "description": "Send video frames to win32ipcvideosrc elements",
                 "hierarchy": [
                     "GstWin32IpcVideoSink",
+                    "GstWin32IpcBaseSink",
                     "GstBaseSink",
                     "GstElement",
                     "GstObject",
@@ -259328,7 +259373,7 @@
                 "klass": "Sink/Video",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw:\n         format: { A444_16LE, A444_16BE, AYUV64, RGBA64_LE, ARGB64, ARGB64_LE, BGRA64_LE, ABGR64_LE, RGBA64_BE, ARGB64_BE, BGRA64_BE, ABGR64_BE, A422_16LE, A422_16BE, A420_16LE, A420_16BE, A444_12LE, GBRA_12LE, A444_12BE, GBRA_12BE, Y412_LE, Y412_BE, A422_12LE, A422_12BE, A420_12LE, A420_12BE, A444_10LE, GBRA_10LE, A444_10BE, GBRA_10BE, A422_10LE, A422_10BE, A420_10LE, A420_10BE, BGR10A2_LE, RGB10A2_LE, Y410, A444, GBRA, AYUV, VUYA, RGBA, RBGA, ARGB, BGRA, ABGR, A422, A420, AV12, Y444_16LE, GBR_16LE, Y444_16BE, GBR_16BE, v216, P016_LE, P016_BE, Y444_12LE, GBR_12LE, Y444_12BE, GBR_12BE, I422_12LE, I422_12BE, Y212_LE, Y212_BE, I420_12LE, I420_12BE, P012_LE, P012_BE, Y444_10LE, GBR_10LE, Y444_10BE, GBR_10BE, r210, I422_10LE, I422_10BE, NV16_10LE32, Y210, UYVP, v210, I420_10LE, I420_10BE, P010_10LE, NV12_10LE40, NV12_10LE32, P010_10BE, MT2110R, MT2110T, NV12_10BE_8L128, NV12_10LE40_4L4, Y444, BGRP, GBR, RGBP, NV24, v308, IYU2, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, VYUY, I420, YV12, NV12, NV21, NV12_16L32S, NV12_32L32, NV12_4L4, NV12_64Z32, NV12_8L128, Y41B, IYU1, YUV9, YVU9, BGR16, RGB16, BGR15, RGB15, RGB8P, GRAY16_LE, GRAY16_BE, GRAY10_LE32, GRAY8 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw:\n         format: { A444_16LE, A444_16BE, Y416_LE, AYUV64, RGBA64_LE, ARGB64, ARGB64_LE, BGRA64_LE, ABGR64_LE, Y416_BE, RGBA64_BE, ARGB64_BE, BGRA64_BE, ABGR64_BE, A422_16LE, A422_16BE, A420_16LE, A420_16BE, A444_12LE, GBRA_12LE, A444_12BE, GBRA_12BE, Y412_LE, Y412_BE, A422_12LE, A422_12BE, A420_12LE, A420_12BE, A444_10LE, GBRA_10LE, A444_10BE, GBRA_10BE, A422_10LE, A422_10BE, A420_10LE, A420_10BE, BGR10A2_LE, RGB10A2_LE, Y410, A444, GBRA, AYUV, VUYA, RGBA, RBGA, ARGB, BGRA, ABGR, A422, A420, AV12, Y444_16LE, GBR_16LE, Y444_16BE, GBR_16BE, Y216_LE, Y216_BE, v216, P016_LE, P016_BE, Y444_12LE, GBR_12LE, Y444_12BE, GBR_12BE, I422_12LE, I422_12BE, Y212_LE, Y212_BE, I420_12LE, I420_12BE, P012_LE, P012_BE, Y444_10LE, GBR_10LE, Y444_10BE, GBR_10BE, BGR10x2_LE, RGB10x2_LE, r210, I422_10LE, I422_10BE, NV16_10LE40, NV16_10LE32, Y210, UYVP, v210, I420_10LE, I420_10BE, P010_10LE, NV12_10LE40, NV12_10LE32, P010_10BE, MT2110R, MT2110T, NV12_10BE_8L128, NV12_10LE40_4L4, Y444, BGRP, GBR, RGBP, NV24, v308, IYU2, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, VYUY, I420, YV12, NV12, NV21, NV12_16L32S, NV12_32L32, NV12_4L4, NV12_64Z32, NV12_8L128, Y41B, IYU1, YUV9, YVU9, BGR16, RGB16, BGR15, RGB15, RGB8P, GRAY16_LE, GRAY16_BE, GRAY10_LE16, GRAY10_LE32, GRAY8 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     }
@@ -259354,6 +259399,7 @@
                 "description": "Receive video frames from the win32ipcvideosink",
                 "hierarchy": [
                     "GstWin32IpcVideoSrc",
+                    "GstWin32IpcBaseSrc",
                     "GstBaseSrc",
                     "GstElement",
                     "GstObject",
@@ -259363,7 +259409,7 @@
                 "klass": "Source/Video",
                 "pad-templates": {
                     "src": {
-                        "caps": "video/x-raw:\n         format: { A444_16LE, A444_16BE, AYUV64, RGBA64_LE, ARGB64, ARGB64_LE, BGRA64_LE, ABGR64_LE, RGBA64_BE, ARGB64_BE, BGRA64_BE, ABGR64_BE, A422_16LE, A422_16BE, A420_16LE, A420_16BE, A444_12LE, GBRA_12LE, A444_12BE, GBRA_12BE, Y412_LE, Y412_BE, A422_12LE, A422_12BE, A420_12LE, A420_12BE, A444_10LE, GBRA_10LE, A444_10BE, GBRA_10BE, A422_10LE, A422_10BE, A420_10LE, A420_10BE, BGR10A2_LE, RGB10A2_LE, Y410, A444, GBRA, AYUV, VUYA, RGBA, RBGA, ARGB, BGRA, ABGR, A422, A420, AV12, Y444_16LE, GBR_16LE, Y444_16BE, GBR_16BE, v216, P016_LE, P016_BE, Y444_12LE, GBR_12LE, Y444_12BE, GBR_12BE, I422_12LE, I422_12BE, Y212_LE, Y212_BE, I420_12LE, I420_12BE, P012_LE, P012_BE, Y444_10LE, GBR_10LE, Y444_10BE, GBR_10BE, r210, I422_10LE, I422_10BE, NV16_10LE32, Y210, UYVP, v210, I420_10LE, I420_10BE, P010_10LE, NV12_10LE40, NV12_10LE32, P010_10BE, MT2110R, MT2110T, NV12_10BE_8L128, NV12_10LE40_4L4, Y444, BGRP, GBR, RGBP, NV24, v308, IYU2, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, VYUY, I420, YV12, NV12, NV21, NV12_16L32S, NV12_32L32, NV12_4L4, NV12_64Z32, NV12_8L128, Y41B, IYU1, YUV9, YVU9, BGR16, RGB16, BGR15, RGB15, RGB8P, GRAY16_LE, GRAY16_BE, GRAY10_LE32, GRAY8 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "caps": "video/x-raw:\n         format: { A444_16LE, A444_16BE, Y416_LE, AYUV64, RGBA64_LE, ARGB64, ARGB64_LE, BGRA64_LE, ABGR64_LE, Y416_BE, RGBA64_BE, ARGB64_BE, BGRA64_BE, ABGR64_BE, A422_16LE, A422_16BE, A420_16LE, A420_16BE, A444_12LE, GBRA_12LE, A444_12BE, GBRA_12BE, Y412_LE, Y412_BE, A422_12LE, A422_12BE, A420_12LE, A420_12BE, A444_10LE, GBRA_10LE, A444_10BE, GBRA_10BE, A422_10LE, A422_10BE, A420_10LE, A420_10BE, BGR10A2_LE, RGB10A2_LE, Y410, A444, GBRA, AYUV, VUYA, RGBA, RBGA, ARGB, BGRA, ABGR, A422, A420, AV12, Y444_16LE, GBR_16LE, Y444_16BE, GBR_16BE, Y216_LE, Y216_BE, v216, P016_LE, P016_BE, Y444_12LE, GBR_12LE, Y444_12BE, GBR_12BE, I422_12LE, I422_12BE, Y212_LE, Y212_BE, I420_12LE, I420_12BE, P012_LE, P012_BE, Y444_10LE, GBR_10LE, Y444_10BE, GBR_10BE, BGR10x2_LE, RGB10x2_LE, r210, I422_10LE, I422_10BE, NV16_10LE40, NV16_10LE32, Y210, UYVP, v210, I420_10LE, I420_10BE, P010_10LE, NV12_10LE40, NV12_10LE32, P010_10BE, MT2110R, MT2110T, NV12_10BE_8L128, NV12_10LE40_4L4, Y444, BGRP, GBR, RGBP, NV24, v308, IYU2, RGBx, xRGB, BGRx, xBGR, RGB, BGR, Y42B, NV16, NV61, YUY2, YVYU, UYVY, VYUY, I420, YV12, NV12, NV21, NV12_16L32S, NV12_32L32, NV12_4L4, NV12_64Z32, NV12_8L128, Y41B, IYU1, YUV9, YVU9, BGR16, RGB16, BGR15, RGB15, RGB8P, GRAY16_LE, GRAY16_BE, GRAY10_LE16, GRAY10_LE32, GRAY8 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -259401,7 +259447,198 @@
         },
         "filename": "gstwin32ipc",
         "license": "LGPL",
-        "other-types": {},
+        "other-types": {
+            "GstWin32IpcBaseSink": {
+                "hierarchy": [
+                    "GstWin32IpcBaseSink",
+                    "GstBaseSink",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "kind": "object",
+                "properties": {
+                    "current-level-buffers": {
+                        "blurb": "The number of currently queued buffers",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": false
+                    },
+                    "leaky-type": {
+                        "blurb": "Whether to drop buffers once the internal queue is full",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "downstream (2)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstWin32IpcLeakyType",
+                        "writable": true
+                    },
+                    "max-buffers": {
+                        "blurb": "Maximum number of buffers in queue (0=unlimited)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "2",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    },
+                    "num-clients": {
+                        "blurb": "The number of connected clients",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "-1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint",
+                        "writable": false
+                    },
+                    "pipe-name": {
+                        "blurb": "The name of Win32 named pipe to communicate with clients. Validation of the pipe name is caller's responsibility",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "\\\\.\\pipe\\gst.win32.ipc.video",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "wait-for-connection": {
+                        "blurb": "Blocks the stream until at least one client is connected",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                }
+            },
+            "GstWin32IpcBaseSrc": {
+                "hierarchy": [
+                    "GstWin32IpcBaseSrc",
+                    "GstBaseSrc",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "kind": "object",
+                "properties": {
+                    "current-level-buffers": {
+                        "blurb": "The number of currently queued buffers",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": false
+                    },
+                    "leaky-type": {
+                        "blurb": "Whether to drop buffers once the internal queue is full",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "downstream (2)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstWin32IpcLeakyType",
+                        "writable": true
+                    },
+                    "max-buffers": {
+                        "blurb": "Maximum number of buffers in queue (0=unlimited)",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "2",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    },
+                    "pipe-name": {
+                        "blurb": "The name of Win32 named pipe to communicate with server. Validation of the client name is caller's responsibility",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "\\\\.\\pipe\\gst.win32.ipc.video",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gchararray",
+                        "writable": true
+                    },
+                    "processing-deadline": {
+                        "blurb": "Maximum processing time for a buffer in nanoseconds",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "20000000",
+                        "max": "18446744073709551615",
+                        "min": "0",
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "guint64",
+                        "writable": true
+                    }
+                }
+            },
+            "GstWin32IpcLeakyType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "None",
+                        "name": "none",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Upstream",
+                        "name": "upstream",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Downstream",
+                        "name": "downstream",
+                        "value": "2"
+                    }
+                ]
+            }
+        },
         "package": "GStreamer Bad Plug-ins",
         "source": "gst-plugins-bad",
         "tracers": {},
