@@ -256725,7 +256725,7 @@
         "description": "Windows audio session API plugin",
         "elements": {
             "wasapi2sink": {
-                "author": "Nirbheek Chauhan <nirbheek@centricular.com>, Ole André Vadla Ravnås <ole.andre.ravnas@tandberg.com>, Seungha Yang <seungha@centricular.com>",
+                "author": "Seungha Yang <seungha@centricular.com>",
                 "description": "Stream audio to an audio capture device through WASAPI",
                 "hierarchy": [
                     "GstWasapi2Sink",
@@ -256743,14 +256743,26 @@
                 "long-name": "Wasapi2Sink",
                 "pad-templates": {
                     "sink": {
-                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
+                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20_32LE, S20_32BE, U20_32LE, U20_32BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     }
                 },
                 "properties": {
+                    "continue-on-error": {
+                        "blurb": "Continue running and consume buffers on device failure",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "device": {
-                        "blurb": "Audio device ID as provided by Windows.Devices.Enumeration.DeviceInformation.Id",
+                        "blurb": "Audio device ID as provided by WASAPI device endpoint ID as provided by IMMDevice::GetId",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
@@ -256770,6 +256782,18 @@
                         "mutable": "ready",
                         "readable": false,
                         "type": "gpointer",
+                        "writable": true
+                    },
+                    "exclusive": {
+                        "blurb": "Open the device in exclusive mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
                         "writable": true
                     },
                     "low-latency": {
@@ -256814,7 +256838,7 @@
                 "rank": "primary + 1"
             },
             "wasapi2src": {
-                "author": "Nirbheek Chauhan <nirbheek@centricular.com>, Ole André Vadla Ravnås <ole.andre.ravnas@tandberg.com>, Seungha Yang <seungha@centricular.com>",
+                "author": "Seungha Yang <seungha@centricular.com>",
                 "description": "Stream audio from an audio capture device through WASAPI",
                 "hierarchy": [
                     "GstWasapi2Src",
@@ -256833,20 +256857,32 @@
                 "long-name": "Wasapi2Src",
                 "pad-templates": {
                     "src": {
-                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
+                        "caps": "audio/x-raw:\n         format: { F64LE, F64BE, F32LE, F32BE, S32LE, S32BE, U32LE, U32BE, S24_32LE, S24_32BE, U24_32LE, U24_32BE, S24LE, S24BE, U24LE, U24BE, S20_32LE, S20_32BE, U20_32LE, U20_32BE, S20LE, S20BE, U20LE, U20BE, S18LE, S18BE, U18LE, U18BE, S16LE, S16BE, U16LE, U16BE, S8, U8 }\n         layout: interleaved\n           rate: [ 1, 2147483647 ]\n       channels: [ 1, 2147483647 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
                 },
                 "properties": {
+                    "continue-on-error": {
+                        "blurb": "Continue running and produce buffers on device failure",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    },
                     "device": {
-                        "blurb": "Audio device ID as provided by Windows.Devices.Enumeration.DeviceInformation.Id",
+                        "blurb": "Audio device ID as provided by WASAPI device endpoint ID as provided by IMMDevice::GetId",
                         "conditionally-available": false,
                         "construct": false,
                         "construct-only": false,
                         "controllable": false,
                         "default": "NULL",
-                        "mutable": "ready",
+                        "mutable": "playing",
                         "readable": true,
                         "type": "gchararray",
                         "writable": true
@@ -256860,6 +256896,18 @@
                         "mutable": "ready",
                         "readable": false,
                         "type": "gpointer",
+                        "writable": true
+                    },
+                    "exclusive": {
+                        "blurb": "Open the device in exclusive mode",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
                         "writable": true
                     },
                     "loopback": {
