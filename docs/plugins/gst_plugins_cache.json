@@ -13970,12 +13970,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-av1:\n      alignment: frame\n        profile: main\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-av1:\n      alignment: frame\n        profile: main\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -14471,6 +14471,337 @@
                 },
                 "rank": "none"
             },
+            "d3d12fisheyedewarp": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Dewarping fisheye image",
+                "hierarchy": [
+                    "GstD3D12FisheyeDewarp",
+                    "GstD3D12BaseFilter",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Converter/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "center-x": {
+                        "blurb": "Normalized X position of fisheye circle",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.5",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "center-y": {
+                        "blurb": "Normalized Y position of fisheye circle",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.5",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "fisheye-fov": {
+                        "blurb": "Fisheye image field-of-view angle, in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "180",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "horizontal-fov": {
+                        "blurb": "Horizontal field-of-view angle of output, in degrees; ignored in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "90",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "inner-radius": {
+                        "blurb": "Normalized inner radius for cropping central area (0.0 = center, 1.0 = full crop). Only used in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.3",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "projection-type": {
+                        "blurb": "Projection type to use",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "equirect (1)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstD3D12FisheyeDewarpProjectionType",
+                        "writable": true
+                    },
+                    "radius-x": {
+                        "blurb": "Normalized horizontal radius of fisheye circle",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.5",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "radius-y": {
+                        "blurb": "Normalized vertical radius of fisheye circle",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0.5",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "roi-height": {
+                        "blurb": "Normalized ROI height, in output image space",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "roi-width": {
+                        "blurb": "Normalized ROI width, in output image space",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "roi-x": {
+                        "blurb": "Normalized horizontal ROI offset (top-left), in output image space",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "roi-y": {
+                        "blurb": "Normalized vertical ROI offset (top-left), in output image space",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "rotation-order": {
+                        "blurb": "Rotation axis order to apply, ignored in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "zxy (4)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstD3D12FisheyeDewarpRotationOrder",
+                        "writable": true
+                    },
+                    "rotation-space": {
+                        "blurb": "Controls whether rotations are applied in local (intrinsic, camera-relative) or world (extrinsic, fixed-axis) space",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "local (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstD3D12FisheyeDewarpRotationSpace",
+                        "writable": true
+                    },
+                    "rotation-x": {
+                        "blurb": "Pitch (X-axis rotation) angle, in degrees; ignored in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "rotation-y": {
+                        "blurb": "Yaw (Y-axis rotation) angle, in degrees; ignored in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "rotation-z": {
+                        "blurb": "Roll (Z-axis rotation) angle, in degrees",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "vertical-fov": {
+                        "blurb": "Vertical field-of-view angle of output, in degrees; ignored in 'panorama' projection",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "90",
+                        "max": "1.79769e+308",
+                        "min": "-1.79769e+308",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "viewport-height": {
+                        "blurb": "Normalized viewport height",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "viewport-width": {
+                        "blurb": "Normalized viewport width",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "viewport-x": {
+                        "blurb": "Normalized top-left viewport X position",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    },
+                    "viewport-y": {
+                        "blurb": "Normalized top-left viewport Y position",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "0",
+                        "max": "1",
+                        "min": "0",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gdouble",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
+            },
             "d3d12h264dec": {
                 "author": "Seungha Yang <seungha@centricualr.com>",
                 "description": "Direct3D12/DXVA based H.264 video decoder",
@@ -14561,12 +14892,12 @@
                 "klass": "Codec/Encoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: NV12\n          width: [ 16, 4096 ]\n         height: [ 16, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: NV12\n          width: [ 16, 4096 ]\n         height: [ 16, 4096 ]\n interlace-mode: progressive\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: NV12\n          width: [ 128, 4096 ]\n         height: [ 128, 4096 ]\n interlace-mode: progressive\nvideo/x-raw:\n         format: NV12\n          width: [ 128, 4096 ]\n         height: [ 128, 4096 ]\n interlace-mode: progressive\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-h264:\n          width: [ 16, 4096 ]\n         height: [ 16, 4096 ]\n  stream-format: byte-stream\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-baseline }\n",
+                        "caps": "video/x-h264:\n          width: [ 128, 4096 ]\n         height: [ 128, 4096 ]\n  stream-format: byte-stream\n      alignment: au\n        profile: { (string)high, (string)main, (string)constrained-baseline }\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -14843,12 +15174,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-h265:\n  stream-format: { (string)hev1, (string)hvc1, (string)byte-stream }\n      alignment: au\n        profile: { (string)main, (string)main-10 }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-h265:\n  stream-format: { (string)hev1, (string)hvc1, (string)byte-stream }\n      alignment: au\n        profile: { (string)main, (string)main-10 }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -14898,6 +15229,71 @@
                     }
                 },
                 "rank": "primary + 2"
+            },
+            "d3d12interlace": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "A Direct3D12 interlacer element",
+                "hierarchy": [
+                    "GstD3D12Interlace",
+                    "GstD3D12BaseFilter",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Interlace/Effect/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n interlace-mode: progressive\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n interlace-mode: progressive\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n interlace-mode: interleaved\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n interlace-mode: interleaved\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "engine": {
+                        "blurb": "Engine to use",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "auto (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstD3D12InterlaceEngine",
+                        "writable": true
+                    },
+                    "field-pattern": {
+                        "blurb": "The output field pattern",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "1:1 (0)",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "GstD3D12InterlacePattern",
+                        "writable": true
+                    },
+                    "top-field-first": {
+                        "blurb": "Interlaced stream should be top field first",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "false",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
             },
             "d3d12ipcsink": {
                 "author": "Seungha Yang <seungha@centricular.com>",
@@ -15151,6 +15547,73 @@
                     }
                 },
                 "rank": "primary + 2"
+            },
+            "d3d12overlaycompositor": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Blend overlay into stream",
+                "hierarchy": [
+                    "GstD3D12OverlayCompositor",
+                    "GstD3D12BaseFilter",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Effect/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "rank": "none"
+            },
+            "d3d12remap": {
+                "author": "Seungha Yang <seungha@centricular.com>",
+                "description": "Remap pixels",
+                "hierarchy": [
+                    "GstD3D12Remap",
+                    "GstD3D12BaseFilter",
+                    "GstBaseTransform",
+                    "GstElement",
+                    "GstObject",
+                    "GInitiallyUnowned",
+                    "GObject"
+                ],
+                "klass": "Filter/Converter/Video/Hardware",
+                "pad-templates": {
+                    "sink": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "sink",
+                        "presence": "always"
+                    },
+                    "src": {
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n\nvideo/x-raw(memory:D3D12Memory, meta:GstVideoOverlayComposition):\n         format: { RGBA64_LE, BGRA64_LE, Y416_LE, Y412_LE, RGB10A2_LE, Y410, BGR10A2_LE, Y216_LE, Y212_LE, Y210, VUYA, RGBA, BGRA, RBGA, P016_LE, P012_LE, P010_10LE, RGBx, BGRx, YUY2, NV12, ARGB64_LE, AYUV64, GBRA_12LE, GBRA_10LE, AYUV, ABGR, ARGB, GBRA, Y444_16LE, A444_16LE, A444_12LE, A444_10LE, A444, A422_16LE, A422_12LE, A422_10LE, A422, A420_16LE, A420_12LE, A420_10LE, A420, AV12, GBR_16LE, Y444_12LE, GBR_12LE, I422_12LE, I420_12LE, Y444_10LE, GBR_10LE, I422_10LE, I420_10LE, Y444, BGRP, GBR, RGBP, xBGR, xRGB, Y42B, NV24, NV16, NV61, NV21, I420, YV12, Y41B, YUV9, YVU9, GRAY16_LE, GRAY8, v216, v210, r210, v308, IYU2, RGB, BGR, UYVY, VYUY, YVYU, RGB16, BGR16, RGB15, BGR15 }\n          width: [ 1, 2147483647 ]\n         height: [ 1, 2147483647 ]\n      framerate: [ 0/1, 2147483647/1 ]\n",
+                        "direction": "src",
+                        "presence": "always"
+                    }
+                },
+                "properties": {
+                    "uv-remap": {
+                        "blurb": "ID3D12Resource for UV coordinates remapping. Valid formats are R8G8B8A8_UNORM and R16G16B16A16_UNORM. R -> U, G -> U, B -> unused, and A -> mask where A >= 0.5 applies remapping, otherwise fill background color",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "mutable": "playing",
+                        "readable": true,
+                        "type": "gpointer",
+                        "writable": true
+                    }
+                },
+                "rank": "none"
             },
             "d3d12scale": {
                 "author": "Seungha Yang <seungha@centricular.com>",
@@ -15617,6 +16080,23 @@
                 },
                 "rank": "none",
                 "signals": {
+                    "last-rendered-sample": {
+                        "action": true,
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "gboolean"
+                            }
+                        ],
+                        "return-type": "GstSample",
+                        "when": "last"
+                    },
+                    "redraw": {
+                        "action": true,
+                        "args": [],
+                        "return-type": "void",
+                        "when": "last"
+                    },
                     "resize": {
                         "action": true,
                         "args": [
@@ -15627,6 +16107,29 @@
                             {
                                 "name": "arg1",
                                 "type": "guint"
+                            }
+                        ],
+                        "return-type": "void",
+                        "when": "last"
+                    },
+                    "uv-remap": {
+                        "action": true,
+                        "args": [
+                            {
+                                "name": "arg0",
+                                "type": "guint"
+                            },
+                            {
+                                "name": "arg1",
+                                "type": "gpointer"
+                            },
+                            {
+                                "name": "arg2",
+                                "type": "gpointer"
+                            },
+                            {
+                                "name": "arg3",
+                                "type": "gpointer"
                             }
                         ],
                         "return-type": "void",
@@ -16259,12 +16762,12 @@
                 "klass": "Codec/Decoder/Video/Hardware",
                 "pad-templates": {
                     "sink": {
-                        "caps": "video/x-vp9:\n      alignment: frame\n        profile: 0\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\nvideo/x-vp9:\n      alignment: frame\n        profile: 2\n bit-depth-luma: 10\nbit-depth-chroma: 10\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-vp9:\n      alignment: frame\n        profile: 0\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\nvideo/x-vp9:\n      alignment: frame\n        profile: 2\n bit-depth-luma: 10\nbit-depth-chroma: 10\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "sink",
                         "presence": "always"
                     },
                     "src": {
-                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 16384 ]\n         height: [ 1, 16384 ]\n",
+                        "caps": "video/x-raw(memory:D3D12Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n\nvideo/x-raw(memory:D3D11Memory):\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\nvideo/x-raw:\n         format: { NV12, P010_10LE }\n          width: [ 1, 8192 ]\n         height: [ 1, 8192 ]\n",
                         "direction": "src",
                         "presence": "always"
                     }
@@ -16777,6 +17280,116 @@
                     }
                 ]
             },
+            "GstD3D12FisheyeDewarpProjectionType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Passthrough",
+                        "name": "passthrough",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "Equirectangular",
+                        "name": "equirect",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Panorama",
+                        "name": "panorama",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Perspective",
+                        "name": "perspective",
+                        "value": "3"
+                    }
+                ]
+            },
+            "GstD3D12FisheyeDewarpRotationOrder": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "XYZ",
+                        "name": "xyz",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "XZY",
+                        "name": "xzy",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "YXZ",
+                        "name": "yxz",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "YZX",
+                        "name": "yzx",
+                        "value": "3"
+                    },
+                    {
+                        "desc": "ZXY",
+                        "name": "zxy",
+                        "value": "4"
+                    },
+                    {
+                        "desc": "ZYX",
+                        "name": "zyx",
+                        "value": "5"
+                    }
+                ]
+            },
+            "GstD3D12FisheyeDewarpRotationSpace": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Local",
+                        "name": "local",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "World",
+                        "name": "world",
+                        "value": "1"
+                    }
+                ]
+            },
+            "GstD3D12InterlaceEngine": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "iGPU uses 3D engine, dGPU uses compute engine",
+                        "name": "auto",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "3D",
+                        "name": "3d",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Compute",
+                        "name": "compute",
+                        "value": "2"
+                    }
+                ]
+            },
+            "GstD3D12InterlacePattern": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "1:1 (e.g. 60p -> 60i)",
+                        "name": "1:1",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "2:2 (e.g. 30p -> 60i)",
+                        "name": "2:2",
+                        "value": "1"
+                    }
+                ]
+            },
             "GstD3D12IpcIOMode": {
                 "kind": "enum",
                 "values": [
@@ -16817,6 +17430,31 @@
                     }
                 ]
             },
+            "GstD3D12MemcpyCmdQueueType": {
+                "kind": "enum",
+                "values": [
+                    {
+                        "desc": "Auto",
+                        "name": "auto",
+                        "value": "0"
+                    },
+                    {
+                        "desc": "3D",
+                        "name": "3d",
+                        "value": "1"
+                    },
+                    {
+                        "desc": "Compute",
+                        "name": "compute",
+                        "value": "2"
+                    },
+                    {
+                        "desc": "Copy",
+                        "name": "copy",
+                        "value": "3"
+                    }
+                ]
+            },
             "GstD3D12MemoryCopy": {
                 "hierarchy": [
                     "GstD3D12MemoryCopy",
@@ -16840,6 +17478,30 @@
                         "mutable": "ready",
                         "readable": true,
                         "type": "gint",
+                        "writable": true
+                    },
+                    "queue-type": {
+                        "blurb": "Command queue type to use for copy operation",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "auto (0)",
+                        "mutable": "ready",
+                        "readable": true,
+                        "type": "GstD3D12MemcpyCmdQueueType",
+                        "writable": true
+                    },
+                    "use-staging-memory": {
+                        "blurb": "If FALSE, system memory pool will be used instead of GPU-visible staging memory",
+                        "conditionally-available": false,
+                        "construct": false,
+                        "construct-only": false,
+                        "controllable": false,
+                        "default": "true",
+                        "mutable": "null",
+                        "readable": true,
+                        "type": "gboolean",
                         "writable": true
                     }
                 }
