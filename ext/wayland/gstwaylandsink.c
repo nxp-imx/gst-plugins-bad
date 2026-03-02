@@ -1093,18 +1093,19 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
     s = gst_caps_get_structure (self->caps, 0);
     gst_structure_get (s, "width", G_TYPE_INT, &padded_width,
         "height", G_TYPE_INT, &padded_height, NULL);
+    if (vmeta) {
+      if (vmeta->width != padded_width || vmeta->height != padded_height) {
+        gst_structure_set (s, "width", G_TYPE_INT, vmeta->width,
+            "height", G_TYPE_INT, vmeta->height, NULL);
 
-    if (vmeta->width != padded_width || vmeta->height != padded_height) {
-      gst_structure_set (s, "width", G_TYPE_INT, vmeta->width,
-          "height", G_TYPE_INT, vmeta->height, NULL);
+        if (self->pool) {
+          gst_buffer_pool_set_active (self->pool, FALSE);
+          gst_clear_object (&self->pool);
+        }
 
-      if (self->pool) {
-        gst_buffer_pool_set_active (self->pool, FALSE);
-        gst_clear_object (&self->pool);
+        gst_video_info_set_format (&self->video_info, vmeta->format,
+            vmeta->width, vmeta->height);
       }
-
-      gst_video_info_set_format (&self->video_info, vmeta->format,
-          vmeta->width, vmeta->height);
     }
   }
 
