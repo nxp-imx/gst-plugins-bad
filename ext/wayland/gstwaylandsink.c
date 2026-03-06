@@ -979,7 +979,8 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   gboolean need_pool;
   guint size;
   guint64 drm_modifier;
-  
+  GstVideoInfoDmaDrm drm_info;
+  GstVideoInfo vinfo;
 
   gst_query_parse_allocation (query, &caps, &need_pool);
 
@@ -987,22 +988,22 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
     return FALSE;
 
   if (gst_video_is_dma_drm_caps (caps)) {
-    GstVideoInfoDmaDrm drm_info;
-
     if (!gst_video_info_dma_drm_from_caps (&drm_info, caps))
       return FALSE;
 
     size = drm_info.vinfo.size;
   } else {
-    GstVideoInfo vinfo;
-
     /* extract info from caps */
     if (!gst_video_info_from_caps (&vinfo, caps))
       return FALSE;
 
     size = vinfo.size;
 
-    if (gst_wl_display_check_format_for_dmabuf (self->display, &self->drm_info)) {
+    if (!gst_video_info_dma_drm_from_video_info (&drm_info,
+            &vinfo, DRM_FORMAT_MOD_LINEAR))
+      gst_video_info_dma_drm_init (&drm_info);
+
+    if (gst_wl_display_check_format_for_dmabuf (self->display, &drm_info)) {
 #ifdef HAVE_DMABUFHEAPS_ALLOCATOR
       allocator = gst_dmabufheaps_allocator_obtain ();
 #endif
@@ -1035,8 +1036,8 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
     if (GST_IS_UDMABUF_ALLOCATOR (allocator)) {
       pool = gst_video_dmabuf_pool_new ();
     } else {
-      gint w = GST_VIDEO_INFO_WIDTH (&self->video_info);
-      gint h = GST_VIDEO_INFO_HEIGHT (&self->video_info);
+      gint w = GST_VIDEO_INFO_WIDTH (&vinfo);
+      gint h = GST_VIDEO_INFO_HEIGHT (&vinfo);
       pool = gst_wl_video_buffer_pool_new ();
       config = gst_buffer_pool_get_config (pool);
 
