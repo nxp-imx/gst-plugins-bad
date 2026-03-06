@@ -1152,7 +1152,7 @@ gst_wayland_sink_show_frame (GstVideoSink * vsink, GstBuffer * buffer)
       /* if we were not provided a window, create one ourselves */
       self->window = gst_wl_window_new_toplevel_full (self->display,
           &self->render_info, self->fullscreen, self->fullscreen_output,
-          &self->render_lock);
+          &self->window_rectangle, &self->render_lock);
       g_signal_connect_object (self->window, "closed",
           G_CALLBACK (on_window_closed), self, 0);
       gst_wl_window_set_rotate_method (self->window,
@@ -1464,15 +1464,20 @@ gst_wayland_sink_set_render_rectangle (GstVideoOverlay * overlay,
 
   g_mutex_lock (&self->render_lock);
   if (!self->window) {
-    g_mutex_unlock (&self->render_lock);
     GST_WARNING_OBJECT (self,
-        "set_render_rectangle called without window, ignoring");
-    return;
+        "set_render_rectangle called without window, cache it");
+    goto out;
   }
 
   GST_DEBUG_OBJECT (self, "window geometry changed to (%d, %d) %d x %d",
       x, y, w, h);
   gst_wl_window_set_render_rectangle (self->window, x, y, w, h);
+
+out:
+  self->window_rectangle.x = x;
+  self->window_rectangle.y = y;
+  self->window_rectangle.w = w;
+  self->window_rectangle.h = h;
 
   g_mutex_unlock (&self->render_lock);
 }

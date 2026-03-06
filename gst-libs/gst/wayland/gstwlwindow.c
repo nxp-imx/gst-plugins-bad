@@ -498,7 +498,7 @@ gst_wl_window_ensure_fullscreen (GstWlWindow * self, gboolean fullscreen)
 GstWlWindow *
 gst_wl_window_new_toplevel_full (GstWlDisplay * display,
     const GstVideoInfo * info, gboolean fullscreen, const gchar * output_name,
-    GMutex * render_lock)
+    const GstVideoRectangle * window_rectangle, GMutex * render_lock)
 {
   GstWlWindow *self;
   GstWlWindowPrivate *priv;
@@ -543,10 +543,16 @@ gst_wl_window_new_toplevel_full (GstWlDisplay * display,
     /* Finally, commit the xdg_surface state as toplevel */
     priv->configured = FALSE;
 
-    /* set the initial size to be the same as the reported video size */
-    priv->default_width =
-        gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
-    priv->default_height = info->height;
+    if (window_rectangle && 
+        window_rectangle->w != 0 && window_rectangle->h != 0) {
+      priv->default_width = window_rectangle->w;
+      priv->default_height = window_rectangle->h;
+    } else {
+      /* set the initial size to be the same as the reported video size */
+      priv->default_width =
+          gst_util_uint64_scale_int_round (info->width, info->par_n, info->par_d);
+      priv->default_height = info->height;
+    }
     gst_wl_window_set_render_rectangle (self, 0, 0, priv->default_width,
         priv->default_height);
 
@@ -599,7 +605,7 @@ GstWlWindow *
 gst_wl_window_new_toplevel (GstWlDisplay * display, const GstVideoInfo * info,
     gboolean fullscreen, GMutex * render_lock)
 {
-  return gst_wl_window_new_toplevel_full (display, info, fullscreen, NULL,
+  return gst_wl_window_new_toplevel_full (display, info, fullscreen, NULL, NULL,
       render_lock);
 }
 

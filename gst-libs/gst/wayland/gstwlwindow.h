@@ -48,7 +48,8 @@ GstWlWindow *gst_wl_window_new_toplevel (GstWlDisplay * display,
 
 GST_WL_API
 GstWlWindow * gst_wl_window_new_toplevel_full (GstWlDisplay * display, const GstVideoInfo * info,
-        gboolean fullscreen,  const gchar * output_name, GMutex * render_lock);
+        gboolean fullscreen,  const gchar * output_name, const GstVideoRectangle * window_rectangle,
+        GMutex * render_lock);
 
 GST_WL_API
 GstWlWindow *gst_wl_window_new_in_surface (GstWlDisplay * display,

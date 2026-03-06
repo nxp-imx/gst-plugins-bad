@@ -64,6 +64,9 @@ struct _GstWaylandSink
   gchar *fullscreen_output;
   GstCaps *caps;
 
+  /* GstVideoOverlay::set_render_rectangle() cache */
+  GstVideoRectangle window_rectangle;
+
   gchar *display_name;
 
   /* If both OBJECT_LOCK and render_lock are needed,
