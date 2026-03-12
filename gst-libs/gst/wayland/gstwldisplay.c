@@ -485,7 +485,8 @@ output_done (void *data, struct wl_output *wl_output)
   GST_INFO ("---");
 
   g_mutex_lock (&priv->outputs_mutex);
-  g_hash_table_replace (priv->outputs, g_strdup (name), output);
+  if (name)
+    g_hash_table_replace (priv->outputs, g_strdup (name), output);
   g_mutex_unlock (&priv->outputs_mutex);
 }
 
