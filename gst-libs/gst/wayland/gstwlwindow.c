@@ -963,8 +963,7 @@ frame_redraw_callback (void *data, struct wl_callback *callback, uint32_t time)
 
   GST_DEBUG_OBJECT (self, "frame_redraw_cb");
 
-  wl_callback_destroy (callback);
-  priv->frame_callback = NULL;
+  gst_wl_display_callback_destroy (priv->display, &priv->frame_callback);
 
   g_mutex_lock (&priv->window_lock);
   next_buffer = priv->next_buffer = priv->staged_buffer;
@@ -1117,8 +1116,7 @@ commit_callback (void *data, struct wl_callback *callback, uint32_t serial)
   GstWlWindowPrivate *priv = gst_wl_window_get_instance_private (self);
   GstWlBuffer *next_buffer;
 
-  wl_callback_destroy (callback);
-  priv->commit_callback = NULL;
+  gst_wl_display_callback_destroy (priv->display, &priv->commit_callback);
 
   g_mutex_lock (&priv->window_lock);
   if (priv->ready_to_finalize) {
