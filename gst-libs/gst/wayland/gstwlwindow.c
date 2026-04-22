@@ -30,7 +30,6 @@
 #include "gstwlwindow.h"
 #include "gstwlbuffer_private.h"
 #include "gstwlutils.h"
-#include "gstimxcommon.h"
 
 #include "color-management-v1-client-protocol.h"
 #include "color-representation-v1-client-protocol.h"

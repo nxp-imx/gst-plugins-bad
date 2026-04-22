@@ -44,8 +44,6 @@
 
 #include "gstwaylandsink.h"
 
-#include "gstimxcommon.h"
-
 #include <drm_fourcc.h>
 #include <gst/allocators/allocators.h>
 #include <gst/video/gstvideodmabufpool.h>
@@ -982,6 +980,9 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   guint64 drm_modifier;
   GstVideoInfoDmaDrm drm_info;
   GstVideoInfo vinfo;
+  GstElement *soc = NULL;
+  gboolean is_amphion = FALSE;
+  gboolean is_mx8mq = FALSE;
 
   gst_query_parse_allocation (query, &caps, &need_pool);
 
@@ -1017,12 +1018,21 @@ gst_wayland_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
       allocator = gst_shm_allocator_get ();
   }
 
-  if (IS_AMPHION()) {
+  soc = gst_element_factory_make ("imxsocfeatures", NULL);
+  if (soc) {
+    g_signal_emit_by_name (soc, "in-group", "amphion", &is_amphion);
+    g_signal_emit_by_name (soc, "is-chip", "MX8MQ", &is_mx8mq);
+    GST_INFO ("In amphion group: %s", is_amphion ? "yes" : "no");
+    GST_INFO ("chip is mx8mq: %s", is_mx8mq ? "yes" : "no");
+    gst_object_unref (soc);
+  }
+
+  if (is_amphion) {
     drm_modifier = DRM_FORMAT_MOD_AMPHION_TILED;
     gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
   }
 
-  if (self->enable_tile && HAS_DCSS ()) {
+  if (self->enable_tile && is_mx8mq) {
     drm_modifier = DRM_FORMAT_MOD_VSI_G1_TILED;
     gst_query_add_allocation_dmabuf_meta (query, drm_modifier);
     drm_modifier = DRM_FORMAT_MOD_VSI_G2_TILED;
@@ -1539,12 +1549,21 @@ static gboolean
 plugin_init (GstPlugin * plugin)
 {
   GstRank rank = GST_RANK_MARGINAL;
+  GstElement *soc = NULL;
+  gboolean imx_legacy = TRUE;
 
   GST_DEBUG_CATEGORY_INIT (gstwayland_debug, "waylandsink", 0,
       " wayland video sink");
 
-  if (imx_chip_code() >= CC_MX8)
-      rank = IMX_GST_PLUGIN_RANK + 1;
+  soc = gst_element_factory_make ("imxsocfeatures", NULL);
+  if (soc) {
+    g_signal_emit_by_name (soc, "in-group", "imx-legacy", &imx_legacy);
+    GST_INFO ("In imx-legacy group: %s\n", imx_legacy ? "yes" : "no");
+    gst_object_unref (soc);
+  }
+
+  if (!imx_legacy)
+    rank = GST_RANK_PRIMARY + 2;
 
   GST_ELEMENT_REGISTER_DEFINE (waylandsink, "waylandsink", rank,
     GST_TYPE_WAYLAND_SINK);
