@@ -1182,6 +1182,7 @@ gst_wl_window_render_hdr (GstWlWindow * self, GstWlBuffer * buffer,
   if (!priv->next_buffer) {
     priv->next_buffer = buffer;
     priv->redraw_pending = TRUE;
+    gst_wl_display_callback_destroy (priv->display, &priv->commit_callback);
     priv->commit_callback =
         gst_wl_display_sync (priv->display, &commit_listener, self);
     wl_display_flush (gst_wl_display_get_display (priv->display));
