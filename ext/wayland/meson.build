@@ -21,10 +21,15 @@ if cc.has_header('linux/dma-heap.h') and cc.has_header('gst/allocators/gstdmabuf
     dmabufheapsallocator_flags += ['-DHAVE_DMABUFHEAPS_ALLOCATOR']
 endif
 
+gst_arch_args = []
+if host_machine.cpu_family() == 'aarch64'
+  gst_arch_args = ['-DIS_AARCH64']
+endif
+
 if use_wayland
   gstwaylandsink = library('gstwaylandsink',
     wl_sources,
-    c_args : gst_plugins_bad_args + dmabufheapsallocator_flags + ['-DGST_USE_UNSTABLE_API'],
+    c_args : gst_plugins_bad_args + gst_arch_args + dmabufheapsallocator_flags + ['-DGST_USE_UNSTABLE_API'],
     include_directories : [configinc],
     dependencies : [gst_dep, gstvideo_dep, gstwayland_dep],
     install : true,

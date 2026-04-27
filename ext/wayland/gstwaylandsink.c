@@ -1549,26 +1549,16 @@ static gboolean
 plugin_init (GstPlugin * plugin)
 {
   GstRank rank = GST_RANK_MARGINAL;
-  GstElement *soc = NULL;
-  gboolean imx_legacy = TRUE;
 
   GST_DEBUG_CATEGORY_INIT (gstwayland_debug, "waylandsink", 0,
       " wayland video sink");
 
-  soc = gst_element_factory_make ("imxsocfeatures", NULL);
-  if (soc) {
-    g_signal_emit_by_name (soc, "in-group", "imx-legacy", &imx_legacy);
-    GST_INFO ("In imx-legacy group: %s\n", imx_legacy ? "yes" : "no");
-    gst_object_unref (soc);
-  }
+#if defined(IS_AARCH64)
+  rank = GST_RANK_PRIMARY + 2;
+#endif
 
-  if (!imx_legacy)
-    rank = GST_RANK_PRIMARY + 2;
-
-  GST_ELEMENT_REGISTER_DEFINE (waylandsink, "waylandsink", rank,
-    GST_TYPE_WAYLAND_SINK);
-
-  return GST_ELEMENT_REGISTER (waylandsink, plugin);
+  GST_INFO ("register waylandsink with rank %d", rank);
+  return gst_element_register (plugin, "waylandsink", rank, GST_TYPE_WAYLAND_SINK);
 }
 
 GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
