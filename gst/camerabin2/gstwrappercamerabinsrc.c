@@ -1021,8 +1021,8 @@ gst_wrapper_camera_bin_src_start_capture (GstBaseCameraSrc * camerasrc)
     if (src->video_rec_status == GST_VIDEO_RECORDING_STATUS_DONE) {
       src->video_rec_status = GST_VIDEO_RECORDING_STATUS_STARTING;
       src->video_capture_probe =
-          gst_pad_add_probe (pad, GST_PAD_PROBE_TYPE_IDLE, start_video_capture,
-          src, NULL);
+          gst_pad_add_probe (pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+          start_video_capture, src, NULL);
     }
   } else {
     g_assert_not_reached ();
