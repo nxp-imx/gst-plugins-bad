@@ -1759,6 +1759,9 @@ gst_kms_sink_propose_allocation (GstBaseSink * bsink, GstQuery * query)
   drmModePropertyPtr prop = NULL;
   guint i;
   gsize size;
+  GstElement *soc = NULL;
+  gboolean is_mx8mq = FALSE;
+  gboolean is_amphion = FALSE;
 
   self = GST_KMS_SINK (bsink);
 
@@ -1811,9 +1814,20 @@ out:
   gst_query_add_allocation_meta (query, GST_VIDEO_META_API_TYPE, NULL);
   gst_query_add_allocation_meta (query, GST_VIDEO_CROP_META_API_TYPE, NULL);
 
-  gst_query_add_allocation_dmabuf_meta (query, DRM_FORMAT_MOD_AMPHION_TILED);
+  soc = gst_element_factory_make ("imxsocfeatures", NULL);
+  if (soc) {
+    g_signal_emit_by_name (soc, "in-group", "amphion", &is_amphion);
+    g_signal_emit_by_name (soc, "is-chip", "MX8MQ", &is_mx8mq);
+    GST_INFO ("In amphion group: %s", is_amphion ? "yes" : "no");
+    GST_INFO ("chip is mx8mq: %s", is_mx8mq ? "yes" : "no");
+    gst_object_unref (soc);
+  }
 
-  if (self->hantro_tile_enabled) {
+  if (is_amphion) {
+    gst_query_add_allocation_dmabuf_meta (query, DRM_FORMAT_MOD_AMPHION_TILED);
+  }
+
+  if (is_mx8mq && self->hantro_tile_enabled) {
     props = drmModeObjectGetProperties (self->fd, self->plane_id, DRM_MODE_OBJECT_PLANE);
     for (i = 0; i < props->count_props; ++i) {
       prop = drmModeGetProperty (self->fd, props->props[i]);
